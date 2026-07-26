@@ -98,7 +98,7 @@ const metroLines = [
   {
     number: 8, color: "#93282C",
     stations: [
-      ["博览中心", [6, 12]], ["合其路", []], ["和宁路", [7]], ["天逸府", [11]],
+      ["博览中心", [6, 12]], ["合其路", []], ["和宁路", [7]], ["天赐府", [11]],
       ["璇玑路", [1]], ["元江·省人民医院", [3]], ["随化桥", [2]], ["水榭滨", [5]],
       ["泽大三山校区", [1, 4]], ["古林", []]
     ]
@@ -124,7 +124,7 @@ const metroLines = [
     stations: [
       ["西北终点（暂定名）", []], ["规划车站（暂定名）", [9]],
       ["站前广场", [5, 6], [5]], ["学研路", []], ["市职业技术学院", [2]],
-      ["植物园", [3]], ["天逸府", [8]], ["和平湾", [1, 7]]
+      ["植物园", [3]], ["天赐府", [8]], ["和平湾", [1, 7]]
     ]
   },
   {
@@ -218,7 +218,10 @@ function sectionTemplate(section) {
     <section class="page-hero">
       <div class="shell page-hero-inner">
         <div>
-          <p>${section.en}</p>
+          <div class="page-hero-meta">
+            <p>${section.en}</p>
+            <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>${section.title}</span></div>
+          </div>
           <h1>${section.title}</h1>
           <span>${section.desc}</span>
         </div>
@@ -226,7 +229,6 @@ function sectionTemplate(section) {
       </div>
     </section>
     <section class="placeholder shell">
-      <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>${section.title}</span></div>
       <div class="placeholder-panel">
         <span class="placeholder-mark" aria-hidden="true">${section.mark}</span>
         <p>CONTENT RESERVED</p>
@@ -247,7 +249,10 @@ function newsTemplate(section) {
     <section class="page-hero">
       <div class="shell page-hero-inner">
         <div>
-          <p>${section.en}</p>
+          <div class="page-hero-meta">
+            <p>${section.en}</p>
+            <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>新闻公告</span></div>
+          </div>
           <h1>${section.title}</h1>
           <span>${section.desc}</span>
         </div>
@@ -255,7 +260,6 @@ function newsTemplate(section) {
       </div>
     </section>
     <section class="news-page shell">
-      <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>新闻公告</span></div>
       <article class="news-article">
         <header class="news-article-header">
           <p class="news-label">泽州要闻</p>
@@ -286,7 +290,10 @@ function districtsTemplate(section) {
     <section class="page-hero">
       <div class="shell page-hero-inner">
         <div>
-          <p>${section.en}</p>
+          <div class="page-hero-meta">
+            <p>${section.en}</p>
+            <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>行政区划</span></div>
+          </div>
           <h1>${section.title}</h1>
           <span>${section.desc}</span>
         </div>
@@ -294,7 +301,6 @@ function districtsTemplate(section) {
       </div>
     </section>
     <section class="districts-page shell">
-      <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>行政区划</span></div>
       <div class="districts-heading">
         <p>DISTRICTS OF ZEZHOU</p>
         <h2>泽州市行政区</h2>
@@ -321,7 +327,10 @@ function mapTemplate(section) {
     <section class="page-hero">
       <div class="shell page-hero-inner">
         <div>
-          <p>${section.en}</p>
+          <div class="page-hero-meta">
+            <p>${section.en}</p>
+            <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>城市地图</span></div>
+          </div>
           <h1>${section.title}</h1>
           <span>${section.desc}</span>
         </div>
@@ -329,7 +338,6 @@ function mapTemplate(section) {
       </div>
     </section>
     <section class="map-page shell">
-      <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>城市地图</span></div>
       <div class="map-section-heading">
         <div>
           <p>CURRENT CITY MAP</p>
@@ -353,10 +361,13 @@ function mapTemplate(section) {
 
 function transitTemplate(section) {
   return `
-    <section class="page-hero">
+    <section class="page-hero page-hero-transit">
       <div class="shell page-hero-inner">
         <div>
-          <p>${section.en}</p>
+          <div class="page-hero-meta">
+            <p>${section.en}</p>
+            <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>公共交通</span><i>/</i><span>地铁</span></div>
+          </div>
           <h1>${section.title}</h1>
           <span>${section.desc}</span>
         </div>
@@ -364,7 +375,6 @@ function transitTemplate(section) {
       </div>
     </section>
     <section class="transit-page shell">
-      <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>公共交通</span><i>/</i><span>地铁</span></div>
       <div class="transit-heading">
         <p>ZEZHOU METRO</p>
         <h2>地铁</h2>

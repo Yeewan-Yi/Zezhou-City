@@ -98,15 +98,32 @@ a { color: inherit; text-decoration: none; }
 .section-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.8; }
 .section-card:hover p { color: rgba(255,255,255,.66); }
 .arrow { position: absolute; right: 24px; bottom: 22px; font-size: 18px; }
-.page-hero { color: #fff; background: linear-gradient(112deg, var(--green-2), #2b665e); }
-.page-hero-inner { min-height: 330px; display: flex; align-items: center; justify-content: space-between; }
-.page-hero p { margin: 0 0 14px; color: #e9c276; font-size: 11px; letter-spacing: .25em; text-transform: uppercase; }
+.page-hero {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background: url("assets/zezhou-overview.jpg") center 42% / cover no-repeat;
+}
+.page-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 35, 32, .48);
+}
+.page-hero-transit { background-image: url("assets/zezhou-public-transit.png"); background-position: center 53%; }
+.page-hero-transit::before { background: rgba(5, 29, 29, .4); }
+.page-hero-inner { min-height: 330px; position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; }
+.page-hero-meta { display: flex; align-items: center; gap: 20px; width: fit-content; margin-bottom: 18px; padding: 9px 13px; background: rgba(4, 27, 27, .62); }
+.page-hero p { margin: 0; color: #f1ca7f; font-size: 11px; letter-spacing: .25em; text-transform: uppercase; }
 .page-hero h1 { margin: 0 0 22px; font-family: "Songti SC", serif; font-size: 56px; font-weight: 500; }
 .page-hero span { color: rgba(255,255,255,.65); }
 .page-hero b { color: rgba(255,255,255,.1); font: 140px/1 Georgia, serif; }
 .placeholder { padding: 30px 0 90px; }
 .breadcrumb { display: flex; gap: 10px; color: #7a8888; font-size: 12px; }
 .breadcrumb i { color: #c4cac9; font-style: normal; }
+.page-hero .breadcrumb { color: rgba(255,255,255,.9); }
+.page-hero .breadcrumb span { color: rgba(255,255,255,.9); }
+.page-hero .breadcrumb i { color: rgba(255,255,255,.5); }
 .placeholder-panel { min-height: 420px; position: relative; overflow: hidden; margin-top: 30px; padding: 90px 8%; border: 1px solid var(--line); background: #fff; }
 .placeholder-panel h2 { margin: 0; font-family: "Songti SC", serif; font-size: 36px; font-weight: 500; }
 .placeholder-panel .rule { width: 42px; height: 2px; margin: 30px 0; background: var(--accent); }
@@ -254,6 +271,7 @@ noscript { display: block; padding: 20px; color: #fff; background: #a33; text-al
   .section-grid { grid-template-columns: 1fr; }
   .section-card { min-height: 190px; }
   .page-hero-inner { min-height: 280px; }
+  .page-hero-meta { align-items: flex-start; flex-direction: column; gap: 8px; }
   .page-hero h1 { font-size: 42px; }
   .page-hero b { display: none; }
   .placeholder-panel { min-height: 400px; padding: 70px 28px; }
