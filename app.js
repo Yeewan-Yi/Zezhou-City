@@ -32,6 +32,111 @@ const districts = [
   { name: "江洲区", en: "Jiangzhou District", no: "07" }
 ];
 
+const metroLines = [
+  {
+    number: 1, color: "#009ace",
+    stations: [
+      ["龙腾嘴", []], ["新岗", [10, 12]], ["龙衔山", [11]], ["璇玑路", [11]],
+      ["和平湾", [7, 11]], ["常印大道", [3]], ["市职业技术学院", [2, 11]],
+      ["神印路", [2]], ["陇蜀", [5]], ["凤凰大道", []], ["牧林", []],
+      ["泽大三山校区", [4, 8]], ["东郊", []]
+    ]
+  },
+  {
+    number: 2, color: "#a6093d",
+    stations: [
+      ["白溪国际机场", [9, 12]], ["神工大道", [12]], ["凌云角", []], ["天信", []],
+      ["常纬汇", []], ["红渡广场", []], ["承商街", [5]], ["综合换乘站", [1, 3, 4, 6, 7, 8, 9, 10, 11, 12]],
+      ["衡印路", [3, 6, 12]], ["市职业技术学院", [1, 11]], ["印沙大道", []],
+      ["神印路", [1]], ["随化桥", [8]], ["工气石化", []], ["白塔山", []]
+    ]
+  },
+  {
+    number: 3, color: "#009a44",
+    stations: [
+      ["泽州站", [5, 12]], ["衡印路", [2, 6, 12]], ["植物园", [11]], ["常印大道", [1]],
+      ["元江·省人民医院", [8]], ["平江汇", []], ["善家庄", []],
+      ["青奥公园·青奥中心", [5, 7, 12]], ["规划终点（暂定名）", [10]]
+    ]
+  },
+  {
+    number: 4, color: "#7d55c7",
+    stations: [
+      ["规划终点（暂定名）", [9]], ["规划车站（暂定名）", [6, 9]],
+      ["泽大三山校区", [1, 8]], ["江洲北站", [2]]
+    ]
+  },
+  {
+    number: 5, color: "#f2da51",
+    stations: [
+      ["规划终点（暂定名）", []], ["综合换乘站", [1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12]],
+      ["承商街", [2]], ["常纬汇", []], ["泽州站", [3, 12]],
+      ["陇蜀大道·市第六中学", []], ["勤庄", []], ["水榭滨", [8]],
+      ["江州新城", []], ["汇善坊", []], ["青奥公园·青奥中心", [3, 7, 12]],
+      ["规划终点（暂定名）", []]
+    ]
+  },
+  {
+    number: 6, color: "#4bbbb4",
+    stations: [
+      ["北端终点（暂定名）", []], ["规划车站（暂定名）", [4, 9]],
+      ["站前广场", [11]], ["名广", []], ["衡印路", [2, 3, 12]],
+      ["和信园北", [7, 12]], ["博览中心", [8, 12]], ["惠首湾", []],
+      ["迁移广场", []], ["泽州南站", [10, 12]]
+    ]
+  },
+  {
+    number: 7, color: "#4A7729",
+    stations: [
+      ["西端终点（暂定名）", []], ["综合换乘站", [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12]],
+      ["和信园北", [6, 12]], ["和宁路", [8]], ["和平湾", [1, 11]],
+      ["驰龙大道", []], ["新胜", []], ["胡家肆", [10, 12]],
+      ["太元大道", [12]], ["青奥公园·青奥中心", [3, 5, 12]]
+    ]
+  },
+  {
+    number: 8, color: "#93282C",
+    stations: [
+      ["博览中心", [6, 12]], ["合其路", []], ["和宁路", [7]], ["天逸府", [11]],
+      ["元江·省人民医院", [3]], ["随化桥", [2]], ["水榭滨", [5]],
+      ["泽大三山校区", [1, 4]], ["吉林", []]
+    ]
+  },
+  {
+    number: 9, color: "#fa4616",
+    stations: [
+      ["白溪国际机场", [2, 12]], ["规划车站（暂定名）", []],
+      ["规划车站（暂定名）", [6, 11]], ["规划终点（暂定名）", [4]]
+    ]
+  },
+  {
+    number: 10, color: "#b9975b",
+    stations: [
+      ["泽州南站", [6, 12]], ["夹龙山", [12]], ["铁道旧址", [12]], ["新岗", [1, 12]],
+      ["伏爪关", [12]], ["胡家肆", [7, 12]], ["规划车站（暂定名）", []],
+      ["规划终点（暂定名）", [3]]
+    ]
+  },
+  {
+    number: 11, color: "#ef426f",
+    stations: [
+      ["西北终点（暂定名）", []], ["规划车站（暂定名）", [9]], ["站前广场", [6]],
+      ["学研路", []], ["市职业技术学院", [1, 2]], ["植物园", [3]],
+      ["天逸府", [8]], ["和平湾", [1, 7]], ["龙衔山", [1]]
+    ]
+  },
+  {
+    number: 12, color: "#ff6314",
+    stations: [
+      ["白溪国际机场", [2, 9]], ["神工大道", [2]], ["规划车站（暂定名）", []],
+      ["泽州站", [3, 5]], ["衡印路", [2, 3, 6]], ["和信园北", [6, 7]],
+      ["博览中心", [6, 8]], ["泽州南站", [6, 10]], ["夹龙山", [10]],
+      ["新岗", [1, 10]], ["伏爪关", [10]], ["胡家肆", [7, 10]],
+      ["太元大道", [7]], ["青奥公园·青奥中心", [3, 5, 7]]
+    ]
+  }
+];
+
 const app = document.querySelector("#app");
 const nav = document.querySelector("#primary-nav");
 
@@ -244,54 +349,75 @@ function transitTemplate(section) {
       <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>公共交通</span><i>/</i><span>地铁</span></div>
       <div class="transit-heading">
         <p>ZEZHOU METRO</p>
-        <h2>泽州市地铁</h2>
-        <span>现状运营线网与远期规划线网分别展示，规划内容不代表当前已经建成。</span>
-      </div>
-      <div class="status-legend">
-        <span><b class="legend-dot built"></b><strong>已建成</strong>　现状城市地图中显示的既有线路</span>
-        <span><b class="legend-dot planned"></b><strong>未建成</strong>　规划线网图中的远期线路及延伸段</span>
+        <h2>地铁</h2>
+        <span>按线路编号查看泽州市地铁规划站点及换乘关系。图中未正式命名的站点以“暂定名”标识。</span>
       </div>
 
-      <article class="transit-map-block">
-        <header>
-          <div>
-            <p>OPERATING NETWORK</p>
-            <h3>现有地铁与城市地图</h3>
-          </div>
-          <span class="status-badge status-built"><i></i>已建成 · 运营中</span>
-        </header>
-        <p class="map-intro">以下矢量图记录泽州市当前城市格局及现有地铁线路，可用于查看线路与道路、行政区和公共设施之间的空间关系。</p>
-        <figure class="map-figure">
-          <div class="map-image-frame current-network">
-            <img src="assets/zezhou-current-map.svg" alt="泽州市现有城市地图及已建成地铁">
-          </div>
-          <figcaption>
-            <span>泽州市现状综合地图</span>
-            <a href="assets/zezhou-current-map.svg" target="_blank" rel="noopener">查看矢量原图 ↗</a>
-          </figcaption>
-        </figure>
-      </article>
+      <div class="metro-line-tabs" role="tablist" aria-label="地铁线路">
+        ${metroLines.map((line, index) => `
+          <button class="metro-line-tab${index === 0 ? " active" : ""}" type="button"
+            role="tab" aria-selected="${index === 0}" data-line="${line.number}"
+            style="--line-color:${line.color}">
+            <span>${line.number}</span><strong>${line.number}号线</strong><small>${line.stations.length}站</small>
+          </button>
+        `).join("")}
+      </div>
 
-      <article class="transit-map-block planned-block">
+      <div id="metro-line-view" class="metro-line-view" role="tabpanel">
+        ${metroLineDiagram(metroLines[0])}
+      </div>
+
+      <article class="metro-overview">
         <header>
-          <div>
-            <p>PLANNED NETWORK</p>
-            <h3>地铁规划线网图</h3>
-          </div>
-          <span class="status-badge status-planned"><i></i>规划 · 未建成</span>
+          <div><p>NETWORK MASTER PLAN</p><h3>泽州市地铁规划总图</h3></div>
+          <span class="status-badge status-planned"><i></i>规划线网</span>
         </header>
-        <p class="map-intro">以下线网图为泽州市地铁远期规划方案，用于展示规划线路、换乘关系和枢纽布局。图中规划内容与现状运营状态应分别理解。</p>
+        <p class="map-intro">总图用于核对线路走向、站点位置和换乘关系；点击上方线路，可查看更适合站台导向阅读的单线线路图。</p>
         <figure class="map-figure">
           <div class="map-image-frame planned-network">
-            <img src="assets/zezhou-metro-plan.png" alt="泽州市规划地铁线网图，所示规划部分尚未建成">
+            <img src="assets/zezhou-metro-plan.png" alt="泽州市地铁规划线网图">
           </div>
           <figcaption>
-            <span><b class="legend-dot planned"></b>规划方案 · 未建成部分</span>
+            <span><b class="legend-dot planned"></b>泽州市地铁规划方案</span>
             <a href="assets/zezhou-metro-plan.png" target="_blank" rel="noopener">打开原尺寸规划图 ↗</a>
           </figcaption>
         </figure>
       </article>
     </section>
+  `;
+}
+
+function metroLineDiagram(line) {
+  const stationCards = line.stations.map(([name, transfers]) => `
+    <div class="metro-station">
+      <div class="transfer-badges">
+        ${transfers.map((number) => {
+          const transfer = metroLines.find((item) => item.number === number);
+          return `<span style="--transfer-color:${transfer.color}" title="换乘${number}号线">${number}</span>`;
+        }).join("")}
+      </div>
+      <i class="station-dot"></i>
+      <strong>${name}</strong>
+      <small>${transfers.length ? `换乘${transfers.join("、")}号线` : "一般车站"}</small>
+    </div>
+  `).join("");
+
+  return `
+    <header class="metro-line-header" style="--line-color:${line.color}">
+      <span class="metro-line-number">${line.number}</span>
+      <div>
+        <p>ZEZHOU METRO LINE ${line.number}</p>
+        <h3>${line.number}号线</h3>
+      </div>
+      <span class="metro-station-count">规划站点 ${line.stations.length} 座</span>
+    </header>
+    <div class="metro-diagram-scroll" style="--line-color:${line.color}">
+      <div class="metro-diagram" style="--station-count:${line.stations.length}">
+        <div class="metro-track"></div>
+        ${stationCards}
+      </div>
+    </div>
+    <p class="metro-note">线路及站名根据当前规划图整理；“规划车站/规划终点（暂定名）”表示原图尚未给出正式站名。</p>
   `;
 }
 
@@ -313,6 +439,21 @@ function render() {
   nav.querySelectorAll(".nav-link").forEach((link) => {
     link.classList.toggle("active", link.dataset.slug === slug);
   });
+  if (section?.slug === "transit") {
+    const lineView = document.querySelector("#metro-line-view");
+    document.querySelectorAll(".metro-line-tab").forEach((button) => {
+      button.addEventListener("click", () => {
+        const line = metroLines.find((item) => item.number === Number(button.dataset.line));
+        document.querySelectorAll(".metro-line-tab").forEach((item) => {
+          const selected = item === button;
+          item.classList.toggle("active", selected);
+          item.setAttribute("aria-selected", String(selected));
+        });
+        lineView.innerHTML = metroLineDiagram(line);
+        lineView.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  }
   window.scrollTo(0, 0);
 }
 
