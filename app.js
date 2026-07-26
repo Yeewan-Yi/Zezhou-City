@@ -456,6 +456,7 @@ function metroLineDiagram(line) {
 function render() {
   const slug = location.hash.replace(/^#/, "") || "home";
   const section = sections.find((item) => item.slug === slug);
+  document.body.classList.toggle("inner-page", Boolean(section));
   app.innerHTML = section
     ? section.slug === "news"
       ? newsTemplate(section)
