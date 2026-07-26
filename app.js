@@ -138,6 +138,23 @@ const metroLines = [
   }
 ];
 
+// 英文站名仅取自各线路 JSON 的 localisedName.en；
+// 数组顺序与上方各线路 stations 顺序严格对应，不采用 JSON 内的换乘数据。
+const metroEnglishNames = {
+  1: ["LONGTENGZUI", "XIN'GANG", "LONGXIANSHAN", "HEPINGWAN", "XUANJILU", "CHANGYINDADAO", "YINSHADADAO", "LONGSHU", "FENGTAIDADAO", "MULIN", "ZZU SANSHAN CAMPUS", "DONGJIAO"],
+  2: ["BAIXIA INTERNATIONAL AIRPORT", "SHENGONGDADAO", "LINGYUNJIAO", "TIANXIN", "CHANGWEIHUI", "HONGDUGUANGCHANG", "HENGYINLU", "ZZVTC", "YINSHADADAO", "SHENYINLU", "SUIHUAQIAO", "JIANGZHOUXINCHENG", "GONGQISHIHUA", "BAITASHAN", "BEITING", "JIANGZHOU NORTH RAILWAY STATION"],
+  3: ["ZEZHOU RAILWAY STATION", "HENGYINLU", "ZHIWUYUAN", "CHANGYINDADAO", "YUANJIANG", "PINGJIANGHUI", "SHANJIAZHUANG", "THE YOUTH OLYMPIC PARK", "XX"],
+  4: ["TERMINAL", "Stn", "ZZU SANSHAN CAMPUS", "JIANGZHOU NORTH RAILWAY STATION"],
+  5: ["TERMINAL", "CHENGSHANGJIE", "HONGDUGUANGCHANG", "CHANGWEIHUI", "ZEZHOU RAILWAY STATION", "Stn", "LONGSHUDADAO", "QINZHUANG", "FENGTAIDADAO", "SHUIXIEBIN", "JIANGZHOUXINCHENG", "HUISHANFANG", "THE YOUTH OLYMPIC PARK", "XX"],
+  6: ["TERMINAL", "Stn", "ZHANQIANGUANGCHANG", "MINGGUANG", "HENGYINLU", "HEXINYUANBEI", "HEYUEXINXIYUAN", "THE EXHIBITION CENTER", "HUISHOUWAN", "QIANYIGUANGCHANG", "ZEZHOU SOUTH RAILWAY STATION"],
+  7: ["TERMINAL", "Stn", "HEYUEXINXIYUAN", "HE'NINGLU", "HEPINGWAN", "CHILONGDADAO", "XINSHENG/PPC", "HUJIASI", "TIANYUANDADAO", "THE YOUTH OLYMPIC PARK"],
+  8: ["THE EXHIBITION CENTER", "HEQILU", "HE'NINGLU", "TIANCIFU", "XUANJILU", "YUANJIANG", "SUIHUAQIAO", "SHUIXIEBIN", "ZZU SANSHAN CAMPUS", "GULIN"],
+  9: ["BAIXIA INTERNATIONAL AIRPORT", "Stn", "Stn", "TERMINAL"],
+  10: ["ZEZHOU SOUTH RAILWAY STATION", "YULONGZUI", "JIALONGSHAN", "TIEDAOJIUZHI", "XIN'GANG", "FUZHAOGUAN", "XINSHENG/PPC", "HUJIASI", "XX", "XX", "XX"],
+  11: ["TERMINAL", "Stn", "ZHANQIANGUANGCHANG", "XUEYANLU", "ZZVTC", "ZHIWUYUAN", "TIANCIFU", "HEPINGWAN"],
+  12: ["BAIXIA INTERNATIONAL AIRPORT", "Stn", "ZEZHOU RAILWAY STATION", "HENGYINLU", "THE EXHIBITION CENTER", "ZEZHOU SOUTH RAILWAY STATION", "XIN'GANG", "THE YOUTH OLYMPIC PARK"]
+};
+
 const app = document.querySelector("#app");
 const nav = document.querySelector("#primary-nav");
 
@@ -389,12 +406,8 @@ function transitTemplate(section) {
 }
 
 function metroLineDiagram(line) {
-  const stationCards = line.stations.map(([name, transfers, outsideTransfers = []]) => {
-    const insideTransfers = transfers.filter((number) => !outsideTransfers.includes(number));
-    const transferText = [
-      insideTransfers.length ? `换乘${insideTransfers.join("、")}号线` : "",
-      outsideTransfers.length ? `站外换乘${outsideTransfers.join("、")}号线` : ""
-    ].filter(Boolean).join(" · ") || "一般车站";
+  const stationCards = line.stations.map(([name, transfers, outsideTransfers = []], stationIndex) => {
+    const englishName = metroEnglishNames[line.number]?.[stationIndex] || "";
     return `
     <div class="metro-station">
       <div class="transfer-badges">
@@ -406,7 +419,7 @@ function metroLineDiagram(line) {
       </div>
       <i class="station-dot"></i>
       <strong>${name}</strong>
-      <small>${transferText}</small>
+      <small>${englishName}</small>
     </div>
   `;
   }).join("");
