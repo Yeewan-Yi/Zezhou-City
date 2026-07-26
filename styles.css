@@ -150,7 +150,7 @@ a { color: inherit; text-decoration: none; }
 .district-status { position: absolute; left: 30px; bottom: 24px; color: var(--green); font-size: 11px; letter-spacing: .12em; }
 .map-page, .transit-page { padding: 30px 0 100px; }
 .map-section-heading { display: flex; align-items: end; justify-content: space-between; padding: 58px 0 12px; }
-.map-section-heading p, .transit-heading > p, .transit-map-block header p { margin: 0 0 9px; color: var(--accent); font-size: 11px; letter-spacing: .22em; }
+.map-section-heading p, .transit-heading > p, .transit-map-block header p, .metro-overview header p { margin: 0 0 9px; color: var(--accent); font-size: 11px; letter-spacing: .22em; }
 .map-section-heading h2, .transit-heading h2 { margin: 0; font-family: "Songti SC", serif; font-size: 38px; font-weight: 500; }
 .map-intro { max-width: 900px; margin: 10px 0 26px; color: var(--muted); font-size: 14px; line-height: 1.9; }
 .status-badge { display: inline-flex; align-items: center; gap: 8px; padding: 9px 13px; border: 1px solid; font-size: 12px; white-space: nowrap; }
@@ -176,6 +176,47 @@ a { color: inherit; text-decoration: none; }
 .transit-map-block.planned-block { margin-top: 48px; background: #fbf7ef; border-left-color: #e78a2e; }
 .transit-map-block > header { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .transit-map-block h3 { margin: 0; font-family: "Songti SC", serif; font-size: 30px; font-weight: 500; }
+.metro-line-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 10px 0 30px; }
+.metro-line-tab {
+  min-height: 78px; display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 12px;
+  padding: 12px 14px; color: var(--ink); background: #fff; border: 1px solid var(--line);
+  text-align: left; cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s;
+}
+.metro-line-tab > span {
+  width: 38px; height: 38px; display: grid; place-items: center; color: #fff;
+  background: var(--line-color); border-radius: 4px; font: 700 20px/1 Arial, sans-serif;
+}
+.metro-line-tab strong { font-size: 16px; font-weight: 600; }
+.metro-line-tab small { color: var(--muted); font-size: 11px; }
+.metro-line-tab:hover, .metro-line-tab.active {
+  transform: translateY(-2px); border-color: var(--line-color);
+  box-shadow: inset 0 -4px 0 var(--line-color), 0 10px 22px rgba(19,39,42,.08);
+}
+.metro-line-view { scroll-margin-top: 24px; margin-bottom: 54px; background: #fff; border: 1px solid var(--line); box-shadow: 0 14px 36px rgba(19,39,42,.08); }
+.metro-line-header {
+  display: flex; align-items: center; gap: 18px; min-height: 116px; padding: 22px 28px;
+  color: #fff; background: linear-gradient(100deg, var(--line-color), color-mix(in srgb, var(--line-color) 72%, #152b30));
+}
+.metro-line-number { width: 58px; height: 58px; display: grid; place-items: center; border: 2px solid rgba(255,255,255,.85); border-radius: 5px; font: 700 32px/1 Arial, sans-serif; }
+.metro-line-header p { margin: 0 0 5px; color: rgba(255,255,255,.72); font-size: 10px; letter-spacing: .16em; }
+.metro-line-header h3 { margin: 0; font-family: "Songti SC", serif; font-size: 30px; font-weight: 500; }
+.metro-station-count { margin-left: auto; color: rgba(255,255,255,.82); font-size: 13px; }
+.metro-diagram-scroll { overflow-x: auto; padding: 36px 24px 28px; background: #f5f5f1; }
+.metro-diagram {
+  min-width: max(100%, calc(var(--station-count) * 116px)); position: relative;
+  display: grid; grid-template-columns: repeat(var(--station-count), minmax(106px, 1fr)); padding-top: 18px;
+}
+.metro-track { position: absolute; top: 62px; left: 5%; right: 5%; height: 9px; background: var(--line-color); border-radius: 10px; }
+.metro-station { position: relative; z-index: 1; min-height: 178px; display: flex; align-items: center; flex-direction: column; padding: 0 7px; text-align: center; }
+.transfer-badges { height: 30px; display: flex; align-items: center; justify-content: center; gap: 3px; }
+.transfer-badges span { min-width: 23px; height: 23px; display: grid; place-items: center; padding: 0 4px; color: #fff; background: var(--transfer-color); border-radius: 3px; font: 700 11px/1 Arial, sans-serif; }
+.station-dot { width: 22px; height: 22px; display: block; margin: 12px 0 13px; background: #fff; border: 5px solid var(--line-color); border-radius: 50%; box-shadow: 0 0 0 2px #fff; }
+.metro-station strong { max-width: 100px; font-size: 14px; line-height: 1.4; }
+.metro-station small { margin-top: 6px; color: #7f8989; font-size: 10px; line-height: 1.4; }
+.metro-note { margin: 0; padding: 14px 22px; color: var(--muted); border-top: 1px solid var(--line); font-size: 12px; line-height: 1.7; }
+.metro-overview { margin-top: 48px; padding: 34px; background: #fbf7ef; border-left: 4px solid #e78a2e; }
+.metro-overview > header { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.metro-overview h3 { margin: 0; font-family: "Songti SC", serif; font-size: 30px; font-weight: 500; }
 .footer { padding: 55px 0 20px; color: rgba(255,255,255,.72); background: #0b2927; }
 .footer-inner { display: flex; justify-content: space-between; padding-bottom: 40px; }
 .footer strong { color: #fff; font-family: "Songti SC", serif; font-size: 24px; font-weight: 500; }
@@ -195,6 +236,7 @@ noscript { display: block; padding: 20px; color: #fff; background: #a33; text-al
   .section-grid { grid-template-columns: repeat(2, 1fr); }
   .district-grid { grid-template-columns: repeat(2, 1fr); }
   .status-legend { flex-direction: column; }
+  .metro-line-tabs { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 680px) {
   .shell { width: min(100% - 30px, 1240px); }
@@ -221,9 +263,16 @@ noscript { display: block; padding: 20px; color: #fff; background: #a33; text-al
   .news-meta, .news-article-footer { align-items: center; flex-direction: column; gap: 8px; }
   .news-article-body p { font-size: 16px; }
   .district-grid { grid-template-columns: 1fr; }
-  .map-section-heading, .transit-map-block > header { align-items: flex-start; flex-direction: column; }
+  .map-section-heading, .transit-map-block > header, .metro-overview > header { align-items: flex-start; flex-direction: column; }
   .map-image-frame { padding: 6px; }
   .map-figure figcaption { align-items: flex-start; flex-direction: column; gap: 8px; }
   .transit-map-block { padding: 24px 16px; }
+  .metro-line-tabs { grid-template-columns: repeat(2, 1fr); }
+  .metro-line-tab { grid-template-columns: 38px 1fr; gap: 9px; padding: 10px; }
+  .metro-line-tab small { display: none; }
+  .metro-line-tab > span { width: 34px; height: 34px; font-size: 17px; }
+  .metro-line-header { align-items: flex-start; flex-wrap: wrap; padding: 20px; }
+  .metro-station-count { width: 100%; margin-left: 76px; }
+  .metro-overview { padding: 24px 16px; }
   .footer-inner { flex-direction: column; gap: 30px; }
 }
