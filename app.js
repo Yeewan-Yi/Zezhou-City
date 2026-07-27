@@ -268,26 +268,32 @@ function homeTemplate() {
 function sectionHeroTemplate(section, activeIndex = -1) {
   const hasHeroImage = ["districts", "roads", "transit", "facilities"].includes(section.slug);
   const isSubpage = activeIndex >= 0;
+  const secondaryTitle = isSubpage ? submenus[section.slug][activeIndex] : "";
   return `
     <section class="page-hero page-hero-${section.slug}${hasHeroImage ? " page-hero-image" : ""}${isSubpage ? " page-hero-subpage" : ""}">
       <div class="shell page-hero-inner">
         <div class="page-hero-copy">
           <div class="page-hero-meta">
             <p>${section.en}</p>
-            <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>${section.title}</span></div>
+            <div class="breadcrumb">
+              <a href="#home">首页</a><i>/</i>
+              ${isSubpage ? `<a href="#${section.slug}">${section.title}</a><i>/</i><span>${secondaryTitle}</span>` : `<span>${section.title}</span>`}
+            </div>
           </div>
-          <h1>${section.title}</h1>
+          ${isSubpage
+            ? `<h1 class="page-composite-title"><span>${section.title}</span><i>/</i><em>${secondaryTitle}</em></h1>`
+            : `<h1>${section.title}</h1>`}
           <span>${section.desc}</span>
         </div>
-        <nav class="secondary-title-grid" aria-label="${section.title}二级栏目">
+        ${isSubpage ? "" : `<nav class="secondary-title-grid" aria-label="${section.title}二级栏目">
           ${submenus[section.slug].map((title, index) => `
-            <a href="${submenuHref(section.slug, index)}" class="${index === activeIndex ? "active" : ""}">
+            <a href="${submenuHref(section.slug, index)}">
               <small>${String(index + 1).padStart(2, "0")}</small>
               <strong>${title}</strong>
               <span aria-hidden="true">→</span>
             </a>
           `).join("")}
-        </nav>
+        </nav>`}
       </div>
     </section>
   `;
@@ -582,6 +588,26 @@ async function render() {
     ? 0
     : targetPrimaryIndex > currentPrimaryIndex ? 1 : -1;
   const shouldTransition = direction !== 0;
+  const secondaryGrid = !shouldTransition && secondaryRoute
+    ? app.querySelector(".secondary-title-grid")
+    : null;
+
+  if (secondaryGrid && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const fade = secondaryGrid.animate([
+      { opacity: 1, transform: "translateY(0)" },
+      { opacity: 0, transform: "translateY(-14px)" }
+    ], {
+      duration: 280,
+      easing: "cubic-bezier(.4,0,.2,1)",
+      fill: "forwards"
+    });
+    try {
+      await fade.finished;
+    } catch {
+      // A newer navigation replaced this one.
+    }
+    if (version !== renderVersion) return;
+  }
 
   if (shouldTransition) {
     document.body.classList.add("view-transitioning");
