@@ -205,6 +205,23 @@ nav.querySelectorAll(".nav-item").forEach((item) => {
   });
 });
 
+const preloadSectionBackgrounds = () => {
+  [
+    "assets/zezhou-districts.jpg",
+    "assets/zezhou-roads.jpg",
+    "assets/zezhou-public-transit.png",
+    "assets/zezhou-facilities.jpg"
+  ].forEach((src) => {
+    const image = new Image();
+    image.src = src;
+  });
+};
+if ("requestIdleCallback" in window) {
+  window.requestIdleCallback(preloadSectionBackgrounds);
+} else {
+  window.setTimeout(preloadSectionBackgrounds, 300);
+}
+
 function homeTemplate() {
   return `
     <section class="hero">
@@ -519,7 +536,26 @@ function metroLineDiagram(line) {
   `;
 }
 
-function render() {
+let currentPrimaryIndex = null;
+let renderVersion = 0;
+
+async function animateView(keyframes, duration) {
+  if (!app.animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const animation = app.animate(keyframes, {
+    duration,
+    easing: "cubic-bezier(.22,.72,.2,1)",
+    fill: "forwards"
+  });
+  try {
+    await animation.finished;
+  } catch {
+    // A newer navigation canceled this transition.
+  }
+}
+
+async function render() {
+  const version = ++renderVersion;
+  app.getAnimations?.().forEach((animation) => animation.cancel());
   const slug = location.hash.replace(/^#/, "") || "home";
   const section = sections.find((item) => item.slug === slug);
   const newsCategory = newsCategories.find((item) => slug === `news-${item.slug}`);
@@ -538,6 +574,26 @@ function render() {
     : secondaryRoute
       ? secondaryRoute.section.slug
       : slug;
+  const targetPrimaryIndex = activeSlug === "home"
+    ? -1
+    : sections.findIndex((item) => item.slug === activeSlug);
+  const direction = currentPrimaryIndex === null || targetPrimaryIndex === currentPrimaryIndex
+    ? 0
+    : targetPrimaryIndex > currentPrimaryIndex ? 1 : -1;
+  const shouldTransition = direction !== 0;
+
+  if (shouldTransition) {
+    document.body.classList.add("view-transitioning");
+    await animateView([
+      { opacity: 1, transform: "translateX(0)" },
+      { opacity: 0, transform: `translateX(${direction > 0 ? -64 : 64}px)` }
+    ], 440);
+    if (version !== renderVersion) return;
+    app.getAnimations?.().forEach((animation) => animation.cancel());
+  } else {
+    document.body.classList.remove("view-transitioning");
+  }
+
   document.body.classList.toggle("home-page", !isInnerPage);
   document.body.classList.toggle("inner-page", isInnerPage);
   app.innerHTML = isNewsArticle
@@ -581,6 +637,15 @@ function render() {
     });
   }
   window.scrollTo(0, 0);
+  currentPrimaryIndex = targetPrimaryIndex;
+
+  if (shouldTransition) {
+    await animateView([
+      { opacity: 0, transform: `translateX(${direction > 0 ? 64 : -64}px)` },
+      { opacity: 1, transform: "translateX(0)" }
+    ], 620);
+    if (version === renderVersion) document.body.classList.remove("view-transitioning");
+  }
 }
 
 window.addEventListener("hashchange", render);
