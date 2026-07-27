@@ -22,6 +22,18 @@ const submenus = {
   archives: ["城市版本", "建设日志", "规划方案", "游戏截图", "设定说明"]
 };
 
+const submenuSlugs = {
+  overview: ["profile", "history", "geography", "economy", "planning"],
+  map: ["comprehensive", "districts", "roads", "transit", "facilities"],
+  districts: ["yinsha", "longfu", "guqiu", "sanshan", "hewan", "xinhu", "jiangzhou"],
+  roads: ["directory", "bridges", "landmarks", "origins", "naming"],
+  transit: ["metro", "bus", "intercity", "railway", "external"],
+  facilities: ["government", "education", "healthcare", "culture", "parks", "municipal"],
+  life: ["business", "tourism", "culture", "festivals", "gallery"],
+  news: ["zezhou", "projects", "traffic", "planning"],
+  archives: ["versions", "logs", "plans", "screenshots", "setting"]
+};
+
 const newsCategories = [
   { slug: "zezhou", title: "泽州要闻", en: "Zezhou News", desc: "发布全市重要政务活动与城市发展动态" },
   { slug: "projects", title: "工程公告", en: "Project Notices", desc: "发布城市建设项目、施工安排与工程进展" },
@@ -165,6 +177,10 @@ const metroEnglishNames = {
 const app = document.querySelector("#app");
 const nav = document.querySelector("#primary-nav");
 
+function submenuHref(sectionSlug, index) {
+  return `#${sectionSlug}-${submenuSlugs[sectionSlug][index]}`;
+}
+
 nav.innerHTML = sections
   .map((section) => `
     <div class="nav-item">
@@ -172,8 +188,7 @@ nav.innerHTML = sections
       <div class="submenu" aria-label="${section.title}二级导航">
         <div class="submenu-inner">
           ${submenus[section.slug].map((item, index) => {
-            const href = section.slug === "news" ? `#news-${newsCategories[index].slug}` : `#${section.slug}`;
-            return `<a href="${href}">${item}</a>`;
+            return `<a href="${submenuHref(section.slug, index)}">${item}</a>`;
           }).join("")}
         </div>
       </div>
@@ -224,16 +239,12 @@ function homeTemplate() {
   `;
 }
 
-function sectionTemplate(section) {
-  const current = sections.findIndex((item) => item.slug === section.slug);
-  const prev = sections[(current - 1 + sections.length) % sections.length];
-  const next = sections[(current + 1) % sections.length];
-  const hasHeroImage = ["roads", "facilities"].includes(section.slug);
-
+function sectionHeroTemplate(section, activeIndex = -1) {
+  const hasHeroImage = ["districts", "roads", "transit", "facilities"].includes(section.slug);
   return `
     <section class="page-hero page-hero-${section.slug}${hasHeroImage ? " page-hero-image" : ""}">
       <div class="shell page-hero-inner">
-        <div>
+        <div class="page-hero-copy">
           <div class="page-hero-meta">
             <p>${section.en}</p>
             <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>${section.title}</span></div>
@@ -241,72 +252,49 @@ function sectionTemplate(section) {
           <h1>${section.title}</h1>
           <span>${section.desc}</span>
         </div>
-        <b>${section.mark}</b>
+        <nav class="secondary-title-grid" aria-label="${section.title}二级栏目">
+          ${submenus[section.slug].map((title, index) => `
+            <a href="${submenuHref(section.slug, index)}" class="${index === activeIndex ? "active" : ""}">
+              <small>${String(index + 1).padStart(2, "0")}</small>
+              <strong>${title}</strong>
+              <span aria-hidden="true">→</span>
+            </a>
+          `).join("")}
+        </nav>
       </div>
     </section>
+  `;
+}
+
+function sectionTemplate(section) {
+  return sectionHeroTemplate(section);
+}
+
+function secondaryTemplate(section, secondaryIndex) {
+  const title = submenus[section.slug][secondaryIndex];
+  return `
+    ${sectionHeroTemplate(section, secondaryIndex)}
     <section class="placeholder shell">
       <div class="placeholder-panel">
         <span class="placeholder-mark" aria-hidden="true">${section.mark}</span>
         <p>CONTENT RESERVED</p>
-        <h2>${section.title}内容区已预留</h2>
+        <h2>${title}</h2>
         <div class="rule"></div>
-        <span>待您提供这部分的城市资料后，将在此建立完整的页面层级、图文内容和数据展示。</span>
-      </div>
-      <div class="page-switcher">
-        <a href="#${prev.slug}"><small>上一栏目</small><strong>← ${prev.title}</strong></a>
-        <a href="#${next.slug}" class="next"><small>下一栏目</small><strong>${next.title} →</strong></a>
+        <span>${section.title} · ${title}的详细资料将在后续补充。</span>
       </div>
     </section>
   `;
 }
 
 function newsTemplate(section) {
-  return `
-    <section class="page-hero page-hero-news">
-      <div class="shell page-hero-inner">
-        <div>
-          <div class="page-hero-meta">
-            <p>${section.en}</p>
-            <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>新闻公告</span></div>
-          </div>
-          <h1>${section.title}</h1>
-          <span>${section.desc}</span>
-        </div>
-        <b>${section.mark}</b>
-      </div>
-    </section>
-    <section class="news-page shell">
-      <div class="news-category-grid">
-        ${newsCategories.map((category, index) => `
-          <a class="news-category-card" href="#news-${category.slug}">
-            <span>${String(index + 1).padStart(2, "0")}</span>
-            <small>${category.en}</small>
-            <h2>${category.title}</h2>
-            <p>${category.desc}</p>
-            <b aria-hidden="true">→</b>
-          </a>
-        `).join("")}
-      </div>
-    </section>
-  `;
+  return sectionHeroTemplate(section);
 }
 
 function newsCategoryTemplate(section, category) {
   const isZezhouNews = category.slug === "zezhou";
+  const categoryIndex = newsCategories.findIndex((item) => item.slug === category.slug);
   return `
-    <section class="page-hero page-hero-news">
-      <div class="shell page-hero-inner">
-        <div>
-          <div class="page-hero-meta">
-            <p>${category.en}</p>
-            <div class="breadcrumb"><a href="#home">首页</a><i>/</i><a href="#news">新闻公告</a><i>/</i><span>${category.title}</span></div>
-          </div>
-          <h1>${category.title}</h1>
-          <span>${category.desc}</span>
-        </div>
-        <b>${section.mark}</b>
-      </div>
-    </section>
+    ${sectionHeroTemplate(section, categoryIndex)}
     <section class="news-page shell">
       ${isZezhouNews ? `
         <div class="news-list-heading"><p>LATEST NEWS</p><h2>新闻列表</h2></div>
@@ -332,19 +320,7 @@ function newsCategoryTemplate(section, category) {
 
 function newsArticleTemplate(section) {
   return `
-    <section class="page-hero page-hero-news">
-      <div class="shell page-hero-inner">
-        <div>
-          <div class="page-hero-meta">
-            <p>ZEZHOU NEWS</p>
-            <div class="breadcrumb"><a href="#home">首页</a><i>/</i><a href="#news">新闻公告</a><i>/</i><a href="#news-zezhou">泽州要闻</a><i>/</i><span>正文</span></div>
-          </div>
-          <h1>泽州要闻</h1>
-          <span>泽州市重要政务活动与城市发展动态</span>
-        </div>
-        <b>${section.mark}</b>
-      </div>
-    </section>
+    ${sectionHeroTemplate(section, 0)}
     <section class="news-page shell">
       <article class="news-article">
         <header class="news-article-header">
@@ -410,19 +386,7 @@ function districtsTemplate(section) {
 
 function mapTemplate(section) {
   return `
-    <section class="page-hero">
-      <div class="shell page-hero-inner">
-        <div>
-          <div class="page-hero-meta">
-            <p>${section.en}</p>
-            <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>城市地图</span></div>
-          </div>
-          <h1>${section.title}</h1>
-          <span>${section.desc}</span>
-        </div>
-        <b>${section.mark}</b>
-      </div>
-    </section>
+    ${sectionHeroTemplate(section, 0)}
     <section class="map-page shell">
       <div class="map-section-heading">
         <div>
@@ -447,19 +411,7 @@ function mapTemplate(section) {
 
 function transitTemplate(section) {
   return `
-    <section class="page-hero page-hero-transit page-hero-image">
-      <div class="shell page-hero-inner">
-        <div>
-          <div class="page-hero-meta">
-            <p>${section.en}</p>
-            <div class="breadcrumb"><a href="#home">首页</a><i>/</i><span>公共交通</span><i>/</i><span>地铁</span></div>
-          </div>
-          <h1>${section.title}</h1>
-          <span>${section.desc}</span>
-        </div>
-        <b>${section.mark}</b>
-      </div>
-    </section>
+    ${sectionHeroTemplate(section, 0)}
     <section class="transit-page shell">
       <div class="transit-heading">
         <p>ZEZHOU METRO</p>
@@ -545,36 +497,47 @@ function render() {
   const newsCategory = newsCategories.find((item) => slug === `news-${item.slug}`);
   const isNewsArticle = slug === "news-article-20260726";
   const newsSection = sections.find((item) => item.slug === "news");
-  const isInnerPage = Boolean(section || newsCategory || isNewsArticle);
-  const activeSlug = newsCategory || isNewsArticle ? "news" : slug;
+  const secondaryRoute = sections
+    .flatMap((item) => submenuSlugs[item.slug].map((secondarySlug, index) => ({
+      section: item, secondarySlug, index, route: `${item.slug}-${secondarySlug}`
+    })))
+    .find((item) => item.route === slug);
+  const isMetroPage = secondaryRoute?.section.slug === "transit" && secondaryRoute.secondarySlug === "metro";
+  const isMapPage = secondaryRoute?.section.slug === "map" && secondaryRoute.secondarySlug === "comprehensive";
+  const isInnerPage = Boolean(section || secondaryRoute || newsCategory || isNewsArticle);
+  const activeSlug = newsCategory || isNewsArticle
+    ? "news"
+    : secondaryRoute
+      ? secondaryRoute.section.slug
+      : slug;
   document.body.classList.toggle("home-page", !isInnerPage);
   document.body.classList.toggle("inner-page", isInnerPage);
   app.innerHTML = isNewsArticle
     ? newsArticleTemplate(newsSection)
     : newsCategory
       ? newsCategoryTemplate(newsSection, newsCategory)
-      : section
-    ? section.slug === "news"
-      ? newsTemplate(section)
-      : section.slug === "districts"
-        ? districtsTemplate(section)
-        : section.slug === "map"
-          ? mapTemplate(section)
-          : section.slug === "transit"
-            ? transitTemplate(section)
-            : sectionTemplate(section)
-    : homeTemplate();
+      : isMetroPage
+        ? transitTemplate(secondaryRoute.section)
+        : isMapPage
+          ? mapTemplate(secondaryRoute.section)
+          : secondaryRoute
+            ? secondaryTemplate(secondaryRoute.section, secondaryRoute.index)
+            : section
+              ? section.slug === "news" ? newsTemplate(section) : sectionTemplate(section)
+              : homeTemplate();
   document.title = isNewsArticle
     ? "泽州市市长专题调研城市官网建设工作｜泽州市门户"
     : newsCategory
       ? `${newsCategory.title}｜泽州市门户`
+      : secondaryRoute
+        ? `${submenus[secondaryRoute.section.slug][secondaryRoute.index]}｜泽州市门户`
       : section
         ? `${section.title}｜泽州市门户`
         : "泽州市门户";
   nav.querySelectorAll(".nav-link").forEach((link) => {
     link.classList.toggle("active", link.dataset.slug === activeSlug);
   });
-  if (section?.slug === "transit") {
+  if (isMetroPage) {
     const lineView = document.querySelector("#metro-line-view");
     document.querySelectorAll(".metro-line-tab").forEach((button) => {
       button.addEventListener("click", () => {
