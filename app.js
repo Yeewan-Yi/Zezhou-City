@@ -294,8 +294,25 @@ function sectionHeroTemplate(section, activeIndex = -1) {
             </a>
           `).join("")}
         </nav>`}
+        ${isSubpage ? `
+          <a class="level-back level-back-top" href="#${section.slug}" aria-label="返回${section.title}">
+            <span class="level-back-icon" aria-hidden="true">←</span>
+            <span><small>RETURN</small><strong>返回${section.title}</strong></span>
+          </a>
+        ` : ""}
       </div>
     </section>
+  `;
+}
+
+function lowerBackButtonTemplate(section) {
+  return `
+    <div class="level-back-footer">
+      <a class="level-back level-back-bottom" href="#${section.slug}" aria-label="返回${section.title}">
+        <span class="level-back-icon" aria-hidden="true">←</span>
+        <span><small>BACK TO PREVIOUS LEVEL</small><strong>返回${section.title}</strong></span>
+      </a>
+    </div>
   `;
 }
 
@@ -636,6 +653,14 @@ async function render() {
             : section
               ? section.slug === "news" ? newsTemplate(section) : sectionTemplate(section)
               : homeTemplate();
+  const parentSection = isNewsArticle
+    ? newsSection
+    : newsCategory
+      ? newsSection
+      : secondaryRoute?.section;
+  if (parentSection) {
+    app.querySelector(".section-drawer")?.insertAdjacentHTML("beforeend", lowerBackButtonTemplate(parentSection));
+  }
   document.title = isNewsArticle
     ? "泽州市市长专题调研城市官网建设工作｜泽州市门户"
     : newsCategory
