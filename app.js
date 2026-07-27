@@ -228,9 +228,10 @@ function sectionTemplate(section) {
   const current = sections.findIndex((item) => item.slug === section.slug);
   const prev = sections[(current - 1 + sections.length) % sections.length];
   const next = sections[(current + 1) % sections.length];
+  const hasHeroImage = ["roads", "facilities"].includes(section.slug);
 
   return `
-    <section class="page-hero page-hero-${section.slug}">
+    <section class="page-hero page-hero-${section.slug}${hasHeroImage ? " page-hero-image" : ""}">
       <div class="shell page-hero-inner">
         <div>
           <div class="page-hero-meta">
@@ -372,7 +373,7 @@ function newsArticleTemplate(section) {
 
 function districtsTemplate(section) {
   return `
-    <section class="page-hero page-hero-districts">
+    <section class="page-hero page-hero-districts page-hero-image">
       <div class="shell page-hero-inner">
         <div>
           <div class="page-hero-meta">
@@ -446,7 +447,7 @@ function mapTemplate(section) {
 
 function transitTemplate(section) {
   return `
-    <section class="page-hero page-hero-transit">
+    <section class="page-hero page-hero-transit page-hero-image">
       <div class="shell page-hero-inner">
         <div>
           <div class="page-hero-meta">
@@ -512,7 +513,7 @@ function metroLineDiagram(line) {
           return `<span class="${outside ? "outside" : ""}" style="--transfer-color:${transfer.color}" title="${outside ? "站外换乘" : "换乘"}${number}号线">${number}</span>`;
         }).join("")}
       </div>
-      <i class="station-dot"></i>
+      <i class="station-dot${transfers.length ? " transfer-station-dot" : ""}" aria-label="${transfers.length ? "换乘站" : "一般车站"}"></i>
       <strong>${name}</strong>
       <small>${englishName}</small>
     </div>

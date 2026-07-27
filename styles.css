@@ -76,14 +76,15 @@ a { color: inherit; text-decoration: none; }
   opacity: 0;
   background-position: center;
   background-size: cover;
-  animation: home-slideshow 18s infinite;
+  animation: home-slideshow 12s infinite ease-in-out;
 }
 .hero-slide-1 { background-image: url("assets/zezhou-overview.jpg"); }
-.hero-slide-2 { background-image: url("assets/zezhou-home-2.jpg"); animation-delay: 6s; }
-.hero-slide-3 { background-image: url("assets/zezhou-home-3.jpg"); animation-delay: 12s; }
+.hero-slide-2 { background-image: url("assets/zezhou-home-2.jpg"); animation-delay: -8s; }
+.hero-slide-3 { background-image: url("assets/zezhou-home-3.jpg"); animation-delay: -4s; }
 @keyframes home-slideshow {
-  0%, 30% { opacity: 1; }
-  36%, 100% { opacity: 0; }
+  0%, 25% { opacity: 1; }
+  33.333%, 91.666% { opacity: 0; }
+  100% { opacity: 1; }
 }
 .hero-grid { position: absolute; z-index: 1; width: 750px; height: 750px; right: -70px; top: -70px; opacity: .2; background-image: linear-gradient(rgba(255,255,255,.25) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.25) 1px, transparent 1px); background-size: 42px 42px; transform: rotate(18deg); }
 .hero-river { position: absolute; z-index: 1; width: 720px; height: 180px; right: -120px; bottom: 110px; border: 42px solid rgba(219,238,230,.24); border-left-color: transparent; border-right-color: transparent; border-radius: 50%; transform: rotate(-17deg); }
@@ -120,12 +121,32 @@ a { color: inherit; text-decoration: none; }
   inset: 0;
   background: rgba(5, 35, 32, .48);
 }
-.page-hero-transit { background: url("assets/zezhou-public-transit.png") center 53% / cover no-repeat; }
-.page-hero-roads { background: url("assets/zezhou-roads.jpg") center 52% / cover no-repeat; }
-.page-hero-facilities { background: url("assets/zezhou-facilities.jpg") center 52% / cover no-repeat; }
-.page-hero-districts { background: url("assets/zezhou-districts.jpg") center 52% / cover no-repeat; }
-.page-hero-transit::before { background: rgba(5, 29, 29, .4); }
-.page-hero-roads::before, .page-hero-facilities::before, .page-hero-districts::before { background: rgba(5, 29, 29, .42); }
+.page-hero-transit { --hero-native-width: 1404px; --hero-native-height: 880px; background-image: url("assets/zezhou-public-transit.png"); }
+.page-hero-roads { --hero-native-width: 1992px; --hero-native-height: 1244px; background-image: url("assets/zezhou-roads.jpg"); }
+.page-hero-facilities { --hero-native-width: 1988px; --hero-native-height: 1242px; background-image: url("assets/zezhou-facilities.jpg"); }
+.page-hero-districts { --hero-native-width: 1998px; --hero-native-height: 1248px; background-image: url("assets/zezhou-districts.jpg"); }
+.page-hero-image {
+  min-height: clamp(438px, 62.6vw, var(--hero-native-height));
+  background-position: center top;
+  background-size: min(100%, var(--hero-native-width)) auto;
+  background-repeat: no-repeat;
+}
+.page-hero-image::before { background: rgba(5, 29, 29, .14); }
+.page-hero-image .page-hero-inner {
+  min-height: clamp(438px, 62.6vw, var(--hero-native-height));
+  align-items: flex-end;
+  padding-top: 108px;
+  padding-bottom: 48px;
+}
+.page-hero-image .page-hero-inner > div {
+  max-width: 720px;
+  padding: 24px 28px;
+  background: rgba(5, 30, 29, .76);
+  box-shadow: 0 1px 0 rgba(255,255,255,.15);
+  backdrop-filter: blur(2px);
+}
+.page-hero-image .page-hero-meta { margin-bottom: 14px; padding: 0; background: transparent; }
+.page-hero-image .page-hero-inner > b { margin-bottom: 20px; }
 .page-hero-inner { min-height: 438px; position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; padding-top: 108px; }
 .page-hero-meta { display: flex; align-items: center; gap: 20px; width: fit-content; margin-bottom: 18px; padding: 9px 13px; background: rgba(4, 27, 27, .62); }
 .page-hero p { margin: 0; color: #f1ca7f; font-size: 11px; letter-spacing: .25em; text-transform: uppercase; }
@@ -276,12 +297,31 @@ a { color: inherit; text-decoration: none; }
   min-width: max(100%, calc(var(--station-count) * 116px)); position: relative;
   display: grid; grid-template-columns: repeat(var(--station-count), minmax(106px, 1fr)); padding-top: 18px;
 }
-.metro-track { position: absolute; top: 62px; left: 5%; right: 5%; height: 9px; background: var(--line-color); border-radius: 10px; }
+.metro-track { position: absolute; top: 78px; left: 5%; right: 5%; height: 9px; background: var(--line-color); border-radius: 10px; }
 .metro-station { position: relative; z-index: 1; min-height: 178px; display: flex; align-items: center; flex-direction: column; padding: 0 7px; text-align: center; }
-.transfer-badges { height: 30px; display: flex; align-items: center; justify-content: center; gap: 3px; }
-.transfer-badges span { min-width: 23px; height: 23px; display: grid; place-items: center; padding: 0 4px; color: #fff; background: var(--transfer-color); border-radius: 3px; font: 700 11px/1 Arial, sans-serif; }
+.transfer-badges { height: 40px; display: flex; align-items: center; justify-content: center; gap: 3px; }
+.transfer-badges span { width: 23px; min-width: 23px; height: 34px; display: grid; place-items: center; padding: 0; color: #fff; background: var(--transfer-color); border-radius: 2px; font: 700 11px/1 Arial, sans-serif; }
 .transfer-badges span.outside { outline: 2px dashed #fff; outline-offset: -4px; }
-.station-dot { width: 22px; height: 22px; display: block; margin: 12px 0 13px; background: #fff; border: 5px solid var(--line-color); border-radius: 50%; box-shadow: 0 0 0 2px #fff; }
+.station-dot { width: 28px; height: 28px; position: relative; display: block; margin: 6px 0 10px; }
+.station-dot::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  background: #fff;
+  border: 5px solid var(--line-color);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #fff;
+}
+.transfer-station-dot::before { inset: 0; border-width: 4px; }
+.transfer-station-dot::after {
+  content: "⇄";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--line-color);
+  font: 700 12px/1 Arial, sans-serif;
+}
 .metro-station strong { max-width: 100px; font-size: 14px; line-height: 1.4; }
 .metro-station small { margin-top: 6px; color: #7f8989; font-size: 10px; line-height: 1.4; }
 .metro-note { margin: 0; padding: 14px 22px; color: var(--muted); border-top: 1px solid var(--line); font-size: 12px; line-height: 1.7; }
@@ -328,6 +368,9 @@ noscript { display: block; padding: 20px; color: #fff; background: #a33; text-al
   .section-card { min-height: 190px; }
   .page-hero-inner { min-height: 416px; padding-top: 136px; }
   .page-hero-meta { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .page-hero-image .page-hero-inner { padding-top: 136px; padding-bottom: 24px; }
+  .page-hero-image .page-hero-inner > div { padding: 20px 22px; }
+  .page-hero-image .page-hero-inner > b { display: none; }
   .page-hero h1 { font-size: 42px; }
   .page-hero b { display: none; }
   .placeholder-panel { min-height: 400px; padding: 70px 28px; }
