@@ -267,8 +267,9 @@ function homeTemplate() {
 
 function sectionHeroTemplate(section, activeIndex = -1) {
   const hasHeroImage = ["districts", "roads", "transit", "facilities"].includes(section.slug);
+  const isSubpage = activeIndex >= 0;
   return `
-    <section class="page-hero page-hero-${section.slug}${hasHeroImage ? " page-hero-image" : ""}">
+    <section class="page-hero page-hero-${section.slug}${hasHeroImage ? " page-hero-image" : ""}${isSubpage ? " page-hero-subpage" : ""}">
       <div class="shell page-hero-inner">
         <div class="page-hero-copy">
           <div class="page-hero-meta">
