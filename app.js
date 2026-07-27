@@ -196,6 +196,15 @@ nav.innerHTML = sections
   `)
   .join("");
 
+nav.querySelectorAll("a").forEach((link) => {
+  link.addEventListener("click", () => link.blur());
+});
+nav.querySelectorAll(".nav-item").forEach((item) => {
+  item.addEventListener("mouseleave", () => {
+    if (item.contains(document.activeElement)) document.activeElement.blur();
+  });
+});
+
 function homeTemplate() {
   return `
     <section class="hero">
@@ -270,10 +279,29 @@ function sectionTemplate(section) {
   return sectionHeroTemplate(section);
 }
 
+function subpageHeaderTemplate(section, secondaryIndex) {
+  const title = submenus[section.slug][secondaryIndex];
+  return `
+    <section class="subpage-header">
+      <div class="shell subpage-header-inner">
+        <div>
+          <div class="breadcrumb">
+            <a href="#home">首页</a><i>/</i><a href="#${section.slug}">${section.title}</a><i>/</i><span>${title}</span>
+          </div>
+          <p>${section.en}</p>
+          <h1>${title}</h1>
+          <span>${section.desc}</span>
+        </div>
+        <a class="subpage-back" href="#${section.slug}">返回${section.title}栏目</a>
+      </div>
+    </section>
+  `;
+}
+
 function secondaryTemplate(section, secondaryIndex) {
   const title = submenus[section.slug][secondaryIndex];
   return `
-    ${sectionHeroTemplate(section, secondaryIndex)}
+    ${subpageHeaderTemplate(section, secondaryIndex)}
     <section class="placeholder shell">
       <div class="placeholder-panel">
         <span class="placeholder-mark" aria-hidden="true">${section.mark}</span>
@@ -294,7 +322,7 @@ function newsCategoryTemplate(section, category) {
   const isZezhouNews = category.slug === "zezhou";
   const categoryIndex = newsCategories.findIndex((item) => item.slug === category.slug);
   return `
-    ${sectionHeroTemplate(section, categoryIndex)}
+    ${subpageHeaderTemplate(section, categoryIndex)}
     <section class="news-page shell">
       ${isZezhouNews ? `
         <div class="news-list-heading"><p>LATEST NEWS</p><h2>新闻列表</h2></div>
@@ -320,7 +348,7 @@ function newsCategoryTemplate(section, category) {
 
 function newsArticleTemplate(section) {
   return `
-    ${sectionHeroTemplate(section, 0)}
+    ${subpageHeaderTemplate(section, 0)}
     <section class="news-page shell">
       <article class="news-article">
         <header class="news-article-header">
@@ -386,7 +414,7 @@ function districtsTemplate(section) {
 
 function mapTemplate(section) {
   return `
-    ${sectionHeroTemplate(section, 0)}
+    ${subpageHeaderTemplate(section, 0)}
     <section class="map-page shell">
       <div class="map-section-heading">
         <div>
@@ -411,7 +439,7 @@ function mapTemplate(section) {
 
 function transitTemplate(section) {
   return `
-    ${sectionHeroTemplate(section, 0)}
+    ${subpageHeaderTemplate(section, 0)}
     <section class="transit-page shell">
       <div class="transit-heading">
         <p>ZEZHOU METRO</p>
@@ -465,7 +493,7 @@ function metroLineDiagram(line) {
           return `<span class="${outside ? "outside" : ""}" style="--transfer-color:${transfer.color}" title="${outside ? "站外换乘" : "换乘"}${number}号线">${number}</span>`;
         }).join("")}
       </div>
-      <i class="station-dot${transfers.length ? " transfer-station-dot" : ""}" aria-label="${transfers.length ? "换乘站" : "一般车站"}"></i>
+      <i class="station-dot${transfers.length ? " transfer-station-dot" : ""}" aria-label="${transfers.length ? "换乘站" : "一般车站"}">${transfers.length ? '<span aria-hidden="true"></span>' : ""}</i>
       <strong>${name}</strong>
       <small>${englishName}</small>
     </div>

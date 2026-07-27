@@ -183,6 +183,24 @@ a { color: inherit; text-decoration: none; }
 .secondary-title-grid small { color: #efc675; font: 11px Georgia, serif; }
 .secondary-title-grid strong { margin-top: 9px; color: #fff; font-family: "Songti SC", serif; font-size: 20px; font-weight: 500; }
 .secondary-title-grid a > span { position: absolute; right: 17px; bottom: 16px; color: #efc675; font-size: 17px; }
+.subpage-header { color: #fff; background: linear-gradient(108deg, #0c3733, #245c54); }
+.subpage-header-inner {
+  min-height: 330px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  padding-top: 150px;
+  padding-bottom: 46px;
+}
+.subpage-header .breadcrumb { margin-bottom: 18px; color: rgba(255,255,255,.82); }
+.subpage-header .breadcrumb span { color: #f1ca7f; }
+.subpage-header .breadcrumb i { color: rgba(255,255,255,.42); }
+.subpage-header p { margin: 0 0 8px; color: #f1ca7f; font-size: 11px; letter-spacing: .24em; text-transform: uppercase; }
+.subpage-header h1 { margin: 0 0 12px; font-family: "Songti SC", serif; font-size: 46px; font-weight: 500; }
+.subpage-header-inner > div > span { color: rgba(255,255,255,.68); font-size: 14px; }
+.subpage-back { flex: none; padding: 12px 16px; color: #fff; border: 1px solid rgba(255,255,255,.38); font-size: 13px; }
+.subpage-back:hover { color: #172b2b; background: var(--accent); border-color: var(--accent); }
 .placeholder { padding: 30px 0 90px; }
 .breadcrumb { display: flex; gap: 10px; color: #7a8888; font-size: 12px; }
 .breadcrumb i { color: #c4cac9; font-style: normal; }
@@ -330,7 +348,7 @@ a { color: inherit; text-decoration: none; }
 .metro-track { position: absolute; top: 78px; left: 5%; right: 5%; height: 9px; background: var(--line-color); border-radius: 10px; }
 .metro-station { position: relative; z-index: 1; min-height: 178px; display: flex; align-items: center; flex-direction: column; padding: 0 7px; text-align: center; }
 .transfer-badges { height: 40px; display: flex; align-items: center; justify-content: center; gap: 3px; }
-.transfer-badges span { width: 23px; min-width: 23px; height: 34px; display: grid; place-items: center; padding: 0; color: #fff; background: var(--transfer-color); border-radius: 2px; font: 700 12px/1 Arial, sans-serif; }
+.transfer-badges span { width: 23px; min-width: 23px; height: 34px; display: grid; place-items: center; padding: 0; color: #fff; background: var(--transfer-color); border-radius: 2px; font: 700 13px/1 Arial, sans-serif; }
 .transfer-badges span.outside { outline: 2px dashed #fff; outline-offset: -4px; }
 .station-dot { width: 28px; height: 28px; position: relative; display: block; margin: 6px 0 10px; }
 .station-dot::before {
@@ -344,11 +362,18 @@ a { color: inherit; text-decoration: none; }
 }
 .transfer-station-dot::before { inset: 0; border-width: 4px; }
 .transfer-station-dot::after {
-  content: "⇄";
+  content: "↷";
   position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
+  top: 1px;
+  right: 3px;
+  color: var(--line-color);
+  font: 700 12px/1 Arial, sans-serif;
+}
+.transfer-station-dot span::before {
+  content: "↶";
+  position: absolute;
+  left: 3px;
+  bottom: 1px;
   color: var(--line-color);
   font: 700 12px/1 Arial, sans-serif;
 }
@@ -383,6 +408,7 @@ noscript { display: block; padding: 20px; color: #fff; background: #a33; text-al
   .page-hero, .page-hero-image { min-height: 720px; }
   .page-hero-inner { min-height: 720px; padding-top: 170px; }
   .secondary-title-grid { grid-template-columns: repeat(3, 1fr); }
+  .subpage-header-inner { padding-top: 182px; }
 }
 @media (max-width: 680px) {
   .shell { width: min(100% - 30px, 1240px); }
@@ -406,6 +432,8 @@ noscript { display: block; padding: 20px; color: #fff; background: #a33; text-al
   .secondary-title-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 18px; }
   .secondary-title-grid a { min-height: 84px; padding: 13px 30px 13px 14px; }
   .secondary-title-grid strong { font-size: 17px; }
+  .subpage-header-inner { min-height: 380px; align-items: flex-start; flex-direction: column; justify-content: flex-end; gap: 24px; padding-top: 170px; padding-bottom: 34px; }
+  .subpage-header h1 { font-size: 38px; }
   .placeholder-panel { min-height: 400px; padding: 70px 28px; }
   .placeholder-panel h2 { font-size: 28px; }
   .news-article { padding: 42px 24px; }
