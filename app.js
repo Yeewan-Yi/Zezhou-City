@@ -301,8 +301,8 @@ function subpageHeaderTemplate(section, secondaryIndex) {
 function secondaryTemplate(section, secondaryIndex) {
   const title = submenus[section.slug][secondaryIndex];
   return `
-    ${subpageHeaderTemplate(section, secondaryIndex)}
-    <section class="placeholder shell">
+    ${sectionHeroTemplate(section, secondaryIndex)}
+    <section class="placeholder shell section-drawer">
       <div class="placeholder-panel">
         <span class="placeholder-mark" aria-hidden="true">${section.mark}</span>
         <p>CONTENT RESERVED</p>
@@ -322,8 +322,8 @@ function newsCategoryTemplate(section, category) {
   const isZezhouNews = category.slug === "zezhou";
   const categoryIndex = newsCategories.findIndex((item) => item.slug === category.slug);
   return `
-    ${subpageHeaderTemplate(section, categoryIndex)}
-    <section class="news-page shell">
+    ${sectionHeroTemplate(section, categoryIndex)}
+    <section class="news-page shell section-drawer">
       ${isZezhouNews ? `
         <div class="news-list-heading"><p>LATEST NEWS</p><h2>新闻列表</h2></div>
         <a class="news-list-item" href="#news-article-20260726">
@@ -348,8 +348,8 @@ function newsCategoryTemplate(section, category) {
 
 function newsArticleTemplate(section) {
   return `
-    ${subpageHeaderTemplate(section, 0)}
-    <section class="news-page shell">
+    ${sectionHeroTemplate(section, 0)}
+    <section class="news-page shell section-drawer">
       <article class="news-article">
         <header class="news-article-header">
           <p class="news-label">泽州要闻</p>
@@ -414,8 +414,8 @@ function districtsTemplate(section) {
 
 function mapTemplate(section) {
   return `
-    ${subpageHeaderTemplate(section, 0)}
-    <section class="map-page shell">
+    ${sectionHeroTemplate(section, 0)}
+    <section class="map-page shell section-drawer">
       <div class="map-section-heading">
         <div>
           <p>CURRENT CITY MAP</p>
@@ -439,8 +439,8 @@ function mapTemplate(section) {
 
 function transitTemplate(section) {
   return `
-    ${subpageHeaderTemplate(section, 0)}
-    <section class="transit-page shell">
+    ${sectionHeroTemplate(section, 0)}
+    <section class="transit-page shell section-drawer">
       <div class="transit-heading">
         <p>ZEZHOU METRO</p>
         <h2>地铁</h2>
@@ -451,7 +451,7 @@ function transitTemplate(section) {
         ${metroLines.map((line, index) => `
           <button class="metro-line-tab${index === 0 ? " active" : ""}" type="button"
             role="tab" aria-selected="${index === 0}" data-line="${line.number}"
-            style="--line-color:${line.color}">
+            style="--line-color:${line.color};--line-label-color:${line.number === 5 ? "#111" : "#fff"}">
             <span>${line.number}</span><strong>${line.number}号线</strong><small>${line.stations.length}站</small>
           </button>
         `).join("")}
@@ -490,7 +490,7 @@ function metroLineDiagram(line) {
         ${transfers.map((number) => {
           const transfer = metroLines.find((item) => item.number === number);
           const outside = outsideTransfers.includes(number);
-          return `<span class="${outside ? "outside" : ""}" style="--transfer-color:${transfer.color}" title="${outside ? "站外换乘" : "换乘"}${number}号线">${number}</span>`;
+          return `<span class="${outside ? "outside" : ""}" style="--transfer-color:${transfer.color};color:${number === 5 ? "#111" : "#fff"}" title="${outside ? "站外换乘" : "换乘"}${number}号线">${number}</span>`;
         }).join("")}
       </div>
       <i class="station-dot${transfers.length ? " transfer-station-dot" : ""}" aria-label="${transfers.length ? "换乘站" : "一般车站"}">${transfers.length ? '<span aria-hidden="true"></span>' : ""}</i>
@@ -501,7 +501,7 @@ function metroLineDiagram(line) {
   }).join("");
 
   return `
-    <header class="metro-line-header" style="--line-color:${line.color}">
+    <header class="metro-line-header" style="--line-color:${line.color};--line-label-color:${line.number === 5 ? "#111" : "#fff"}">
       <span class="metro-line-number">${line.number}</span>
       <div>
         <p>ZEZHOU METRO LINE ${line.number}</p>

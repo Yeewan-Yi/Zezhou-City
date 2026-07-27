@@ -115,6 +115,11 @@ a { color: inherit; text-decoration: none; }
   overflow: hidden;
   color: #fff;
   background: #174b45;
+  animation: section-enter .52s cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes section-enter {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .page-hero::before {
   content: "";
@@ -158,20 +163,22 @@ a { color: inherit; text-decoration: none; }
 .page-hero span { color: rgba(255,255,255,.65); }
 .secondary-title-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
-  margin-top: 28px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-top: 32px;
 }
 .secondary-title-grid a {
-  min-height: 104px;
+  min-height: 128px;
   position: relative;
   display: flex;
   align-items: flex-start;
   flex-direction: column;
   justify-content: center;
-  padding: 17px 42px 17px 18px;
-  background: rgba(5, 30, 29, .66);
-  border: 1px solid rgba(255,255,255,.22);
+  padding: 22px 50px 20px 23px;
+  background: linear-gradient(135deg, rgba(5,30,29,.76), rgba(17,66,59,.62));
+  border: 1px solid rgba(255,255,255,.3);
+  border-top: 3px solid rgba(239,198,117,.8);
+  box-shadow: 0 10px 24px rgba(0,0,0,.14);
   backdrop-filter: blur(2px);
   transition: background .2s, border-color .2s, transform .2s;
 }
@@ -180,9 +187,9 @@ a { color: inherit; text-decoration: none; }
   border-color: var(--accent);
   transform: translateY(-2px);
 }
-.secondary-title-grid small { color: #efc675; font: 11px Georgia, serif; }
-.secondary-title-grid strong { margin-top: 9px; color: #fff; font-family: "Songti SC", serif; font-size: 20px; font-weight: 500; }
-.secondary-title-grid a > span { position: absolute; right: 17px; bottom: 16px; color: #efc675; font-size: 17px; }
+.secondary-title-grid small { color: #efc675; font: 13px Georgia, serif; }
+.secondary-title-grid strong { margin-top: 12px; color: #fff; font-family: "Songti SC", serif; font-size: 25px; font-weight: 600; }
+.secondary-title-grid a > span { position: absolute; right: 20px; bottom: 19px; color: #efc675; font-size: 21px; }
 .subpage-header { color: #fff; background: linear-gradient(108deg, #0c3733, #245c54); }
 .subpage-header-inner {
   min-height: 330px;
@@ -325,6 +332,7 @@ a { color: inherit; text-decoration: none; }
   width: 38px; height: 38px; display: grid; place-items: center; color: #fff;
   background: var(--line-color); border-radius: 4px; font: 700 20px/1 Arial, sans-serif;
 }
+.metro-line-tab > span { color: var(--line-label-color, #fff); }
 .metro-line-tab strong { font-size: 16px; font-weight: 600; }
 .metro-line-tab small { color: var(--muted); font-size: 11px; }
 .metro-line-tab:hover, .metro-line-tab.active {
@@ -336,7 +344,7 @@ a { color: inherit; text-decoration: none; }
   display: flex; align-items: center; gap: 18px; min-height: 116px; padding: 22px 28px;
   color: #fff; background: linear-gradient(100deg, var(--line-color), color-mix(in srgb, var(--line-color) 72%, #152b30));
 }
-.metro-line-number { width: 58px; height: 58px; display: grid; place-items: center; border: 2px solid rgba(255,255,255,.85); border-radius: 5px; font: 700 32px/1 Arial, sans-serif; }
+.metro-line-number { width: 58px; height: 58px; display: grid; place-items: center; color: var(--line-label-color, #fff); border: 2px solid currentColor; border-radius: 5px; font: 700 32px/1 Arial, sans-serif; }
 .metro-line-header p { margin: 0 0 5px; color: rgba(255,255,255,.72); font-size: 10px; letter-spacing: .16em; }
 .metro-line-header h3 { margin: 0; font-family: "Songti SC", serif; font-size: 30px; font-weight: 500; }
 .metro-station-count { margin-left: auto; color: rgba(255,255,255,.82); font-size: 13px; }
@@ -362,27 +370,36 @@ a { color: inherit; text-decoration: none; }
 }
 .transfer-station-dot::before { inset: 0; border-width: 4px; }
 .transfer-station-dot::after {
-  content: "↷";
+  content: "⇄";
   position: absolute;
-  top: 1px;
-  right: 3px;
+  inset: 0;
+  display: grid;
+  place-items: center;
   color: var(--line-color);
   font: 700 12px/1 Arial, sans-serif;
 }
-.transfer-station-dot span::before {
-  content: "↶";
-  position: absolute;
-  left: 3px;
-  bottom: 1px;
-  color: var(--line-color);
-  font: 700 12px/1 Arial, sans-serif;
-}
+.transfer-station-dot span { display: none; }
 .metro-station strong { max-width: 100px; font-size: 14px; line-height: 1.4; }
 .metro-station small { margin-top: 6px; color: #7f8989; font-size: 10px; line-height: 1.4; }
 .metro-note { margin: 0; padding: 14px 22px; color: var(--muted); border-top: 1px solid var(--line); font-size: 12px; line-height: 1.7; }
 .metro-overview { margin-top: 48px; padding: 34px; background: #fbf7ef; border-left: 4px solid #e78a2e; }
 .metro-overview > header { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .metro-overview h3 { margin: 0; font-family: "Songti SC", serif; font-size: 30px; font-weight: 500; }
+.section-drawer {
+  position: relative;
+  z-index: 3;
+  margin-top: -220px;
+  padding: 36px 32px 90px;
+  background: #faf9f5;
+  border-top: 4px solid var(--accent);
+  border-radius: 6px 6px 0 0;
+  box-shadow: 0 -18px 48px rgba(5,29,29,.24);
+  animation: drawer-rise .58s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes drawer-rise {
+  from { opacity: 0; transform: translateY(180px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 .footer { padding: 55px 0 20px; color: rgba(255,255,255,.72); background: #0b2927; }
 .footer-inner { display: flex; justify-content: space-between; padding-bottom: 40px; }
 .footer strong { color: #fff; font-family: "Songti SC", serif; font-size: 24px; font-weight: 500; }
@@ -429,9 +446,9 @@ noscript { display: block; padding: 20px; color: #fff; background: #a33; text-al
   .page-hero-meta { align-items: flex-start; flex-direction: column; gap: 8px; }
   .page-hero-copy { width: 100%; padding: 16px 18px 19px; }
   .page-hero h1 { font-size: 42px; }
-  .secondary-title-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 18px; }
-  .secondary-title-grid a { min-height: 84px; padding: 13px 30px 13px 14px; }
-  .secondary-title-grid strong { font-size: 17px; }
+  .secondary-title-grid { grid-template-columns: repeat(2, 1fr); gap: 9px; margin-top: 20px; }
+  .secondary-title-grid a { min-height: 108px; padding: 16px 34px 15px 16px; }
+  .secondary-title-grid strong { font-size: 20px; }
   .subpage-header-inner { min-height: 380px; align-items: flex-start; flex-direction: column; justify-content: flex-end; gap: 24px; padding-top: 170px; padding-bottom: 34px; }
   .subpage-header h1 { font-size: 38px; }
   .placeholder-panel { min-height: 400px; padding: 70px 28px; }
@@ -462,6 +479,7 @@ noscript { display: block; padding: 20px; color: #fff; background: #a33; text-al
   .metro-line-header { align-items: flex-start; flex-wrap: wrap; padding: 20px; }
   .metro-station-count { width: 100%; margin-left: 76px; }
   .metro-overview { padding: 24px 16px; }
+  .section-drawer { margin-top: -120px; padding: 24px 15px 60px; }
   .footer-inner { flex-direction: column; gap: 30px; }
 }
 
