@@ -41,6 +41,43 @@ const newsCategories = [
   { slug: "planning", title: "规划公示", en: "Planning Notices", desc: "发布城市规划方案及相关公示信息" }
 ];
 
+const cityVersions = [
+  { source: "01", era: "筑城起步", title: "区域骨架初现", desc: "城市建设尚未大规模展开，山体、水系和外围通道共同构成泽州最初的空间底盘。" },
+  { source: "03", era: "筑城起步", title: "首片街区落地", desc: "北部交通节点附近出现首批连续街区，城市由单一通道开始向成片建设转变。" },
+  { source: "04", era: "筑城起步", title: "基础路网成形", desc: "核心区道路进一步织密，南北向发展轴开始形成，早期城区轮廓逐渐清晰。" },
+  { source: "05", era: "筑城起步", title: "城区向南延伸", desc: "建设用地沿主要道路向南推进，中心街区与外围交通之间的联系得到加强。" },
+  { source: "06", era: "筑城起步", title: "核心区持续加密", desc: "既有路网内部得到填充，城市功能由线性分布逐步转向紧凑的中心城区。" },
+  { source: "07", era: "筑城起步", title: "早期城区完善", desc: "街区结构继续补全，城市在河流与山地之间建立起较稳定的建设边界。" },
+  { source: "09", era: "交通塑城", title: "对外通道启动", desc: "新的区域道路接入城市，核心区开始承担更强的集散与对外联系功能。" },
+  { source: "10", era: "交通塑城", title: "门户枢纽建设", desc: "北部交通组织明显增强，城市路网由内部服务转向兼顾区域联络。" },
+  { source: "10-0", era: "交通塑城", title: "区域联络线成形", desc: "跨越河道与城区的快速联系逐渐建立，为后续多方向扩展预留骨架。" },
+  { source: "11", era: "交通塑城", title: "北向联系加强", desc: "北部通道与中心区衔接趋于完整，城市发展范围首次明显突破早期核心。" },
+  { source: "12", era: "交通塑城", title: "城市骨架拉开", desc: "东西向和南北向主通道共同作用，泽州开始呈现由中心向外围放射的发展结构。" },
+  { source: "13", era: "交通塑城", title: "中心城区扩展", desc: "核心区建设继续向周边填充，道路网络和用地布局进入同步扩张阶段。" },
+  { source: "14", era: "中心成形", title: "跨河发展起步", desc: "河岸空间得到进一步利用，城区开始沿桥梁和滨水通道向新的片区延伸。" },
+  { source: "15", era: "中心成形", title: "东部街区增长", desc: "中心城区东侧出现更连续的建设组团，城市内部功能分区逐渐丰富。" },
+  { source: "16", era: "中心成形", title: "山前片区联动", desc: "道路向东部山前空间展开，既有中心与外围地区之间形成新的发展走廊。" },
+  { source: "17", era: "中心成形", title: "河湾城市带成形", desc: "滨水路网与中心街区逐步贯通，城市空间由单核向沿河连续发展转变。" },
+  { source: "18", era: "中心成形", title: "中心功能继续填充", desc: "道路密度和建设范围同步提升，中心城区进入结构完善与功能补充阶段。" },
+  { source: "19", era: "中心成形", title: "北部组团出现", desc: "北侧新增建设节点，城市开始形成中心城区与外围组团相互支撑的格局。" },
+  { source: "20", era: "组团拓展", title: "环线交通组织", desc: "环绕中心城区的交通联系加强，为分流穿城交通和连接外围片区创造条件。" },
+  { source: "21", era: "组团拓展", title: "西岸新区形成", desc: "河流西侧出现成片建设，跨河联系推动城市从单岸发展走向两岸协同。" },
+  { source: "22", era: "组团拓展", title: "都市骨架确立", desc: "环线、放射线和跨河通道共同构成新的城市骨架，多组团结构更加明确。" },
+  { source: "23", era: "组团拓展", title: "环城联系加强", desc: "外围交通网络进一步闭合，各片区之间的通达性和独立发展能力同步提升。" },
+  { source: "24", era: "组团拓展", title: "多组团协同发展", desc: "中心、西岸与北部片区持续扩展，城市空间由连续建成区和外围节点共同组成。" },
+  { source: "24.5", era: "组团拓展", title: "公共交通网络完善", desc: "轨道与城市道路的覆盖范围继续扩大，主要组团之间建立更稳定的公共交通联系。" },
+  { source: "25", era: "区域拓展", title: "南部空间展开", desc: "城市建设跨越南侧水系，新的道路和用地为南部发展打开空间。" },
+  { source: "26", era: "区域拓展", title: "东部滨山组团启动", desc: "东部山地周边出现独立建设组团，城市开始利用更广阔的区域空间。" },
+  { source: "27", era: "区域拓展", title: "跨江联系强化", desc: "连接中心城区、东部和南部的交通走廊增多，组团之间的联系更加直接。" },
+  { source: "28", era: "区域拓展", title: "东部环线形成", desc: "东部组团的环形道路逐渐完整，滨山地区进入系统化建设阶段。" },
+  { source: "29", era: "区域拓展", title: "南岸走廊发展", desc: "南岸道路与建设节点持续增加，城市沿河谷和跨江通道向外延展。" },
+  { source: "30", era: "区域拓展", title: "区域道路再组织", desc: "外围快速联系进一步完善，中心城区与各组团之间形成层次更清晰的道路体系。" },
+  { source: "31", era: "区域都市", title: "城市继续南拓", desc: "南部新建道路和轨道联系出现，泽州的建成范围由核心河湾扩展至更完整的区域。" },
+  { source: "32", era: "区域都市", title: "南部新区成片", desc: "南部建设由交通节点转向连续街区，新的城市副中心轮廓开始显现。" },
+  { source: "33", era: "区域都市", title: "区域网络贯通", desc: "道路、铁路与轨道交通在更大范围内衔接，城市进入多中心协同发展阶段。" },
+  { source: "34", era: "区域都市", title: "现状版泽州", desc: "中心城区、两岸新区、东部滨山组团和南部片区共同构成当前泽州的城市格局。" }
+];
+
 const busNumbering = [
   { range: "1—99", title: "市区常规线路", en: "URBAN SERVICE", desc: "承担中心城区日常通勤与片区间基础接驳。" },
   { range: "101—199", title: "市区长距离线路", en: "URBAN LIMITED", desc: "服务跨片区长距离出行，并可采用大站停靠等组织方式。" },
@@ -363,7 +400,8 @@ function adjacentColumn(section, secondaryIndex, offset) {
     section: targetSection,
     index: targetIndex,
     title: submenus[targetSection.slug][targetIndex],
-    href: submenuHref(targetSection.slug, targetIndex)
+    href: submenuHref(targetSection.slug, targetIndex),
+    crossesSection: targetSection.slug !== section.slug
   };
 }
 
@@ -371,12 +409,13 @@ function columnSwitcherTemplate(section, secondaryIndex, position) {
   const previous = adjacentColumn(section, secondaryIndex, -1);
   const next = adjacentColumn(section, secondaryIndex, 1);
   const itemTemplate = (item, direction) => `
-    <a class="column-switcher-link column-switcher-${direction}" href="${item.href}">
+    <a class="column-switcher-link column-switcher-${direction}${item.crossesSection ? " column-switcher-cross-section" : ""}" href="${item.href}">
       ${direction === "previous" ? '<span class="column-switcher-arrow" aria-hidden="true">←</span>' : ""}
       <span class="column-switcher-copy">
-        <small>${direction === "previous" ? "上一栏目" : "下一栏目"}</small>
+        <small>${item.crossesSection ? (direction === "previous" ? "进入上一板块" : "进入下一板块") : (direction === "previous" ? "上一栏目" : "下一栏目")}</small>
         <strong><em>${item.section.title}</em><i>/</i>${item.title}</strong>
       </span>
+      ${item.crossesSection ? '<b class="column-switcher-section-badge">跨板块</b>' : ""}
       ${direction === "next" ? '<span class="column-switcher-arrow" aria-hidden="true">→</span>' : ""}
     </a>`;
 
@@ -423,6 +462,67 @@ function secondaryTemplate(section, secondaryIndex) {
         <div class="rule"></div>
         <span>本栏目当前暂无可公开信息。</span>
       </div>
+    </section>
+  `;
+}
+
+function archiveVersionsTemplate(section) {
+  const first = cityVersions[0];
+  const eras = [
+    ["01—07", "筑城起步", "依托北部通道形成首片街区，建立中心城区最初的道路与用地骨架。"],
+    ["09—13", "交通塑城", "对外通道和区域联络线逐渐接入，城市由早期核心向多方向扩展。"],
+    ["14—19", "中心成形", "中心城区持续填充，滨水空间、东部和北部组团开始联动。"],
+    ["20—24.5", "组团拓展", "环线与跨河联系加强，西岸新区和外围组团共同进入发展阶段。"],
+    ["25—30", "区域拓展", "建设跨越南侧水系并进入东部滨山地区，城市尺度显著扩大。"],
+    ["31—34", "区域都市", "南部新区、轨道网络与区域道路贯通，形成当前多中心城市格局。"]
+  ];
+  return `
+    ${sectionHeroTemplate(section, 0)}
+    <section class="archive-page shell section-drawer">
+      <header class="archive-heading">
+        <div><p>CITY EVOLUTION</p><h2>泽州市城市版本</h2></div>
+        <span>34个建设版本 · 从早期路网到区域都市</span>
+      </header>
+      <p class="archive-intro">本档案依据历次城市总览图，记录泽州建成区、交通骨架和城市组团的演变。版本编号沿用原始影像顺序，文字说明根据图面变化整理。</p>
+
+      <article class="archive-viewer">
+        <figure class="archive-image-frame">
+          <img id="archive-version-image" src="assets/archive/versions/zezhou-version-01.webp" alt="泽州市城市版本01：${first.title}">
+          <figcaption>地图影像为对应建设阶段的城市总览</figcaption>
+        </figure>
+        <div class="archive-version-copy">
+          <div class="archive-version-meta">
+            <span id="archive-version-number">VERSION 01</span>
+            <small id="archive-version-source">原始编号 ${first.source}</small>
+          </div>
+          <p id="archive-version-era">${first.era}</p>
+          <h3 id="archive-version-title">${first.title}</h3>
+          <div class="archive-copy-rule"></div>
+          <p id="archive-version-desc">${first.desc}</p>
+          <div class="archive-version-controls">
+            <button type="button" data-archive-step="-1" aria-label="查看上一个城市版本">←<span>上一版本</span></button>
+            <strong><span id="archive-current-count">01</span> / ${String(cityVersions.length).padStart(2, "0")}</strong>
+            <button type="button" data-archive-step="1" aria-label="查看下一个城市版本"><span>下一版本</span>→</button>
+          </div>
+        </div>
+      </article>
+
+      <nav class="archive-version-strip" aria-label="城市版本选择">
+        ${cityVersions.map((version, index) => `
+          <button class="${index === 0 ? "active" : ""}" type="button" data-archive-index="${index}" aria-label="查看版本${String(index + 1).padStart(2, "0")}：${version.title}" aria-pressed="${index === 0}">
+            <small>${version.era}</small><strong>${String(index + 1).padStart(2, "0")}</strong><span>${version.source}</span>
+          </button>
+        `).join("")}
+      </nav>
+
+      <section class="archive-eras">
+        <header><p>DEVELOPMENT PHASES</p><h3>城市发展阶段</h3></header>
+        <div class="archive-era-grid">
+          ${eras.map(([range, title, desc], index) => `
+            <article><span>${String(index + 1).padStart(2, "0")}</span><small>VERSION ${range}</small><h4>${title}</h4><p>${desc}</p></article>
+          `).join("")}
+        </div>
+      </section>
     </section>
   `;
 }
@@ -747,6 +847,7 @@ async function render() {
   const isMetroPage = secondaryRoute?.section.slug === "transit" && secondaryRoute.secondarySlug === "metro";
   const isBusPage = secondaryRoute?.section.slug === "transit" && secondaryRoute.secondarySlug === "bus";
   const isMapPage = secondaryRoute?.section.slug === "map" && secondaryRoute.secondarySlug === "comprehensive";
+  const isArchiveVersionsPage = secondaryRoute?.section.slug === "archives" && secondaryRoute.secondarySlug === "versions";
   const isInnerPage = Boolean(section || secondaryRoute || newsCategory || isNewsArticle);
   const activeSlug = newsCategory || isNewsArticle
     ? "news"
@@ -827,6 +928,8 @@ async function render() {
         ? transitTemplate(secondaryRoute.section)
         : isBusPage
           ? busTemplate(secondaryRoute.section)
+        : isArchiveVersionsPage
+          ? archiveVersionsTemplate(secondaryRoute.section)
         : isMapPage
           ? mapTemplate(secondaryRoute.section)
           : secondaryRoute
@@ -927,6 +1030,52 @@ async function render() {
         duration: 360,
         easing: "cubic-bezier(.2,.78,.2,1)"
       });
+    });
+  }
+  if (isArchiveVersionsPage) {
+    let archiveIndex = 0;
+    const image = document.querySelector("#archive-version-image");
+    const versionNumber = document.querySelector("#archive-version-number");
+    const sourceNumber = document.querySelector("#archive-version-source");
+    const era = document.querySelector("#archive-version-era");
+    const title = document.querySelector("#archive-version-title");
+    const description = document.querySelector("#archive-version-desc");
+    const currentCount = document.querySelector("#archive-current-count");
+    const versionButtons = [...document.querySelectorAll("[data-archive-index]")];
+
+    const showArchiveVersion = (nextIndex) => {
+      archiveIndex = (nextIndex + cityVersions.length) % cityVersions.length;
+      const version = cityVersions[archiveIndex];
+      const displayNumber = String(archiveIndex + 1).padStart(2, "0");
+      const nextSource = `assets/archive/versions/zezhou-version-${displayNumber}.webp`;
+      image.classList.add("changing");
+      window.setTimeout(() => {
+        image.src = nextSource;
+        image.alt = `泽州市城市版本${displayNumber}：${version.title}`;
+        versionNumber.textContent = `VERSION ${displayNumber}`;
+        sourceNumber.textContent = `原始编号 ${version.source}`;
+        era.textContent = version.era;
+        title.textContent = version.title;
+        description.textContent = version.desc;
+        currentCount.textContent = displayNumber;
+        versionButtons.forEach((button, index) => {
+          const active = index === archiveIndex;
+          button.classList.toggle("active", active);
+          button.setAttribute("aria-pressed", String(active));
+        });
+        versionButtons[archiveIndex]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+        window.requestAnimationFrame(() => image.classList.remove("changing"));
+        const preloadIndex = (archiveIndex + 1) % cityVersions.length;
+        const preload = new Image();
+        preload.src = `assets/archive/versions/zezhou-version-${String(preloadIndex + 1).padStart(2, "0")}.webp`;
+      }, 180);
+    };
+
+    versionButtons.forEach((button) => {
+      button.addEventListener("click", () => showArchiveVersion(Number(button.dataset.archiveIndex)));
+    });
+    document.querySelectorAll("[data-archive-step]").forEach((button) => {
+      button.addEventListener("click", () => showArchiveVersion(archiveIndex + Number(button.dataset.archiveStep)));
     });
   }
   window.scrollTo(0, 0);

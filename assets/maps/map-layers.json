@@ -2,7 +2,7 @@
   "name": "泽州市现状地图",
   "coordinateSystem": {
     "type": "local",
-    "viewBox": [1820, 1820, 4551, 4551],
+    "viewBox": [910, 910, 6371, 6371],
     "displaySize": [1024, 1024],
     "northUp": true
   },
