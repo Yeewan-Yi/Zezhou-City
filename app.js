@@ -347,7 +347,7 @@ function sectionHeroTemplate(section, activeIndex = -1, backRoute = null) {
             </div>
           </div>
           ${isSubpage
-            ? `<h1 class="page-composite-title"><span>${section.title}</span><i>/</i><em>${secondaryTitle}</em></h1>`
+            ? `<h1 class="page-composite-title"><a href="#${section.slug}" aria-label="返回${section.title}一级栏目">${section.title}</a><i>/</i><em>${secondaryTitle}</em></h1>`
             : `<h1>${section.title}</h1>`}
           <span>${section.desc}</span>
         </div>
@@ -413,9 +413,8 @@ function columnSwitcherTemplate(section, secondaryIndex, position) {
       ${direction === "previous" ? '<span class="column-switcher-arrow" aria-hidden="true">←</span>' : ""}
       <span class="column-switcher-copy">
         <small>${item.crossesSection ? (direction === "previous" ? "进入上一板块" : "进入下一板块") : (direction === "previous" ? "上一栏目" : "下一栏目")}</small>
-        <strong><em>${item.section.title}</em><i>/</i>${item.title}</strong>
+        <strong><em>${item.section.title}</em><i>/</i><span>${item.title}</span></strong>
       </span>
-      ${item.crossesSection ? '<b class="column-switcher-section-badge">跨板块</b>' : ""}
       ${direction === "next" ? '<span class="column-switcher-arrow" aria-hidden="true">→</span>' : ""}
     </a>`;
 
@@ -1124,7 +1123,7 @@ async function render() {
       button.addEventListener("click", () => showArchiveVersion(archiveIndex + Number(button.dataset.archiveStep)));
     });
   }
-  window.scrollTo(0, 0);
+  if (!isSecondarySwitch) window.scrollTo(0, 0);
   currentPrimaryIndex = targetPrimaryIndex;
   currentSecondaryIndex = targetSecondaryIndex;
 
