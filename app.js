@@ -833,6 +833,7 @@ async function animateView(keyframes, duration) {
 
 async function render() {
   const version = ++renderVersion;
+  const preservedScrollY = window.scrollY;
   app.getAnimations?.().forEach((animation) => animation.cancel());
   const slug = location.hash.replace(/^#/, "") || "home";
   const section = sections.find((item) => item.slug === slug);
@@ -1001,6 +1002,7 @@ async function render() {
     drawer?.insertAdjacentHTML("beforeend", columnSwitcherTemplate(parentSection, activeColumnIndex, "bottom"));
     drawer?.insertAdjacentHTML("beforeend", lowerBackButtonTemplate(parentSection, backRoute));
   }
+  if (isSecondarySwitch) window.scrollTo(0, preservedScrollY);
   if (secondaryGrid || isReturningUp) {
     window.setTimeout(() => {
       if (version === renderVersion) {
@@ -1143,7 +1145,10 @@ async function render() {
         // A newer navigation replaced this one.
       }
     }
-    if (version === renderVersion) document.body.classList.remove("switching-secondary");
+    if (version === renderVersion) {
+      window.scrollTo(0, preservedScrollY);
+      document.body.classList.remove("switching-secondary");
+    }
   } else if (shouldTransition) {
     await animateView([
       { opacity: 0, transform: `translateX(${direction > 0 ? 64 : -64}px)` },
