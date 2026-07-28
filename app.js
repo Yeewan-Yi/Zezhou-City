@@ -41,6 +41,32 @@ const newsCategories = [
   { slug: "planning", title: "规划公示", en: "Planning Notices", desc: "发布城市规划方案及相关公示信息" }
 ];
 
+const busNumbering = [
+  { range: "1—99", title: "市区常规线路", en: "URBAN SERVICE", desc: "承担中心城区日常通勤与片区间基础接驳。" },
+  { range: "101—199", title: "市区长距离线路", en: "URBAN LIMITED", desc: "服务跨片区长距离出行，并可采用大站停靠等组织方式。" },
+  { range: "201—299", title: "市郊连接线路", en: "SUBURBAN LINK", desc: "连接中心城区与近郊组团、交通节点及外围街道。" },
+  { range: "301—999", title: "郊区分区线路", en: "OUTER DISTRICT", desc: "以百位数字区分服务片区；3字头用于三山区东郊街道，其他号段随各郊区线路建设启用。" }
+];
+
+const busRoute301 = {
+  number: "301",
+  type: "三山区东郊街道郊区公交",
+  outbound: [
+    ["滨郊南路", "shared"],
+    ["古林南", "shared"],
+    ["古林北", "shared"],
+    ["林郊大道·文郊东路", "outbound-only"],
+    ["东郊地铁站", "shared"]
+  ],
+  inbound: [
+    ["东郊地铁站", "shared"],
+    ["林郊大道·文郊西路", "inbound-only"],
+    ["古林北", "shared"],
+    ["古林南", "shared"],
+    ["滨郊南路", "shared"]
+  ]
+};
+
 const districts = [
   { name: "印沙区", en: "Yinsha District", no: "01" },
   { name: "陇府区", en: "Longfu District", no: "02" },
@@ -266,7 +292,7 @@ function homeTemplate() {
 }
 
 function sectionHeroTemplate(section, activeIndex = -1, backRoute = null) {
-  const hasHeroImage = ["districts", "roads", "transit", "facilities", "life", "news", "archives"].includes(section.slug);
+  const hasHeroImage = ["overview", "map", "districts", "roads", "transit", "facilities", "life", "news", "archives"].includes(section.slug);
   const isSubpage = activeIndex >= 0;
   const secondaryTitle = isSubpage ? submenus[section.slug][activeIndex] : "";
   const parentRoute = backRoute || { href: `#${section.slug}`, label: section.title };
@@ -524,6 +550,75 @@ function transitTemplate(section) {
   `;
 }
 
+function busDirectionTemplate(label, direction, stations) {
+  return `
+    <section class="bus-direction bus-direction-${direction}">
+      <header>
+        <span>${direction === "outbound" ? "去" : "返"}</span>
+        <div><small>${direction.toUpperCase()}</small><h3>${label}</h3></div>
+      </header>
+      <ol class="bus-stop-list">
+        ${stations.map(([name, status], index) => `
+          <li class="${status}">
+            <i aria-hidden="true"></i>
+            <span class="bus-stop-order">${String(index + 1).padStart(2, "0")}</span>
+            <strong>${name}</strong>
+            ${status === "outbound-only" ? '<em>仅去程停靠</em>' : ""}
+            ${status === "inbound-only" ? '<em>仅返程停靠</em>' : ""}
+          </li>
+        `).join("")}
+      </ol>
+    </section>
+  `;
+}
+
+function busTemplate(section) {
+  return `
+    ${sectionHeroTemplate(section, 1)}
+    <section class="bus-page shell section-drawer">
+      <header class="bus-page-heading">
+        <p>ZEZHOU CITY BUS</p>
+        <h2>公交线路与编号体系</h2>
+        <span>泽州市公交线路使用1至999号。线路编号兼具识别与分区功能，乘客可由号码快速判断线路的主要服务范围。</span>
+      </header>
+
+      <section class="bus-numbering" aria-label="公交线路编号规则">
+        ${busNumbering.map((item) => `
+          <article>
+            <span>${item.range}</span>
+            <small>${item.en}</small>
+            <h3>${item.title}</h3>
+            <p>${item.desc}</p>
+          </article>
+        `).join("")}
+      </section>
+
+      <article class="bus-route-card">
+        <header class="bus-route-header">
+          <div class="bus-route-number"><small>BUS</small><strong>${busRoute301.number}</strong></div>
+          <div>
+            <p>OUTER DISTRICT SERVICE · SANSHAN</p>
+            <h2>${busRoute301.number}路</h2>
+            <span>${busRoute301.type} · 双向运营 · 非环线</span>
+          </div>
+          <div class="bus-route-termini">
+            <span>滨郊南路</span><i>⇄</i><span>东郊地铁站</span>
+          </div>
+        </header>
+        <div class="bus-direction-grid">
+          ${busDirectionTemplate("滨郊南路 → 东郊地铁站", "outbound", busRoute301.outbound)}
+          ${busDirectionTemplate("东郊地铁站 → 滨郊南路", "inbound", busRoute301.inbound)}
+        </div>
+        <footer class="bus-route-note">
+          <span><i class="shared-sample"></i>双向共同停靠</span>
+          <span><i class="direction-sample"></i>方向性停靠站</span>
+          <p>林郊大道沿线采用分向设站：去程停靠文郊东路站，返程停靠文郊西路站。</p>
+        </footer>
+      </article>
+    </section>
+  `;
+}
+
 function metroLineDiagram(line) {
   const stationCards = line.stations.map(([name, transfers, outsideTransfers = []], stationIndex) => {
     const englishName = metroEnglishNames[line.number]?.[stationIndex] || "";
@@ -581,7 +676,6 @@ async function animateView(keyframes, duration) {
 
 async function render() {
   const version = ++renderVersion;
-  const previousHeroCopyWidth = app.querySelector(".page-hero-copy")?.getBoundingClientRect().width || 0;
   app.getAnimations?.().forEach((animation) => animation.cancel());
   const slug = location.hash.replace(/^#/, "") || "home";
   const section = sections.find((item) => item.slug === slug);
@@ -594,6 +688,7 @@ async function render() {
     })))
     .find((item) => item.route === slug);
   const isMetroPage = secondaryRoute?.section.slug === "transit" && secondaryRoute.secondarySlug === "metro";
+  const isBusPage = secondaryRoute?.section.slug === "transit" && secondaryRoute.secondarySlug === "bus";
   const isMapPage = secondaryRoute?.section.slug === "map" && secondaryRoute.secondarySlug === "comprehensive";
   const isInnerPage = Boolean(section || secondaryRoute || newsCategory || isNewsArticle);
   const activeSlug = newsCategory || isNewsArticle
@@ -608,9 +703,33 @@ async function render() {
     ? 0
     : targetPrimaryIndex > currentPrimaryIndex ? 1 : -1;
   const shouldTransition = direction !== 0;
+  const existingDrawer = app.querySelector(".section-drawer");
+  const isReturningUp = Boolean(existingDrawer) && (
+    Boolean(section) ||
+    (Boolean(newsCategory) && Boolean(app.querySelector(".news-article")))
+  );
   const secondaryGrid = !shouldTransition && secondaryRoute
     ? app.querySelector(".secondary-title-grid")
     : null;
+  document.body.classList.toggle("entering-secondary", Boolean(secondaryGrid));
+  document.body.classList.toggle("returning-up", isReturningUp);
+
+  if (isReturningUp && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const drawerExit = existingDrawer.animate([
+      { opacity: 1, transform: "translateY(0) scale(1)" },
+      { opacity: 0, transform: "translateY(90px) scale(.985)" }
+    ], {
+      duration: 360,
+      easing: "cubic-bezier(.4,0,.7,.2)",
+      fill: "forwards"
+    });
+    try {
+      await drawerExit.finished;
+    } catch {
+      // A newer navigation replaced this one.
+    }
+    if (version !== renderVersion) return;
+  }
 
   if (secondaryGrid && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     const fade = secondaryGrid.animate([
@@ -649,6 +768,8 @@ async function render() {
       ? newsCategoryTemplate(newsSection, newsCategory)
       : isMetroPage
         ? transitTemplate(secondaryRoute.section)
+        : isBusPage
+          ? busTemplate(secondaryRoute.section)
         : isMapPage
           ? mapTemplate(secondaryRoute.section)
           : secondaryRoute
@@ -667,18 +788,12 @@ async function render() {
       : null;
     app.querySelector(".section-drawer")?.insertAdjacentHTML("beforeend", lowerBackButtonTemplate(parentSection, backRoute));
   }
-  const nextHeroCopy = app.querySelector(".page-hero-copy");
-  if (!shouldTransition && previousHeroCopyWidth && nextHeroCopy && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    const nextHeroCopyWidth = nextHeroCopy.getBoundingClientRect().width;
-    if (Math.abs(previousHeroCopyWidth - nextHeroCopyWidth) > 2) {
-      nextHeroCopy.animate([
-        { width: `${previousHeroCopyWidth}px` },
-        { width: `${nextHeroCopyWidth}px` }
-      ], {
-        duration: 560,
-        easing: "cubic-bezier(.2,.78,.2,1)"
-      });
-    }
+  if (secondaryGrid || isReturningUp) {
+    window.setTimeout(() => {
+      if (version === renderVersion) {
+        document.body.classList.remove("entering-secondary", "returning-up");
+      }
+    }, 620);
   }
   document.title = isNewsArticle
     ? "泽州市市长专题调研城市官网建设工作｜泽州市门户"
