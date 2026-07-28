@@ -304,8 +304,8 @@ function homeTemplate() {
     <section class="hero">
       <div class="hero-slideshow" aria-hidden="true">
         <div class="hero-slide hero-slide-1"></div>
-        <div class="hero-slide hero-slide-2"></div>
-        <div class="hero-slide hero-slide-3"></div>
+        <div class="hero-slide hero-slide-2" data-background="assets/zezhou-home-2.jpg"></div>
+        <div class="hero-slide hero-slide-3" data-background="assets/zezhou-home-3.jpg"></div>
       </div>
       <div class="hero-grid" aria-hidden="true"></div>
       <div class="hero-river" aria-hidden="true"></div>
@@ -340,6 +340,36 @@ function homeTemplate() {
       </div>
     </section>
   `;
+}
+
+function loadDeferredHomeMedia() {
+  const slideshow = document.querySelector(".hero-slideshow");
+  if (!slideshow || slideshow.dataset.loading) return;
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (connection?.saveData || ["slow-2g", "2g"].includes(connection?.effectiveType)) return;
+  slideshow.dataset.loading = "true";
+  const slides = [...slideshow.querySelectorAll("[data-background]")];
+  Promise.all(slides.map((slide) => new Promise((resolve) => {
+    const loader = new Image();
+    loader.decoding = "async";
+    loader.onload = () => {
+      if (slideshow.isConnected) slide.style.backgroundImage = `url("${slide.dataset.background}")`;
+      resolve();
+    };
+    loader.onerror = resolve;
+    loader.src = slide.dataset.background;
+  }))).then(() => {
+    if (slideshow.isConnected) slideshow.classList.add("media-ready");
+  });
+}
+
+function scheduleDeferredHomeMedia() {
+  const start = () => {
+    if ("requestIdleCallback" in window) window.requestIdleCallback(loadDeferredHomeMedia, { timeout: 2400 });
+    else window.setTimeout(loadDeferredHomeMedia, 1200);
+  };
+  if (document.readyState === "complete") start();
+  else window.addEventListener("load", start, { once: true });
 }
 
 function sectionHeroTemplate(section, activeIndex = -1, backRoute = null) {
@@ -1095,7 +1125,9 @@ async function render() {
   if (isArchiveVersionsPage) {
     let archiveIndex = 0;
     let archiveStageIndex = 0;
+    let archiveRequestId = 0;
     const image = document.querySelector("#archive-version-image");
+    const loadedArchiveSources = new Set([image?.getAttribute("src")]);
     const versionNumber = document.querySelector("#archive-version-number");
     const sourceNumber = document.querySelector("#archive-version-source");
     const era = document.querySelector("#archive-version-era");
@@ -1112,12 +1144,16 @@ async function render() {
 
     const showArchiveVersion = (nextIndex) => {
       const currentStage = cityEras[archiveStageIndex];
-      archiveIndex = nextIndex < currentStage.start ? currentStage.end : nextIndex > currentStage.end ? currentStage.start : nextIndex;
-      const version = cityVersions[archiveIndex];
-      const displayNumber = String(archiveIndex + 1).padStart(2, "0");
+      const targetIndex = nextIndex < currentStage.start ? currentStage.end : nextIndex > currentStage.end ? currentStage.start : nextIndex;
+      const targetStageIndex = archiveStageIndex;
+      const requestId = ++archiveRequestId;
+      archiveIndex = targetIndex;
+      const version = cityVersions[targetIndex];
+      const displayNumber = String(targetIndex + 1).padStart(2, "0");
       const nextSource = `assets/archive/versions/zezhou-version-${displayNumber}.webp`;
       image.classList.add("changing");
-      window.setTimeout(() => {
+      const commitVersion = () => {
+        if (requestId !== archiveRequestId || targetStageIndex !== archiveStageIndex) return;
         image.src = nextSource;
         image.alt = `泽州市城市版本${displayNumber}：${version.title}`;
         versionNumber.textContent = `VERSION ${displayNumber}`;
@@ -1125,22 +1161,38 @@ async function render() {
         era.textContent = `${version.era} · ${version.date}`;
         title.textContent = version.title;
         description.textContent = version.desc;
-        currentCount.textContent = String(archiveIndex - currentStage.start + 1).padStart(2, "0");
+        currentCount.textContent = String(targetIndex - currentStage.start + 1).padStart(2, "0");
         versionButtons.forEach((button, index) => {
-          const active = index === archiveIndex;
+          const active = index === targetIndex;
           button.classList.toggle("active", active);
           button.setAttribute("aria-pressed", String(active));
         });
-        versionButtons[archiveIndex]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+        versionButtons[targetIndex]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
         window.requestAnimationFrame(() => image.classList.remove("changing"));
         const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
         const shouldPreload = !connection?.saveData && !["slow-2g", "2g"].includes(connection?.effectiveType);
-        if (shouldPreload && archiveIndex < currentStage.end) {
+        if (shouldPreload && targetIndex < currentStage.end) {
+          const preloadSource = `assets/archive/versions/zezhou-version-${String(targetIndex + 2).padStart(2, "0")}.webp`;
           const preload = new Image();
           preload.decoding = "async";
-          preload.src = `assets/archive/versions/zezhou-version-${String(archiveIndex + 2).padStart(2, "0")}.webp`;
+          preload.onload = () => loadedArchiveSources.add(preloadSource);
+          preload.src = preloadSource;
         }
-      }, 180);
+      };
+      if (loadedArchiveSources.has(nextSource)) {
+        commitVersion();
+      } else {
+        const loader = new Image();
+        loader.decoding = "async";
+        loader.onload = () => {
+          loadedArchiveSources.add(nextSource);
+          commitVersion();
+        };
+        loader.onerror = () => {
+          if (requestId === archiveRequestId) image.classList.remove("changing");
+        };
+        loader.src = nextSource;
+      }
     };
 
     const showArchiveStage = (nextStageIndex) => {
@@ -1172,6 +1224,7 @@ async function render() {
       button.addEventListener("click", () => showArchiveVersion(archiveIndex + Number(button.dataset.archiveStep)));
     });
   }
+  if (slug === "home") scheduleDeferredHomeMedia();
   if (!isSecondarySwitch) window.scrollTo(0, 0);
   currentPrimaryIndex = targetPrimaryIndex;
   currentSecondaryIndex = targetSecondaryIndex;

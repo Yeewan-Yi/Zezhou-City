@@ -77,10 +77,12 @@ a { color: inherit; text-decoration: none; }
   background-position: center;
   background-size: cover;
   animation: home-slideshow 12s infinite ease-in-out;
+  animation-play-state: paused;
 }
 .hero-slide-1 { background-image: url("assets/zezhou-overview.jpg"); }
-.hero-slide-2 { background-image: url("assets/zezhou-home-2.jpg"); animation-delay: -8s; }
-.hero-slide-3 { background-image: url("assets/zezhou-home-3.jpg"); animation-delay: -4s; }
+.hero-slide-2 { animation-delay: -8s; }
+.hero-slide-3 { animation-delay: -4s; }
+.hero-slideshow.media-ready .hero-slide { animation-play-state: running; }
 @keyframes home-slideshow {
   0%, 25% { opacity: 1; }
   33.333%, 91.666% { opacity: 0; }
