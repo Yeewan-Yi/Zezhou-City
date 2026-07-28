@@ -242,6 +242,16 @@ const metroEnglishNames = {
 const app = document.querySelector("#app");
 const nav = document.querySelector("#primary-nav");
 
+app.addEventListener("click", (event) => {
+  const link = event.target.closest(".column-switcher-link");
+  if (!link || currentPrimaryIndex === null || currentPrimaryIndex < 0) return;
+  const currentSection = sections[currentPrimaryIndex];
+  if (link.dataset.targetSection !== currentSection.slug) return;
+  event.preventDefault();
+  history.pushState(null, "", link.getAttribute("href"));
+  render();
+});
+
 function submenuHref(sectionSlug, index) {
   return `#${sectionSlug}-${submenuSlugs[sectionSlug][index]}`;
 }
@@ -409,10 +419,10 @@ function columnSwitcherTemplate(section, secondaryIndex, position) {
   const previous = adjacentColumn(section, secondaryIndex, -1);
   const next = adjacentColumn(section, secondaryIndex, 1);
   const itemTemplate = (item, direction) => `
-    <a class="column-switcher-link column-switcher-${direction}${item.crossesSection ? " column-switcher-cross-section" : ""}" href="${item.href}">
+    <a class="column-switcher-link column-switcher-${direction}${item.crossesSection ? " column-switcher-cross-section" : ""}" href="${item.href}" data-target-section="${item.section.slug}">
       ${direction === "previous" ? '<span class="column-switcher-arrow" aria-hidden="true">←</span>' : ""}
       <span class="column-switcher-copy">
-        <small>${item.crossesSection ? (direction === "previous" ? "进入上一板块" : "进入下一板块") : (direction === "previous" ? "上一栏目" : "下一栏目")}</small>
+        <small>${item.crossesSection ? (direction === "previous" ? "PREVIOUS SECTION · 进入上一板块" : "NEXT SECTION · 进入下一板块") : (direction === "previous" ? "上一栏目" : "下一栏目")}</small>
         <strong><em>${item.section.title}</em><i>/</i><span>${item.title}</span></strong>
       </span>
       ${direction === "next" ? '<span class="column-switcher-arrow" aria-hidden="true">→</span>' : ""}
@@ -885,6 +895,7 @@ async function render() {
   document.body.classList.toggle("entering-secondary", Boolean(secondaryGrid));
   document.body.classList.toggle("returning-up", isReturningUp);
   document.body.classList.toggle("switching-secondary", isSecondarySwitch);
+  document.documentElement.classList.toggle("switching-secondary", isSecondarySwitch);
 
   if (isReturningUp && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     const drawerExit = existingDrawer.animate([
@@ -1148,6 +1159,7 @@ async function render() {
     if (version === renderVersion) {
       window.scrollTo(0, preservedScrollY);
       document.body.classList.remove("switching-secondary");
+      document.documentElement.classList.remove("switching-secondary");
     }
   } else if (shouldTransition) {
     await animateView([

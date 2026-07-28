@@ -577,18 +577,21 @@ body.returning-up .page-hero:not(.page-hero-subpage) .page-hero-copy { animation
 .column-switcher-cross-section {
   position: relative;
   color: #fff;
+  border-top: 2px solid #f1c86f;
+  border-bottom: 2px solid #f1c86f;
   background:
-    linear-gradient(110deg, rgba(12,55,51,.96), rgba(22,96,88,.9)),
+    linear-gradient(110deg, rgba(8,47,44,.99), rgba(26,105,95,.94)),
     repeating-linear-gradient(135deg, transparent 0 12px, rgba(255,255,255,.04) 12px 13px);
+  box-shadow: inset 0 0 30px rgba(241,200,111,.08);
 }
 .column-switcher-cross-section + .column-switcher-link { border-left-color: rgba(216,166,77,.55); }
-.column-switcher-cross-section .column-switcher-copy small { color: #f1c86f; font-weight: 700; }
+.column-switcher-cross-section .column-switcher-copy small { color: #f1c86f; font-family: Georgia, serif; font-size: 9px; font-weight: 700; letter-spacing: .16em; }
 .column-switcher-cross-section .column-switcher-copy { gap: 4px; }
 .column-switcher-cross-section .column-switcher-copy strong { display: flex; align-items: baseline; flex-wrap: wrap; gap: 7px; }
-.column-switcher-cross-section .column-switcher-copy em { color: #f1c86f; font-size: 23px; line-height: 1.15; }
+.column-switcher-cross-section .column-switcher-copy em { color: #ffe0a0; font-family: "STKaiti", "KaiTi", "Songti SC", serif; font-size: 28px; font-weight: 700; line-height: 1.15; letter-spacing: .04em; text-shadow: 0 2px 12px rgba(0,0,0,.35); }
 .column-switcher-cross-section .column-switcher-copy i { color: rgba(255,255,255,.42); }
-.column-switcher-cross-section .column-switcher-copy strong > span { color: rgba(255,255,255,.78); font-family: "Microsoft YaHei UI", sans-serif; font-size: 12px; font-weight: 500; }
-.column-switcher-cross-section .column-switcher-arrow { color: #f1c86f; border-color: #f1c86f; }
+.column-switcher-cross-section .column-switcher-copy strong > span { color: rgba(255,255,255,.78); font-family: "Microsoft YaHei UI", sans-serif; font-size: 11px; font-weight: 500; letter-spacing: .06em; }
+.column-switcher-cross-section .column-switcher-arrow { width: 44px; height: 44px; flex-basis: 44px; color: #f1c86f; border-color: #f1c86f; font-size: 21px; }
 .archive-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 28px; padding: 8px 0 22px; border-bottom: 1px solid var(--line); }
 .archive-heading p, .archive-eras > header p { margin: 0 0 8px; color: #a16e20; font-size: 10px; font-weight: 700; letter-spacing: .2em; }
 .archive-heading h2, .archive-eras > header h3 { margin: 0; font-family: "Songti SC", serif; font-size: 34px; font-weight: 500; }
@@ -644,7 +647,8 @@ body.returning-up .page-hero:not(.page-hero-subpage) .page-hero-copy { animation
 }
 .page-hero-subpage + .section-drawer { margin-top: -310px; }
 body.switching-secondary .section-drawer { animation: none; }
-body.switching-secondary { overflow-anchor: none; }
+html.switching-secondary { scroll-behavior: auto; }
+html.switching-secondary, body.switching-secondary { overflow-anchor: none; }
 @keyframes drawer-rise {
   from { opacity: 0; transform: translateY(180px); }
   to { opacity: 1; transform: translateY(0); }
@@ -763,8 +767,10 @@ body.view-transitioning #app { min-height: 100vh; background: #0b302d; overflow:
   .column-switcher-copy em { display: block; margin-bottom: 2px; font-size: 10px; }
   .column-switcher-copy i { display: none; }
   .column-switcher-bottom { margin-top: 38px; }
-  .column-switcher-cross-section .column-switcher-copy em { display: block; margin: 0; font-size: 17px; }
+  .column-switcher-cross-section .column-switcher-copy small { font-size: 7px; letter-spacing: .08em; }
+  .column-switcher-cross-section .column-switcher-copy em { display: block; margin: 0; font-size: 20px; }
   .column-switcher-cross-section .column-switcher-copy strong > span { font-size: 10px; }
+  .column-switcher-cross-section .column-switcher-arrow { width: 34px; height: 34px; flex-basis: 34px; font-size: 16px; }
   .archive-heading { align-items: flex-start; flex-direction: column; gap: 10px; }
   .archive-heading > span { text-align: left; }
   .archive-viewer { grid-template-columns: 1fr; }
