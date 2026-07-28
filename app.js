@@ -873,8 +873,7 @@ async function render() {
   const secondaryDirection = isSecondarySwitch
     ? targetSecondaryIndex > currentSecondaryIndex ? 1 : -1
     : 0;
-  const transitionDirection = direction || secondaryDirection;
-  const shouldTransition = transitionDirection !== 0;
+  const shouldTransition = direction !== 0;
   const existingDrawer = app.querySelector(".section-drawer");
   const isReturningUp = Boolean(existingDrawer) && (
     Boolean(section) ||
@@ -921,12 +920,27 @@ async function render() {
     if (version !== renderVersion) return;
   }
 
-  if (shouldTransition) {
+  if (isSecondarySwitch && existingDrawer && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const drawerExit = existingDrawer.animate([
+      { opacity: 1, transform: "translateX(0)" },
+      { opacity: 0, transform: `translateX(${secondaryDirection > 0 ? -90 : 90}px)` }
+    ], {
+      duration: 340,
+      easing: "cubic-bezier(.4,0,.65,1)",
+      fill: "forwards"
+    });
+    try {
+      await drawerExit.finished;
+    } catch {
+      // A newer navigation replaced this one.
+    }
+    if (version !== renderVersion) return;
+  } else if (shouldTransition) {
     document.body.classList.add("view-transitioning");
     await animateView([
       { opacity: 1, transform: "translateX(0)" },
-      { opacity: 0, transform: `translateX(${transitionDirection > 0 ? -64 : 64}px)` }
-    ], isSecondarySwitch ? 380 : 440);
+      { opacity: 0, transform: `translateX(${direction > 0 ? -64 : 64}px)` }
+    ], 440);
     if (version !== renderVersion) return;
     app.getAnimations?.().forEach((animation) => animation.cancel());
   } else {
@@ -935,7 +949,7 @@ async function render() {
 
   document.body.classList.toggle("home-page", !isInnerPage);
   document.body.classList.toggle("inner-page", isInnerPage);
-  app.innerHTML = isNewsArticle
+  const nextMarkup = isNewsArticle
     ? newsArticleTemplate(newsSection)
     : newsCategory
       ? newsCategoryTemplate(newsSection, newsCategory)
@@ -952,6 +966,23 @@ async function render() {
             : section
               ? section.slug === "news" ? newsTemplate(section) : sectionTemplate(section)
               : homeTemplate();
+  if (isSecondarySwitch && existingDrawer) {
+    const nextView = document.createElement("template");
+    nextView.innerHTML = nextMarkup.trim();
+    const nextDrawer = nextView.content.querySelector(".section-drawer");
+    if (nextDrawer) existingDrawer.replaceWith(nextDrawer);
+    const secondaryTitle = isNewsArticle
+      ? newsCategories[0].title
+      : newsCategory
+        ? newsCategory.title
+        : submenus[secondaryRoute.section.slug][secondaryRoute.index];
+    const titleDetail = app.querySelector(".page-composite-title em");
+    const breadcrumbDetail = app.querySelector(".page-hero-subpage .breadcrumb span:last-child");
+    if (titleDetail) titleDetail.textContent = secondaryTitle;
+    if (breadcrumbDetail) breadcrumbDetail.textContent = secondaryTitle;
+  } else {
+    app.innerHTML = nextMarkup;
+  }
   const parentSection = isNewsArticle
     ? newsSection
     : newsCategory
@@ -1097,12 +1128,29 @@ async function render() {
   currentPrimaryIndex = targetPrimaryIndex;
   currentSecondaryIndex = targetSecondaryIndex;
 
-  if (shouldTransition) {
+  if (isSecondarySwitch) {
+    const nextDrawer = app.querySelector(".section-drawer");
+    if (nextDrawer && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const drawerEnter = nextDrawer.animate([
+        { opacity: 0, transform: `translateX(${secondaryDirection > 0 ? 90 : -90}px)` },
+        { opacity: 1, transform: "translateX(0)" }
+      ], {
+        duration: 460,
+        easing: "cubic-bezier(.2,.78,.2,1)"
+      });
+      try {
+        await drawerEnter.finished;
+      } catch {
+        // A newer navigation replaced this one.
+      }
+    }
+    if (version === renderVersion) document.body.classList.remove("switching-secondary");
+  } else if (shouldTransition) {
     await animateView([
-      { opacity: 0, transform: `translateX(${transitionDirection > 0 ? 64 : -64}px)` },
+      { opacity: 0, transform: `translateX(${direction > 0 ? 64 : -64}px)` },
       { opacity: 1, transform: "translateX(0)" }
-    ], isSecondarySwitch ? 500 : 620);
-    if (version === renderVersion) document.body.classList.remove("view-transitioning", "switching-secondary");
+    ], 620);
+    if (version === renderVersion) document.body.classList.remove("view-transitioning");
   }
 }
 
