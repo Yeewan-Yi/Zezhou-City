@@ -52,12 +52,12 @@
       "id": "group_text",
       "name": "地图标注",
       "geometry": "text",
-      "textCountBase": 814,
-      "textCountTransportFull": 810
+      "textCountBase": 812,
+      "textCountTransportFull": 808
     }
   ],
   "labelClasses": {
-    "district": 9,
+    "district": 8,
     "building": 73,
     "road": 325
   }
