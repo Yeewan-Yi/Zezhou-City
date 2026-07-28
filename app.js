@@ -78,6 +78,25 @@ const cityVersions = [
   { source: "34", era: "区域都市", title: "现状版泽州", desc: "中心城区、两岸新区、东部滨山组团和南部片区共同构成当前泽州的城市格局。" }
 ];
 
+const cityVersionDates = [
+  "2025.07.04", "2025.07.04", "2025.07.04", "2025.07.04", "2025.07.04", "2025.07.04",
+  "2025.07.15", "2025.07.16", "2025.07.16", "2025.07.18", "2025.07.19", "2025.07.22",
+  "2025.07.24", "2025.07.24", "2025.07.26", "2025.07.28", "2025.07.29", "2025.07.31",
+  "2025.08.02", "2025.08.06", "2025.08.30", "2025.09.04", "2025.09.06", "2025.09.12",
+  "2025.09.27", "2025.10.08", "2025.10.12", "2025.10.25", "2025.10.27", "2025.11.15",
+  "2025.12.10", "2026.01.21", "2026.02.11", "2026.07.28"
+];
+cityVersions.forEach((version, index) => { version.date = cityVersionDates[index]; });
+
+const cityEras = [
+  { range: "01—07", title: "筑城起步", dates: "2025.07.04", start: 0, end: 5, desc: "同日留存的六次早期推演，记录泽州从空间底盘到首轮城区轮廓的集中形成。" },
+  { range: "09—13", title: "交通塑城", dates: "2025.07.15—07.22", start: 6, end: 11, desc: "一周内对外通道与区域联络连续落位，城市骨架由核心区向多方向拉开。" },
+  { range: "14—19", title: "中心成形", dates: "2025.07.24—07.31", start: 12, end: 17, desc: "滨水、东部与北部组团在八天内相继出现，中心城区进入结构完善期。" },
+  { range: "20—24.5", title: "组团拓展", dates: "2025.08.02—09.12", start: 18, end: 23, desc: "跨越盛夏的六次记录见证环线闭合、西岸开发与公共交通网络成形。" },
+  { range: "25—30", title: "区域拓展", dates: "2025.09.27—11.15", start: 24, end: 29, desc: "建设重心向南岸与东部滨山迁移，泽州由组团城市迈向更大的区域尺度。" },
+  { range: "31—34", title: "区域都市", dates: "2025.12.10—2026.07.28", start: 30, end: 33, desc: "跨年度的最后四次留存，记录南部新区成片、区域网络贯通与现状格局定型。" }
+];
+
 const busNumbering = [
   { range: "1—99", title: "市区常规线路", en: "URBAN SERVICE", desc: "承担中心城区日常通勤与片区间基础接驳。" },
   { range: "101—199", title: "市区长距离线路", en: "URBAN LIMITED", desc: "服务跨片区长距离出行，并可采用大站停靠等组织方式。" },
@@ -477,40 +496,44 @@ function secondaryTemplate(section, secondaryIndex) {
 
 function archiveVersionsTemplate(section) {
   const first = cityVersions[0];
-  const eras = [
-    ["01—07", "筑城起步", "依托北部通道形成首片街区，建立中心城区最初的道路与用地骨架。"],
-    ["09—13", "交通塑城", "对外通道和区域联络线逐渐接入，城市由早期核心向多方向扩展。"],
-    ["14—19", "中心成形", "中心城区持续填充，滨水空间、东部和北部组团开始联动。"],
-    ["20—24.5", "组团拓展", "环线与跨河联系加强，西岸新区和外围组团共同进入发展阶段。"],
-    ["25—30", "区域拓展", "建设跨越南侧水系并进入东部滨山地区，城市尺度显著扩大。"],
-    ["31—34", "区域都市", "南部新区、轨道网络与区域道路贯通，形成当前多中心城市格局。"]
-  ];
   return `
     ${sectionHeroTemplate(section, 0)}
     <section class="archive-page shell section-drawer">
       <header class="archive-heading">
         <div><p>CITY EVOLUTION</p><h2>泽州市城市版本</h2></div>
-        <span>34个建设版本 · 从早期路网到区域都市</span>
+        <span>34个建设版本 · 6个发展阶段 · 2025.07—2026.07</span>
       </header>
-      <p class="archive-intro">本档案依据历次城市总览图，记录泽州建成区、交通骨架和城市组团的演变。版本编号沿用原始影像顺序，文字说明根据图面变化整理。</p>
+      <p class="archive-intro">本档案依据历次城市总览图，记录泽州建成区、交通骨架和城市组团的演变。阶段时间取自原始图片的文件创建日期，文字说明根据图面变化整理。</p>
+
+      <nav class="archive-stage-nav" aria-label="城市发展阶段">
+        ${cityEras.map((item, index) => `
+          <button class="${index === 0 ? "active" : ""}" type="button" data-archive-stage="${index}" aria-pressed="${index === 0}">
+            <span>${String(index + 1).padStart(2, "0")}</span><strong>${item.title}</strong><small>${item.dates}</small>
+          </button>
+        `).join("")}
+      </nav>
+      <section class="archive-stage-summary" aria-live="polite">
+        <div><small id="archive-stage-range">当前阶段 / VERSION ${cityEras[0].range}</small><h3 id="archive-stage-title">${cityEras[0].title}</h3></div>
+        <p id="archive-stage-desc">${cityEras[0].desc}</p>
+      </section>
 
       <article class="archive-viewer">
         <figure class="archive-image-frame">
           <img id="archive-version-image" src="assets/archive/versions/zezhou-version-01.webp" alt="泽州市城市版本01：${first.title}">
-          <figcaption>地图影像为对应建设阶段的城市总览</figcaption>
+          <figcaption>原始总览图 · 创建于 <span id="archive-version-date-caption">${first.date}</span></figcaption>
         </figure>
         <div class="archive-version-copy">
           <div class="archive-version-meta">
             <span id="archive-version-number">VERSION 01</span>
             <small id="archive-version-source">原始编号 ${first.source}</small>
           </div>
-          <p id="archive-version-era">${first.era}</p>
+          <p id="archive-version-era">${first.era} · ${first.date}</p>
           <h3 id="archive-version-title">${first.title}</h3>
           <div class="archive-copy-rule"></div>
           <p id="archive-version-desc">${first.desc}</p>
           <div class="archive-version-controls">
             <button type="button" data-archive-step="-1" aria-label="查看上一个城市版本">←<span>上一版本</span></button>
-            <strong><span id="archive-current-count">01</span> / ${String(cityVersions.length).padStart(2, "0")}</strong>
+            <strong><span id="archive-current-count">01</span> / <span id="archive-stage-count">06</span></strong>
             <button type="button" data-archive-step="1" aria-label="查看下一个城市版本"><span>下一版本</span>→</button>
           </div>
         </div>
@@ -518,20 +541,13 @@ function archiveVersionsTemplate(section) {
 
       <nav class="archive-version-strip" aria-label="城市版本选择">
         ${cityVersions.map((version, index) => `
-          <button class="${index === 0 ? "active" : ""}" type="button" data-archive-index="${index}" aria-label="查看版本${String(index + 1).padStart(2, "0")}：${version.title}" aria-pressed="${index === 0}">
-            <small>${version.era}</small><strong>${String(index + 1).padStart(2, "0")}</strong><span>${version.source}</span>
+          <button class="${index === 0 ? "active" : ""}" type="button" data-archive-index="${index}" data-archive-era="${cityEras.findIndex((item) => index >= item.start && index <= item.end)}" aria-label="查看版本${String(index + 1).padStart(2, "0")}：${version.title}" aria-pressed="${index === 0}" ${index > cityEras[0].end ? "hidden" : ""}>
+            <small>${version.date.slice(5)}</small><strong>${String(index + 1).padStart(2, "0")}</strong><span>原始 ${version.source}</span>
           </button>
         `).join("")}
       </nav>
 
-      <section class="archive-eras">
-        <header><p>DEVELOPMENT PHASES</p><h3>城市发展阶段</h3></header>
-        <div class="archive-era-grid">
-          ${eras.map(([range, title, desc], index) => `
-            <article><span>${String(index + 1).padStart(2, "0")}</span><small>VERSION ${range}</small><h4>${title}</h4><p>${desc}</p></article>
-          `).join("")}
-        </div>
-      </section>
+      <p class="archive-date-note">时间说明：以上日期为对应图片在“25格”资料目录中的创建日期，不等同于城市设定中的法定竣工或投用日期。</p>
     </section>
   `;
 }
@@ -1095,6 +1111,7 @@ async function render() {
   }
   if (isArchiveVersionsPage) {
     let archiveIndex = 0;
+    let archiveStageIndex = 0;
     const image = document.querySelector("#archive-version-image");
     const versionNumber = document.querySelector("#archive-version-number");
     const sourceNumber = document.querySelector("#archive-version-source");
@@ -1102,10 +1119,17 @@ async function render() {
     const title = document.querySelector("#archive-version-title");
     const description = document.querySelector("#archive-version-desc");
     const currentCount = document.querySelector("#archive-current-count");
+    const stageCount = document.querySelector("#archive-stage-count");
+    const dateCaption = document.querySelector("#archive-version-date-caption");
+    const stageRange = document.querySelector("#archive-stage-range");
+    const stageTitle = document.querySelector("#archive-stage-title");
+    const stageDescription = document.querySelector("#archive-stage-desc");
     const versionButtons = [...document.querySelectorAll("[data-archive-index]")];
+    const stageButtons = [...document.querySelectorAll("[data-archive-stage]")];
 
     const showArchiveVersion = (nextIndex) => {
-      archiveIndex = (nextIndex + cityVersions.length) % cityVersions.length;
+      const currentStage = cityEras[archiveStageIndex];
+      archiveIndex = nextIndex < currentStage.start ? currentStage.end : nextIndex > currentStage.end ? currentStage.start : nextIndex;
       const version = cityVersions[archiveIndex];
       const displayNumber = String(archiveIndex + 1).padStart(2, "0");
       const nextSource = `assets/archive/versions/zezhou-version-${displayNumber}.webp`;
@@ -1115,10 +1139,11 @@ async function render() {
         image.alt = `泽州市城市版本${displayNumber}：${version.title}`;
         versionNumber.textContent = `VERSION ${displayNumber}`;
         sourceNumber.textContent = `原始编号 ${version.source}`;
-        era.textContent = version.era;
+        era.textContent = `${version.era} · ${version.date}`;
         title.textContent = version.title;
         description.textContent = version.desc;
-        currentCount.textContent = displayNumber;
+        dateCaption.textContent = version.date;
+        currentCount.textContent = String(archiveIndex - currentStage.start + 1).padStart(2, "0");
         versionButtons.forEach((button, index) => {
           const active = index === archiveIndex;
           button.classList.toggle("active", active);
@@ -1132,8 +1157,29 @@ async function render() {
       }, 180);
     };
 
+    const showArchiveStage = (nextStageIndex) => {
+      archiveStageIndex = nextStageIndex;
+      const nextStage = cityEras[archiveStageIndex];
+      stageButtons.forEach((button, index) => {
+        const active = index === archiveStageIndex;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+      versionButtons.forEach((button) => {
+        button.hidden = Number(button.dataset.archiveEra) !== archiveStageIndex;
+      });
+      stageRange.textContent = `当前阶段 / VERSION ${nextStage.range}`;
+      stageTitle.textContent = nextStage.title;
+      stageDescription.textContent = nextStage.desc;
+      stageCount.textContent = String(nextStage.end - nextStage.start + 1).padStart(2, "0");
+      showArchiveVersion(nextStage.start);
+    };
+
     versionButtons.forEach((button) => {
       button.addEventListener("click", () => showArchiveVersion(Number(button.dataset.archiveIndex)));
+    });
+    stageButtons.forEach((button) => {
+      button.addEventListener("click", () => showArchiveStage(Number(button.dataset.archiveStage)));
     });
     document.querySelectorAll("[data-archive-step]").forEach((button) => {
       button.addEventListener("click", () => showArchiveVersion(archiveIndex + Number(button.dataset.archiveStep)));
