@@ -7,7 +7,7 @@ const sections = [
   { slug: "facilities", title: "城市设施", en: "Public Facilities", desc: "政务、教育、医疗、文化与市政设施", mark: "06" },
   { slug: "life", title: "城市生活", en: "City Life", desc: "商圈、旅游、城市文化与影像记录", mark: "07" },
   { slug: "news", title: "新闻公告", en: "News & Notices", desc: "城市新闻、工程进展、交通调整与规划公示", mark: "08" },
-  { slug: "archives", title: "建设档案", en: "Development Archive", desc: "存档版本、建设日志、规划方案与创作手记", mark: "09" }
+  { slug: "archives", title: "建设档案", en: "Development Archive", desc: "城市版本、建设日志、规划方案与历史资料", mark: "09" }
 ];
 
 const submenus = {
@@ -19,7 +19,7 @@ const submenus = {
   facilities: ["政府机关", "教育", "医疗", "文化体育", "公园绿地", "市政设施"],
   life: ["城市商圈", "旅游景点", "城市文化", "节庆活动", "城市影像"],
   news: ["泽州要闻", "工程公告", "交通调整", "规划公示"],
-  archives: ["城市版本", "建设日志", "规划方案", "游戏截图", "设定说明"]
+  archives: ["城市版本", "建设日志", "规划方案", "城市影像", "资料说明"]
 };
 
 const submenuSlugs = {
@@ -45,7 +45,7 @@ const busNumbering = [
   { range: "1—99", title: "市区常规线路", en: "URBAN SERVICE", desc: "承担中心城区日常通勤与片区间基础接驳。" },
   { range: "101—199", title: "市区长距离线路", en: "URBAN LIMITED", desc: "服务跨片区长距离出行，并可采用大站停靠等组织方式。" },
   { range: "201—299", title: "市郊连接线路", en: "SUBURBAN LINK", desc: "连接中心城区与近郊组团、交通节点及外围街道。" },
-  { range: "301—999", title: "郊区分区线路", en: "OUTER DISTRICT", desc: "以百位数字区分服务片区；3字头用于三山区东郊街道，其他号段随各郊区线路建设启用。" }
+  { range: "301—999", title: "郊区分区线路", en: "OUTER DISTRICT", desc: "以百位数字区分不同郊区的公交服务片区。" }
 ];
 
 const busRoute301 = {
@@ -55,12 +55,14 @@ const busRoute301 = {
     ["滨郊南路", "shared"],
     ["古林南", "shared"],
     ["古林北", "shared"],
+    ["林郊大道·锦郊路", "shared"],
     ["林郊大道·文郊东路", "outbound-only"],
     ["东郊地铁站", "shared"]
   ],
   inbound: [
     ["东郊地铁站", "shared"],
     ["林郊大道·文郊西路", "inbound-only"],
+    ["林郊大道·锦郊路", "shared"],
     ["古林北", "shared"],
     ["古林南", "shared"],
     ["滨郊南路", "shared"]
@@ -260,8 +262,8 @@ function homeTemplate() {
       <div class="hero-river" aria-hidden="true"></div>
       <div class="shell hero-content">
         <p class="eyebrow">ZEZHOU CITY · 泽州市</p>
-        <h1>泽州市，<br>一座拥有真实脉络的虚构城市。</h1>
-        <p class="hero-lead">这里将记录泽州市的空间、交通、地名、生活与成长。当前为网站一级栏目架构预览。</p>
+        <h1>泽州市，<br>山水交织的现代都市。</h1>
+        <p class="hero-lead">汇集泽州市空间规划、公共交通、道路地名与城市生活信息，为市民和游客提供清晰便捷的城市指引。</p>
         <div class="hero-actions">
           <a href="#overview">认识泽州市</a>
           <a href="#map" class="ghost">打开城市地图</a>
@@ -272,7 +274,7 @@ function homeTemplate() {
     <section class="directory shell">
       <div class="section-heading">
         <div><p>EXPLORE THE CITY</p><h2>城市导航</h2></div>
-        <span>九个一级栏目已经建立，具体内容将在后续逐步填充。</span>
+        <span>按主题浏览城市概况、公共服务、交通出行与建设信息。</span>
       </div>
       <div class="section-grid">
         ${sections.map((section) => `
@@ -374,10 +376,10 @@ function secondaryTemplate(section, secondaryIndex) {
     <section class="placeholder shell section-drawer">
       <div class="placeholder-panel">
         <span class="placeholder-mark" aria-hidden="true">${section.mark}</span>
-        <p>CONTENT RESERVED</p>
+        <p>PUBLIC INFORMATION</p>
         <h2>${title}</h2>
         <div class="rule"></div>
-        <span>${section.title} · ${title}的详细资料将在后续补充。</span>
+        <span>本栏目当前暂无可公开信息。</span>
       </div>
     </section>
   `;
@@ -463,7 +465,7 @@ function districtsTemplate(section) {
       <div class="districts-heading">
         <p>DISTRICTS OF ZEZHOU</p>
         <h2>泽州市行政区</h2>
-        <span>各行政区详细资料将在后续建设中逐步补充。</span>
+        <span>按行政区浏览区域概况、公共服务与交通信息。</span>
       </div>
       <div class="district-grid">
         ${districts.map((district) => `
@@ -472,8 +474,8 @@ function districtsTemplate(section) {
             <small>${district.en}</small>
             <h3>${district.name}</h3>
             <div class="district-rule"></div>
-            <p>区域简介、人口面积、行政驻地、交通设施等内容暂待补充。</p>
-            <span class="district-status">资料建设中</span>
+            <p>本栏目收录区域概况、行政驻地、公共设施和交通服务等信息。</p>
+            <span class="district-status">区域信息</span>
           </article>
         `).join("")}
       </div>
@@ -579,42 +581,56 @@ function busTemplate(section) {
       <header class="bus-page-heading">
         <p>ZEZHOU CITY BUS</p>
         <h2>公交线路与编号体系</h2>
-        <span>泽州市公交线路使用1至999号。线路编号兼具识别与分区功能，乘客可由号码快速判断线路的主要服务范围。</span>
       </header>
 
-      <section class="bus-numbering" aria-label="公交线路编号规则">
-        ${busNumbering.map((item) => `
-          <article>
+      <div class="bus-numbering" role="tablist" aria-label="按编号范围查看公交线路">
+        ${busNumbering.map((item, index) => `
+          <button class="bus-number-tab" type="button" role="tab" aria-selected="false"
+            aria-controls="bus-range-panel-${index}" data-bus-range="${index}">
             <span>${item.range}</span>
             <small>${item.en}</small>
             <h3>${item.title}</h3>
             <p>${item.desc}</p>
-          </article>
+            <b aria-hidden="true">查看线路 →</b>
+          </button>
         `).join("")}
-      </section>
+      </div>
 
-      <article class="bus-route-card">
-        <header class="bus-route-header">
-          <div class="bus-route-number"><small>BUS</small><strong>${busRoute301.number}</strong></div>
-          <div>
-            <p>OUTER DISTRICT SERVICE · SANSHAN</p>
-            <h2>${busRoute301.number}路</h2>
-            <span>${busRoute301.type} · 双向运营 · 非环线</span>
-          </div>
-          <div class="bus-route-termini">
-            <span>滨郊南路</span><i>⇄</i><span>东郊地铁站</span>
-          </div>
-        </header>
-        <div class="bus-direction-grid">
-          ${busDirectionTemplate("滨郊南路 → 东郊地铁站", "outbound", busRoute301.outbound)}
-          ${busDirectionTemplate("东郊地铁站 → 滨郊南路", "inbound", busRoute301.inbound)}
-        </div>
-        <footer class="bus-route-note">
-          <span><i class="shared-sample"></i>双向共同停靠</span>
-          <span><i class="direction-sample"></i>方向性停靠站</span>
-          <p>林郊大道沿线采用分向设站：去程停靠文郊东路站，返程停靠文郊西路站。</p>
-        </footer>
-      </article>
+      <div class="bus-range-results" aria-live="polite">
+        <div class="bus-range-prompt">请选择上方编号范围查看线路。</div>
+        ${busNumbering.slice(0, 3).map((item, index) => `
+          <section class="bus-range-panel" id="bus-range-panel-${index}" data-bus-panel="${index}" role="tabpanel" hidden>
+            <div class="bus-range-empty"><small>${item.en}</small><h3>${item.range}</h3><p>该编号范围当前暂无已公布线路。</p></div>
+          </section>
+        `).join("")}
+        <section class="bus-range-panel" id="bus-range-panel-3" data-bus-panel="3" role="tabpanel" hidden>
+          <article class="bus-route-card">
+            <header class="bus-route-header">
+              <div class="bus-route-number"><small>BUS</small><strong>${busRoute301.number}</strong></div>
+              <div>
+                <p>OUTER DISTRICT SERVICE · SANSHAN</p>
+                <h2>${busRoute301.number}路</h2>
+                <span>${busRoute301.type} · 双向运营 · 非环线</span>
+              </div>
+              <button class="bus-direction-toggle" type="button" data-bus-direction="outbound"
+                aria-label="切换至返程方向">
+                <span data-direction-start>滨郊南路</span><i>→</i><span data-direction-end>东郊地铁站</span>
+                <small>点击切换方向</small>
+              </button>
+            </header>
+            <div class="bus-direction-view">
+              ${busDirectionTemplate("滨郊南路 → 东郊地铁站", "outbound", busRoute301.outbound)}
+              <div data-bus-inbound hidden>
+                ${busDirectionTemplate("东郊地铁站 → 滨郊南路", "inbound", busRoute301.inbound)}
+              </div>
+            </div>
+            <footer class="bus-route-note">
+              <span><i class="shared-sample"></i>双向共同停靠</span>
+              <span><i class="direction-sample"></i>方向性停靠站</span>
+            </footer>
+          </article>
+        </section>
+      </div>
     </section>
   `;
 }
@@ -653,7 +669,7 @@ function metroLineDiagram(line) {
         ${stationCards}
       </div>
     </div>
-    <p class="metro-note">线路及站名根据当前规划图整理；“规划车站/规划终点（暂定名）”表示原图尚未给出正式站名。</p>
+    <p class="metro-note">部分规划站点尚未正式命名，页面统一以“暂定名”标识，最终名称以正式公告为准。</p>
   `;
 }
 
@@ -819,6 +835,48 @@ async function render() {
         });
         lineView.innerHTML = metroLineDiagram(line);
         lineView.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  }
+  if (isBusPage) {
+    const busPrompt = document.querySelector(".bus-range-prompt");
+    const busTabs = document.querySelectorAll(".bus-number-tab");
+    const busPanels = document.querySelectorAll(".bus-range-panel");
+    busTabs.forEach((button) => {
+      button.addEventListener("click", () => {
+        const selectedRange = button.dataset.busRange;
+        busTabs.forEach((item) => {
+          const selected = item === button;
+          item.classList.toggle("active", selected);
+          item.setAttribute("aria-selected", String(selected));
+        });
+        busPanels.forEach((panel) => {
+          panel.hidden = panel.dataset.busPanel !== selectedRange;
+        });
+        if (busPrompt) busPrompt.hidden = true;
+      });
+    });
+
+    const directionToggle = document.querySelector(".bus-direction-toggle");
+    directionToggle?.addEventListener("click", () => {
+      const showInbound = directionToggle.dataset.busDirection === "outbound";
+      const outbound = document.querySelector(".bus-direction-outbound");
+      const inboundWrap = document.querySelector("[data-bus-inbound]");
+      if (outbound) outbound.hidden = showInbound;
+      if (inboundWrap) inboundWrap.hidden = !showInbound;
+      directionToggle.dataset.busDirection = showInbound ? "inbound" : "outbound";
+      directionToggle.querySelector("[data-direction-start]").textContent = showInbound ? "东郊地铁站" : "滨郊南路";
+      directionToggle.querySelector("[data-direction-end]").textContent = showInbound ? "滨郊南路" : "东郊地铁站";
+      directionToggle.setAttribute("aria-label", showInbound ? "切换至去程方向" : "切换至返程方向");
+      const activeDirection = showInbound
+        ? inboundWrap?.querySelector(".bus-direction")
+        : outbound;
+      activeDirection?.animate([
+        { opacity: 0, transform: "translateX(22px)" },
+        { opacity: 1, transform: "translateX(0)" }
+      ], {
+        duration: 360,
+        easing: "cubic-bezier(.2,.78,.2,1)"
       });
     });
   }
