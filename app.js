@@ -346,6 +346,48 @@ function lowerBackButtonTemplate(section, backRoute = null) {
   `;
 }
 
+function adjacentColumn(section, secondaryIndex, offset) {
+  let sectionIndex = sections.findIndex((item) => item.slug === section.slug);
+  let targetIndex = secondaryIndex + offset;
+
+  if (targetIndex < 0) {
+    sectionIndex = (sectionIndex - 1 + sections.length) % sections.length;
+    targetIndex = submenus[sections[sectionIndex].slug].length - 1;
+  } else if (targetIndex >= submenus[section.slug].length) {
+    sectionIndex = (sectionIndex + 1) % sections.length;
+    targetIndex = 0;
+  }
+
+  const targetSection = sections[sectionIndex];
+  return {
+    section: targetSection,
+    index: targetIndex,
+    title: submenus[targetSection.slug][targetIndex],
+    href: submenuHref(targetSection.slug, targetIndex)
+  };
+}
+
+function columnSwitcherTemplate(section, secondaryIndex, position) {
+  const previous = adjacentColumn(section, secondaryIndex, -1);
+  const next = adjacentColumn(section, secondaryIndex, 1);
+  const itemTemplate = (item, direction) => `
+    <a class="column-switcher-link column-switcher-${direction}" href="${item.href}">
+      ${direction === "previous" ? '<span class="column-switcher-arrow" aria-hidden="true">←</span>' : ""}
+      <span class="column-switcher-copy">
+        <small>${direction === "previous" ? "上一栏目" : "下一栏目"}</small>
+        <strong><em>${item.section.title}</em><i>/</i>${item.title}</strong>
+      </span>
+      ${direction === "next" ? '<span class="column-switcher-arrow" aria-hidden="true">→</span>' : ""}
+    </a>`;
+
+  return `
+    <nav class="column-switcher column-switcher-${position}" aria-label="相邻栏目快捷导航">
+      ${itemTemplate(previous, "previous")}
+      ${itemTemplate(next, "next")}
+    </nav>
+  `;
+}
+
 function sectionTemplate(section) {
   return sectionHeroTemplate(section);
 }
@@ -585,7 +627,7 @@ function busTemplate(section) {
 
       <div class="bus-numbering" role="tablist" aria-label="按编号范围查看公交线路">
         ${busNumbering.map((item, index) => `
-          <button class="bus-number-tab" type="button" role="tab" aria-selected="false"
+          <button class="bus-number-tab${index === 0 ? " active" : ""}" type="button" role="tab" aria-selected="${index === 0}"
             aria-controls="bus-range-panel-${index}" data-bus-range="${index}">
             <span>${item.range}</span>
             <small>${item.en}</small>
@@ -597,9 +639,8 @@ function busTemplate(section) {
       </div>
 
       <div class="bus-range-results" aria-live="polite">
-        <div class="bus-range-prompt">请选择上方编号范围查看线路。</div>
         ${busNumbering.slice(0, 3).map((item, index) => `
-          <section class="bus-range-panel" id="bus-range-panel-${index}" data-bus-panel="${index}" role="tabpanel" hidden>
+          <section class="bus-range-panel" id="bus-range-panel-${index}" data-bus-panel="${index}" role="tabpanel"${index === 0 ? "" : " hidden"}>
             <div class="bus-range-empty"><small>${item.en}</small><h3>${item.range}</h3><p>该编号范围当前暂无已公布线路。</p></div>
           </section>
         `).join("")}
@@ -799,10 +840,18 @@ async function render() {
       ? newsSection
       : secondaryRoute?.section;
   if (parentSection) {
+    const activeColumnIndex = isNewsArticle
+      ? 0
+      : newsCategory
+        ? newsCategories.findIndex((item) => item.slug === newsCategory.slug)
+        : secondaryRoute.index;
+    const drawer = app.querySelector(".section-drawer");
     const backRoute = isNewsArticle
       ? { href: "#news-zezhou", label: "泽州要闻" }
       : null;
-    app.querySelector(".section-drawer")?.insertAdjacentHTML("beforeend", lowerBackButtonTemplate(parentSection, backRoute));
+    drawer?.insertAdjacentHTML("afterbegin", columnSwitcherTemplate(parentSection, activeColumnIndex, "top"));
+    drawer?.insertAdjacentHTML("beforeend", columnSwitcherTemplate(parentSection, activeColumnIndex, "bottom"));
+    drawer?.insertAdjacentHTML("beforeend", lowerBackButtonTemplate(parentSection, backRoute));
   }
   if (secondaryGrid || isReturningUp) {
     window.setTimeout(() => {
