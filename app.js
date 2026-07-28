@@ -513,14 +513,14 @@ function archiveVersionsTemplate(section) {
         `).join("")}
       </nav>
       <section class="archive-stage-summary" aria-live="polite">
-        <div><small id="archive-stage-range">当前阶段 / VERSION ${cityEras[0].range}</small><h3 id="archive-stage-title">${cityEras[0].title}</h3></div>
-        <p id="archive-stage-desc">${cityEras[0].desc}</p>
+        <span class="archive-stage-watermark" id="archive-stage-watermark">01</span>
+        <div class="archive-stage-summary-title"><small id="archive-stage-range">当前阶段 / VERSION ${cityEras[0].range}</small><h3 id="archive-stage-title">${cityEras[0].title}</h3></div>
+        <div class="archive-stage-summary-copy"><b>DEVELOPMENT CHRONICLE</b><p id="archive-stage-desc">${cityEras[0].desc}</p></div>
       </section>
 
       <article class="archive-viewer">
         <figure class="archive-image-frame">
           <img id="archive-version-image" src="assets/archive/versions/zezhou-version-01.webp" alt="泽州市城市版本01：${first.title}">
-          <figcaption>原始总览图 · 创建于 <span id="archive-version-date-caption">${first.date}</span></figcaption>
         </figure>
         <div class="archive-version-copy">
           <div class="archive-version-meta">
@@ -1120,10 +1120,10 @@ async function render() {
     const description = document.querySelector("#archive-version-desc");
     const currentCount = document.querySelector("#archive-current-count");
     const stageCount = document.querySelector("#archive-stage-count");
-    const dateCaption = document.querySelector("#archive-version-date-caption");
     const stageRange = document.querySelector("#archive-stage-range");
     const stageTitle = document.querySelector("#archive-stage-title");
     const stageDescription = document.querySelector("#archive-stage-desc");
+    const stageWatermark = document.querySelector("#archive-stage-watermark");
     const versionButtons = [...document.querySelectorAll("[data-archive-index]")];
     const stageButtons = [...document.querySelectorAll("[data-archive-stage]")];
 
@@ -1142,7 +1142,6 @@ async function render() {
         era.textContent = `${version.era} · ${version.date}`;
         title.textContent = version.title;
         description.textContent = version.desc;
-        dateCaption.textContent = version.date;
         currentCount.textContent = String(archiveIndex - currentStage.start + 1).padStart(2, "0");
         versionButtons.forEach((button, index) => {
           const active = index === archiveIndex;
@@ -1171,6 +1170,7 @@ async function render() {
       stageRange.textContent = `当前阶段 / VERSION ${nextStage.range}`;
       stageTitle.textContent = nextStage.title;
       stageDescription.textContent = nextStage.desc;
+      stageWatermark.textContent = String(archiveStageIndex + 1).padStart(2, "0");
       stageCount.textContent = String(nextStage.end - nextStage.start + 1).padStart(2, "0");
       showArchiveVersion(nextStage.start);
     };
