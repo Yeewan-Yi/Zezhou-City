@@ -647,6 +647,7 @@ body.returning-up .page-hero:not(.page-hero-subpage) .page-hero-copy { animation
 }
 .page-hero-subpage + .section-drawer { margin-top: -310px; }
 body.switching-secondary .section-drawer { animation: none; }
+.section-drawer.drawer-horizontal { animation: none; }
 html.switching-secondary { scroll-behavior: auto; }
 html.switching-secondary, body.switching-secondary { overflow-anchor: none; }
 @keyframes drawer-rise {

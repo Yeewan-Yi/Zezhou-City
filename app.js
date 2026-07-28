@@ -981,7 +981,10 @@ async function render() {
     const nextView = document.createElement("template");
     nextView.innerHTML = nextMarkup.trim();
     const nextDrawer = nextView.content.querySelector(".section-drawer");
-    if (nextDrawer) existingDrawer.replaceWith(nextDrawer);
+    if (nextDrawer) {
+      nextDrawer.classList.add("drawer-horizontal");
+      existingDrawer.replaceWith(nextDrawer);
+    }
     const secondaryTitle = isNewsArticle
       ? newsCategories[0].title
       : newsCategory
