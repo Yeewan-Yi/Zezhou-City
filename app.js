@@ -265,10 +265,11 @@ function homeTemplate() {
   `;
 }
 
-function sectionHeroTemplate(section, activeIndex = -1) {
-  const hasHeroImage = ["districts", "roads", "transit", "facilities"].includes(section.slug);
+function sectionHeroTemplate(section, activeIndex = -1, backRoute = null) {
+  const hasHeroImage = ["districts", "roads", "transit", "facilities", "life", "news", "archives"].includes(section.slug);
   const isSubpage = activeIndex >= 0;
   const secondaryTitle = isSubpage ? submenus[section.slug][activeIndex] : "";
+  const parentRoute = backRoute || { href: `#${section.slug}`, label: section.title };
   return `
     <section class="page-hero page-hero-${section.slug}${hasHeroImage ? " page-hero-image" : ""}${isSubpage ? " page-hero-subpage" : ""}">
       <div class="shell page-hero-inner">
@@ -295,9 +296,9 @@ function sectionHeroTemplate(section, activeIndex = -1) {
           `).join("")}
         </nav>`}
         ${isSubpage ? `
-          <a class="level-back level-back-top" href="#${section.slug}" aria-label="返回${section.title}">
+          <a class="level-back level-back-top" href="${parentRoute.href}" aria-label="返回${parentRoute.label}">
             <span class="level-back-icon" aria-hidden="true">←</span>
-            <span><small>RETURN</small><strong>返回${section.title}</strong></span>
+            <span><small>RETURN</small><strong>返回${parentRoute.label}</strong></span>
           </a>
         ` : ""}
       </div>
@@ -305,12 +306,13 @@ function sectionHeroTemplate(section, activeIndex = -1) {
   `;
 }
 
-function lowerBackButtonTemplate(section) {
+function lowerBackButtonTemplate(section, backRoute = null) {
+  const parentRoute = backRoute || { href: `#${section.slug}`, label: section.title };
   return `
     <div class="level-back-footer">
-      <a class="level-back level-back-bottom" href="#${section.slug}" aria-label="返回${section.title}">
+      <a class="level-back level-back-bottom" href="${parentRoute.href}" aria-label="返回${parentRoute.label}">
         <span class="level-back-icon" aria-hidden="true">←</span>
-        <span><small>BACK TO PREVIOUS LEVEL</small><strong>返回${section.title}</strong></span>
+        <span><small>BACK TO PREVIOUS LEVEL</small><strong>返回${parentRoute.label}</strong></span>
       </a>
     </div>
   `;
@@ -389,7 +391,7 @@ function newsCategoryTemplate(section, category) {
 
 function newsArticleTemplate(section) {
   return `
-    ${sectionHeroTemplate(section, 0)}
+    ${sectionHeroTemplate(section, 0, { href: "#news-zezhou", label: "泽州要闻" })}
     <section class="news-page shell section-drawer">
       <article class="news-article">
         <header class="news-article-header">
@@ -579,6 +581,7 @@ async function animateView(keyframes, duration) {
 
 async function render() {
   const version = ++renderVersion;
+  const previousHeroCopyWidth = app.querySelector(".page-hero-copy")?.getBoundingClientRect().width || 0;
   app.getAnimations?.().forEach((animation) => animation.cancel());
   const slug = location.hash.replace(/^#/, "") || "home";
   const section = sections.find((item) => item.slug === slug);
@@ -659,7 +662,23 @@ async function render() {
       ? newsSection
       : secondaryRoute?.section;
   if (parentSection) {
-    app.querySelector(".section-drawer")?.insertAdjacentHTML("beforeend", lowerBackButtonTemplate(parentSection));
+    const backRoute = isNewsArticle
+      ? { href: "#news-zezhou", label: "泽州要闻" }
+      : null;
+    app.querySelector(".section-drawer")?.insertAdjacentHTML("beforeend", lowerBackButtonTemplate(parentSection, backRoute));
+  }
+  const nextHeroCopy = app.querySelector(".page-hero-copy");
+  if (!shouldTransition && previousHeroCopyWidth && nextHeroCopy && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const nextHeroCopyWidth = nextHeroCopy.getBoundingClientRect().width;
+    if (Math.abs(previousHeroCopyWidth - nextHeroCopyWidth) > 2) {
+      nextHeroCopy.animate([
+        { width: `${previousHeroCopyWidth}px` },
+        { width: `${nextHeroCopyWidth}px` }
+      ], {
+        duration: 560,
+        easing: "cubic-bezier(.2,.78,.2,1)"
+      });
+    }
   }
   document.title = isNewsArticle
     ? "泽州市市长专题调研城市官网建设工作｜泽州市门户"
