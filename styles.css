@@ -649,6 +649,7 @@ body.returning-up .page-hero:not(.page-hero-subpage) .page-hero-copy { animation
   animation: drawer-rise .58s cubic-bezier(.2,.8,.2,1) both;
 }
 .page-hero-subpage + .section-drawer { margin-top: -310px; }
+body.switching-secondary .section-drawer { animation: none; }
 @keyframes drawer-rise {
   from { opacity: 0; transform: translateY(180px); }
   to { opacity: 1; transform: translateY(0); }

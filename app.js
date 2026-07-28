@@ -815,6 +815,7 @@ function metroLineDiagram(line) {
 }
 
 let currentPrimaryIndex = null;
+let currentSecondaryIndex = null;
 let renderVersion = 0;
 
 async function animateView(keyframes, duration) {
@@ -857,10 +858,23 @@ async function render() {
   const targetPrimaryIndex = activeSlug === "home"
     ? -1
     : sections.findIndex((item) => item.slug === activeSlug);
+  const targetSecondaryIndex = isNewsArticle
+    ? 0
+    : newsCategory
+      ? newsCategories.findIndex((item) => item.slug === newsCategory.slug)
+      : secondaryRoute?.index ?? null;
   const direction = currentPrimaryIndex === null || targetPrimaryIndex === currentPrimaryIndex
     ? 0
     : targetPrimaryIndex > currentPrimaryIndex ? 1 : -1;
-  const shouldTransition = direction !== 0;
+  const isSecondarySwitch = currentPrimaryIndex === targetPrimaryIndex
+    && currentSecondaryIndex !== null
+    && targetSecondaryIndex !== null
+    && targetSecondaryIndex !== currentSecondaryIndex;
+  const secondaryDirection = isSecondarySwitch
+    ? targetSecondaryIndex > currentSecondaryIndex ? 1 : -1
+    : 0;
+  const transitionDirection = direction || secondaryDirection;
+  const shouldTransition = transitionDirection !== 0;
   const existingDrawer = app.querySelector(".section-drawer");
   const isReturningUp = Boolean(existingDrawer) && (
     Boolean(section) ||
@@ -871,6 +885,7 @@ async function render() {
     : null;
   document.body.classList.toggle("entering-secondary", Boolean(secondaryGrid));
   document.body.classList.toggle("returning-up", isReturningUp);
+  document.body.classList.toggle("switching-secondary", isSecondarySwitch);
 
   if (isReturningUp && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     const drawerExit = existingDrawer.animate([
@@ -910,8 +925,8 @@ async function render() {
     document.body.classList.add("view-transitioning");
     await animateView([
       { opacity: 1, transform: "translateX(0)" },
-      { opacity: 0, transform: `translateX(${direction > 0 ? -64 : 64}px)` }
-    ], 440);
+      { opacity: 0, transform: `translateX(${transitionDirection > 0 ? -64 : 64}px)` }
+    ], isSecondarySwitch ? 380 : 440);
     if (version !== renderVersion) return;
     app.getAnimations?.().forEach((animation) => animation.cancel());
   } else {
@@ -1080,13 +1095,14 @@ async function render() {
   }
   window.scrollTo(0, 0);
   currentPrimaryIndex = targetPrimaryIndex;
+  currentSecondaryIndex = targetSecondaryIndex;
 
   if (shouldTransition) {
     await animateView([
-      { opacity: 0, transform: `translateX(${direction > 0 ? 64 : -64}px)` },
+      { opacity: 0, transform: `translateX(${transitionDirection > 0 ? 64 : -64}px)` },
       { opacity: 1, transform: "translateX(0)" }
-    ], 620);
-    if (version === renderVersion) document.body.classList.remove("view-transitioning");
+    ], isSecondarySwitch ? 500 : 620);
+    if (version === renderVersion) document.body.classList.remove("view-transitioning", "switching-secondary");
   }
 }
 
