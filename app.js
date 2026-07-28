@@ -299,23 +299,6 @@ nav.querySelectorAll(".nav-item").forEach((item) => {
   });
 });
 
-const preloadSectionBackgrounds = () => {
-  [
-    "assets/zezhou-districts.jpg",
-    "assets/zezhou-roads.jpg",
-    "assets/zezhou-public-transit.png",
-    "assets/zezhou-facilities.jpg"
-  ].forEach((src) => {
-    const image = new Image();
-    image.src = src;
-  });
-};
-if ("requestIdleCallback" in window) {
-  window.requestIdleCallback(preloadSectionBackgrounds);
-} else {
-  window.setTimeout(preloadSectionBackgrounds, 300);
-}
-
 function homeTemplate() {
   return `
     <section class="hero">
@@ -520,7 +503,7 @@ function archiveVersionsTemplate(section) {
 
       <article class="archive-viewer">
         <figure class="archive-image-frame">
-          <img id="archive-version-image" src="assets/archive/versions/zezhou-version-01.webp" alt="泽州市城市版本01：${first.title}">
+          <img id="archive-version-image" src="assets/archive/versions/zezhou-version-01.webp" alt="泽州市城市版本01：${first.title}" loading="lazy" decoding="async">
         </figure>
         <div class="archive-version-copy">
           <div class="archive-version-meta">
@@ -664,7 +647,7 @@ function mapTemplate(section) {
       <p class="map-intro">本图展示泽州市现有城市空间、道路、地名、公共设施及已投入使用的地铁线路，是当前城市建设状态的综合记录。</p>
       <figure class="map-figure">
         <div class="map-image-frame">
-          <img src="assets/maps/zezhou-base.svg" alt="泽州市现状城市基础地图">
+          <img src="assets/maps/zezhou-base.svg" alt="泽州市现状城市基础地图" loading="lazy" decoding="async">
         </div>
         <figcaption>
           <span><b class="legend-dot built"></b>已建成：现有城市及运营线路</span>
@@ -707,7 +690,7 @@ function transitTemplate(section) {
         <p class="map-intro">总图用于核对线路走向、站点位置和换乘关系；点击上方线路，可查看更适合站台导向阅读的单线线路图。</p>
         <figure class="map-figure">
           <div class="map-image-frame planned-network">
-            <img src="assets/zezhou-metro-plan.png" alt="泽州市地铁规划线网图">
+            <img src="assets/zezhou-metro-plan.png" alt="泽州市地铁规划线网图" loading="lazy" decoding="async">
           </div>
           <figcaption>
             <span><b class="legend-dot planned"></b>泽州市地铁规划方案</span>
@@ -1150,9 +1133,13 @@ async function render() {
         });
         versionButtons[archiveIndex]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
         window.requestAnimationFrame(() => image.classList.remove("changing"));
-        const preloadIndex = (archiveIndex + 1) % cityVersions.length;
-        const preload = new Image();
-        preload.src = `assets/archive/versions/zezhou-version-${String(preloadIndex + 1).padStart(2, "0")}.webp`;
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        const shouldPreload = !connection?.saveData && !["slow-2g", "2g"].includes(connection?.effectiveType);
+        if (shouldPreload && archiveIndex < currentStage.end) {
+          const preload = new Image();
+          preload.decoding = "async";
+          preload.src = `assets/archive/versions/zezhou-version-${String(archiveIndex + 2).padStart(2, "0")}.webp`;
+        }
       }, 180);
     };
 
