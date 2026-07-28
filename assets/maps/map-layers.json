@@ -1,0 +1,64 @@
+{
+  "name": "泽州市现状地图",
+  "coordinateSystem": {
+    "type": "local",
+    "viewBox": [1820, 1820, 4551, 4551],
+    "displaySize": [1024, 1024],
+    "northUp": true
+  },
+  "sources": {
+    "base": "zezhou-base.svg",
+    "transportFull": "zezhou-transport-full.svg"
+  },
+  "svgLayers": [
+    {
+      "id": "group_terrain",
+      "name": "地形",
+      "geometry": "polygon",
+      "pathCount": 869
+    },
+    {
+      "id": "group_water",
+      "name": "水域",
+      "geometry": "polygon",
+      "pathCount": 20
+    },
+    {
+      "id": "group_building",
+      "name": "建筑",
+      "geometry": "polygon",
+      "pathCount": 121
+    },
+    {
+      "id": "group_road",
+      "name": "道路",
+      "geometry": "line",
+      "pathCount": 16019
+    },
+    {
+      "id": "group_railway",
+      "name": "轨道交通",
+      "geometry": "line",
+      "pathCountBase": 0,
+      "pathCountTransportFull": 5
+    },
+    {
+      "id": "group_mapsymbol",
+      "name": "地图符号",
+      "geometry": "symbol",
+      "pathCount": 0
+    },
+    {
+      "id": "group_text",
+      "name": "地图标注",
+      "geometry": "text",
+      "textCountBase": 814,
+      "textCountTransportFull": 810
+    }
+  ],
+  "labelClasses": {
+    "district": 9,
+    "building": 73,
+    "road": 325
+  }
+}

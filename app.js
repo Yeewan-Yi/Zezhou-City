@@ -539,11 +539,11 @@ function mapTemplate(section) {
       <p class="map-intro">本图展示泽州市现有城市空间、道路、地名、公共设施及已投入使用的地铁线路，是当前城市建设状态的综合记录。</p>
       <figure class="map-figure">
         <div class="map-image-frame">
-          <img src="assets/zezhou-current-map.svg" alt="泽州市现状城市地图及已建成地铁线路">
+          <img src="assets/maps/zezhou-base.svg" alt="泽州市现状城市基础地图">
         </div>
         <figcaption>
           <span><b class="legend-dot built"></b>已建成：现有城市及运营线路</span>
-          <a href="assets/zezhou-current-map.svg" target="_blank" rel="noopener">打开原尺寸地图 ↗</a>
+          <a href="assets/maps/zezhou-base.svg" target="_blank" rel="noopener">打开原尺寸地图 ↗</a>
         </figcaption>
       </figure>
     </section>
