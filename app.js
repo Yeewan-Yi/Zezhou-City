@@ -546,7 +546,6 @@ function archiveVersionsTemplate(section) {
         <div class="archive-version-copy">
           <div class="archive-version-meta">
             <span id="archive-version-number">VERSION 01</span>
-            <small id="archive-version-source">原始编号 ${first.source}</small>
           </div>
           <p id="archive-version-era">${first.era} · ${first.date}</p>
           <h3 id="archive-version-title">${first.title}</h3>
@@ -563,7 +562,7 @@ function archiveVersionsTemplate(section) {
       <nav class="archive-version-strip" aria-label="城市版本选择">
         ${cityVersions.map((version, index) => `
           <button class="${index === 0 ? "active" : ""}" type="button" data-archive-index="${index}" data-archive-era="${cityEras.findIndex((item) => index >= item.start && index <= item.end)}" aria-label="查看版本${String(index + 1).padStart(2, "0")}：${version.title}" aria-pressed="${index === 0}" ${index > cityEras[0].end ? "hidden" : ""}>
-            <small>${version.date.slice(5)}</small><strong>${String(index + 1).padStart(2, "0")}</strong><span>原始 ${version.source}</span>
+            <small>${version.date.slice(5)}</small><strong>${String(index + 1).padStart(2, "0")}</strong>
           </button>
         `).join("")}
       </nav>
@@ -1141,7 +1140,6 @@ async function render() {
     const stageHandleTitle = document.querySelector("#archive-stage-handle-title");
     const loadedArchiveSources = new Set([image?.getAttribute("src")]);
     const versionNumber = document.querySelector("#archive-version-number");
-    const sourceNumber = document.querySelector("#archive-version-source");
     const era = document.querySelector("#archive-version-era");
     const title = document.querySelector("#archive-version-title");
     const description = document.querySelector("#archive-version-desc");
@@ -1152,8 +1150,8 @@ async function render() {
     const stageDescription = document.querySelector("#archive-stage-desc");
     const stageWatermark = document.querySelector("#archive-stage-watermark");
     const versionButtons = [...document.querySelectorAll("[data-archive-index]")];
+    const versionStrip = document.querySelector(".archive-version-strip");
     const stageButtons = [...document.querySelectorAll("[data-archive-stage]")];
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     const stopArchiveRotation = () => {
       window.clearTimeout(archiveRotationTimer);
@@ -1162,7 +1160,7 @@ async function render() {
 
     const scheduleArchiveRotation = () => {
       stopArchiveRotation();
-      if (document.hidden || reducedMotion.matches || viewer.matches(":hover") || viewer.matches(":focus-within")) return;
+      if (document.hidden) return;
       archiveRotationTimer = window.setTimeout(() => showArchiveVersion(archiveIndex + 1), 4000);
     };
 
@@ -1181,7 +1179,6 @@ async function render() {
         image.src = nextSource;
         image.alt = `泽州市城市版本${displayNumber}：${version.title}`;
         versionNumber.textContent = `VERSION ${displayNumber}`;
-        sourceNumber.textContent = `原始编号 ${version.source}`;
         era.textContent = `${version.era} · ${version.date}`;
         title.textContent = version.title;
         description.textContent = version.desc;
@@ -1191,7 +1188,13 @@ async function render() {
           button.classList.toggle("active", active);
           button.setAttribute("aria-pressed", String(active));
         });
-        versionButtons[targetIndex]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+        const activeVersionButton = versionButtons[targetIndex];
+        if (activeVersionButton) {
+          versionStrip.scrollTo({
+            left: activeVersionButton.offsetLeft - (versionStrip.clientWidth - activeVersionButton.offsetWidth) / 2,
+            behavior: "smooth"
+          });
+        }
         window.requestAnimationFrame(() => image.classList.remove("changing"));
         scheduleArchiveRotation();
         const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
@@ -1214,7 +1217,10 @@ async function render() {
           commitVersion();
         };
         loader.onerror = () => {
-          if (requestId === archiveRequestId) image.classList.remove("changing");
+          if (requestId === archiveRequestId) {
+            image.classList.remove("changing");
+            scheduleArchiveRotation();
+          }
         };
         loader.src = nextSource;
       }
@@ -1239,7 +1245,12 @@ async function render() {
       stageHandleTitle.textContent = nextStage.title;
       stageCount.textContent = String(nextStage.end - nextStage.start + 1).padStart(2, "0");
       showArchiveVersion(nextStage.start);
-      window.requestAnimationFrame(() => viewer.scrollIntoView({ behavior: "smooth", block: "start" }));
+      window.requestAnimationFrame(() => {
+        window.scrollTo({
+          top: window.scrollY + viewer.getBoundingClientRect().top - 12,
+          behavior: "smooth"
+        });
+      });
     };
 
     versionButtons.forEach((button) => {
@@ -1248,8 +1259,16 @@ async function render() {
         showArchiveVersion(Number(button.dataset.archiveIndex));
       });
     });
+    const closeStageOverlay = () => {
+      stageOverlay.classList.remove("open");
+      stageHandle.setAttribute("aria-expanded", "false");
+      stageHandle.querySelector("em").textContent = "展开";
+    };
     stageButtons.forEach((button) => {
-      button.addEventListener("click", () => showArchiveStage(Number(button.dataset.archiveStage)));
+      button.addEventListener("click", () => {
+        showArchiveStage(Number(button.dataset.archiveStage));
+        closeStageOverlay();
+      });
     });
     document.querySelectorAll("[data-archive-step]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -1263,15 +1282,9 @@ async function render() {
       stageHandle.querySelector("em").textContent = isOpen ? "收起" : "展开";
     });
     stageOverlay.addEventListener("mouseleave", () => {
-      stageOverlay.classList.remove("open");
-      stageHandle.setAttribute("aria-expanded", "false");
-      stageHandle.querySelector("em").textContent = "展开";
+      closeStageOverlay();
       if (stageOverlay.contains(document.activeElement)) document.activeElement.blur();
     });
-    viewer.addEventListener("mouseenter", stopArchiveRotation);
-    viewer.addEventListener("mouseleave", scheduleArchiveRotation);
-    viewer.addEventListener("focusin", stopArchiveRotation);
-    viewer.addEventListener("focusout", () => window.setTimeout(scheduleArchiveRotation, 0));
     document.addEventListener("visibilitychange", scheduleArchiveRotation);
     scheduleArchiveRotation();
   }
