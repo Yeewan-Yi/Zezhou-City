@@ -261,7 +261,22 @@ const metroEnglishNames = {
 const app = document.querySelector("#app");
 const nav = document.querySelector("#primary-nav");
 
+function selectBusMapStop(stop) {
+  app.querySelectorAll(".bus-map-stop").forEach((item) => {
+    item.classList.toggle("active", item.dataset.mapStop === stop.dataset.mapStop);
+  });
+  const mapStopName = app.querySelector("[data-map-stop-name]");
+  const mapStopKind = app.querySelector("[data-map-stop-kind]");
+  if (mapStopName) mapStopName.textContent = stop.dataset.mapStop;
+  if (mapStopKind) mapStopKind.textContent = stop.dataset.mapStopType;
+}
+
 app.addEventListener("click", (event) => {
+  const mapStop = event.target.closest(".bus-map-stop, .bus-map-hotspot");
+  if (mapStop) {
+    selectBusMapStop(mapStop);
+    return;
+  }
   const link = event.target.closest(".column-switcher-link");
   if (!link || currentPrimaryIndex === null || currentPrimaryIndex < 0) return;
   const currentSection = sections[currentPrimaryIndex];
@@ -269,6 +284,13 @@ app.addEventListener("click", (event) => {
   event.preventDefault();
   history.pushState(null, "", link.getAttribute("href"));
   render();
+});
+
+app.addEventListener("keydown", (event) => {
+  const mapStop = event.target.closest(".bus-map-stop");
+  if (!mapStop || (event.key !== "Enter" && event.key !== " ")) return;
+  event.preventDefault();
+  selectBusMapStop(mapStop);
 });
 
 function submenuHref(sectionSlug, index) {
@@ -760,6 +782,15 @@ function busDirectionTemplate(label, direction, stations) {
 }
 
 function busLocalMapTemplate() {
+  const mapStops = [
+    { name: "滨郊南路", x: 850.1, y: 302.8, labelX: 854.5, labelY: 306.2, anchor: "start", type: "首末站 · 双向停靠" },
+    { name: "古林南", x: 849.2, y: 280.7, labelX: 853.6, labelY: 283.8, anchor: "start", type: "中途站 · 双向停靠" },
+    { name: "古林北", x: 848.7, y: 266.4, labelX: 853.1, labelY: 269.5, anchor: "start", type: "中途站 · 双向停靠" },
+    { name: "林郊大道·锦郊路", x: 848.2, y: 251.3, labelX: 852.6, labelY: 254.4, anchor: "start", type: "中途站 · 双向停靠" },
+    { name: "林郊大道·文郊东路", x: 842.1, y: 212.8, labelX: 846.5, labelY: 217.3, anchor: "start", type: "方向性站点 · 仅去程停靠" },
+    { name: "林郊大道·文郊西路", x: 839.2, y: 210.3, labelX: 834.8, labelY: 207.1, anchor: "end", type: "方向性站点 · 仅返程停靠" },
+    { name: "东郊地铁站", x: 824.8, y: 176.1, labelX: 829.3, labelY: 173.2, anchor: "start", type: "首末站 · 双向停靠 · 地铁接驳" }
+  ];
   return `
     <figure class="bus-local-map-card">
       <header>
@@ -771,37 +802,52 @@ function busLocalMapTemplate() {
           <title id="bus-301-map-title">301路公交局部线路图</title>
           <desc id="bus-301-map-desc">展示滨郊南路至东郊地铁站的去程和返程站点、方向性停靠站及线路轨迹。</desc>
           <defs>
-            <marker id="bus-arrow-outbound" markerUnits="userSpaceOnUse" markerWidth="4" markerHeight="4" refX="3.4" refY="2" orient="auto">
-              <path d="M0,0 L4,2 L0,4 Z" fill="#176058"/>
+            <marker id="bus-arrow-outbound" markerUnits="userSpaceOnUse" markerWidth="3" markerHeight="3" refX="2.6" refY="1.5" orient="auto">
+              <path d="M0,0 L3,1.5 L0,3 Z" fill="#176058"/>
             </marker>
-            <marker id="bus-arrow-inbound" markerUnits="userSpaceOnUse" markerWidth="4" markerHeight="4" refX="3.4" refY="2" orient="auto">
-              <path d="M0,0 L4,2 L0,4 Z" fill="#d29a35"/>
+            <marker id="bus-arrow-inbound" markerUnits="userSpaceOnUse" markerWidth="3" markerHeight="3" refX="2.6" refY="1.5" orient="auto">
+              <path d="M0,0 L3,1.5 L0,3 Z" fill="#d29a35"/>
             </marker>
             <filter id="bus-route-shadow" x="-20%" y="-20%" width="140%" height="140%">
               <feDropShadow dx="0" dy="1" stdDeviation="1.1" flood-color="#173b37" flood-opacity=".28"/>
             </filter>
           </defs>
           <image href="assets/maps/zezhou-bus-301-source.svg" x="0" y="0" width="1024" height="1024"/>
-          <g fill="none" stroke="#fff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" opacity=".9">
-            <polyline points="850.1,302.8 849.2,280.7 848.7,266.4 848.2,251.3 842.1,212.8 824.8,176.1"/>
-            <polyline points="824.8,176.1 839.2,210.3 848.2,251.3 848.7,266.4 849.2,280.7 850.1,302.8"/>
+          <g class="bus-map-route-halo">
+            <path d="M850.1 302.8 C849.9 294 849.5 286 849.2 280.7 C849 275.2 848.8 270.4 848.7 266.4 C848.6 260.4 848.5 255.4 848.2 251.3 C847.3 239.6 845.5 222.8 842.1 212.8 C838.3 200.5 830.2 183.7 824.8 176.1"/>
+            <path d="M824.8 176.1 C830.6 185.4 835.8 198.5 839.2 210.3 C843.2 222.6 846.8 239.1 848.2 251.3 C848.5 257.2 848.6 261.7 848.7 266.4 C848.8 271.8 849 276.6 849.2 280.7 C849.5 288.4 849.9 296.8 850.1 302.8"/>
           </g>
-          <polyline class="bus-map-route bus-map-route-outbound"
-            points="850.1,302.8 849.2,280.7 848.7,266.4 848.2,251.3 842.1,212.8 824.8,176.1"
+          <path class="bus-map-route bus-map-route-outbound"
+            d="M850.1 302.8 C849.9 294 849.5 286 849.2 280.7 C849 275.2 848.8 270.4 848.7 266.4 C848.6 260.4 848.5 255.4 848.2 251.3 C847.3 239.6 845.5 222.8 842.1 212.8 C838.3 200.5 830.2 183.7 824.8 176.1"
             marker-end="url(#bus-arrow-outbound)"/>
-          <polyline class="bus-map-route bus-map-route-inbound"
-            points="824.8,176.1 839.2,210.3 848.2,251.3 848.7,266.4 849.2,280.7 850.1,302.8"
+          <path class="bus-map-route bus-map-route-inbound"
+            d="M824.8 176.1 C830.6 185.4 835.8 198.5 839.2 210.3 C843.2 222.6 846.8 239.1 848.2 251.3 C848.5 257.2 848.6 261.7 848.7 266.4 C848.8 271.8 849 276.6 849.2 280.7 C849.5 288.4 849.9 296.8 850.1 302.8"
             marker-end="url(#bus-arrow-inbound)"/>
           <g class="bus-map-stops" filter="url(#bus-route-shadow)">
-            <circle class="shared" cx="850.1" cy="302.8" r="2.2"/>
-            <circle class="shared" cx="849.2" cy="280.7" r="2.2"/>
-            <circle class="shared" cx="848.7" cy="266.4" r="2.2"/>
-            <circle class="shared" cx="848.2" cy="251.3" r="2.2"/>
-            <circle class="direction outbound" cx="842.1" cy="212.8" r="2.35"/>
-            <circle class="direction inbound" cx="839.2" cy="210.3" r="2.35"/>
-            <circle class="terminal" cx="824.8" cy="176.1" r="3"/>
+            ${mapStops.map((stop, index) => `
+              <g class="bus-map-stop${index === 0 ? " active" : ""}"
+                data-map-stop="${stop.name}" data-map-stop-type="${stop.type}"
+                aria-hidden="true">
+                <circle class="bus-map-stop-hit" cx="${stop.x}" cy="${stop.y}" r="5.6"/>
+                <circle class="${stop.type.includes("方向性") ? "direction" : stop.type.includes("首末站") ? "terminal" : "shared"}"
+                  cx="${stop.x}" cy="${stop.y}" r="${stop.type.includes("首末站") ? 2.65 : 2.05}"/>
+                <text class="bus-map-stop-label" x="${stop.labelX}" y="${stop.labelY}" text-anchor="${stop.anchor}">${stop.name}</text>
+              </g>
+            `).join("")}
           </g>
         </svg>
+        ${mapStops.map((stop) => `
+          <button class="bus-map-hotspot" type="button"
+            style="--stop-left:${((stop.x - 795) / 122 * 100).toFixed(2)}%;--stop-top:${((stop.y - 158) / 158 * 100).toFixed(2)}%"
+            data-map-stop="${stop.name}" data-map-stop-type="${stop.type}"
+            aria-label="查看${stop.name}站点信息"></button>
+        `).join("")}
+        <aside class="bus-map-popup" aria-live="polite">
+          <small>SELECTED STOP · 已选站点</small>
+          <strong data-map-stop-name>滨郊南路</strong>
+          <span data-map-stop-kind>首末站 · 双向停靠</span>
+          <p>站点详情、周边设施和运营信息将在后续补充。</p>
+        </aside>
       </div>
       <figcaption>
         <span><i class="outbound"></i>去程</span>
@@ -1183,6 +1229,7 @@ async function render() {
         easing: "cubic-bezier(.2,.78,.2,1)"
       });
     });
+
   }
   if (isArchiveVersionsPage) {
     let archiveIndex = 0;
