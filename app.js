@@ -127,12 +127,33 @@ const busRoute301 = {
 
 const districts = [
   { name: "印沙区", en: "Yinsha District", no: "01" },
-  { name: "陇府区", en: "Longfu District", no: "02" },
+  { name: "陇蜀区", en: "Longshu District", no: "02" },
   { name: "古丘区", en: "Guqiu District", no: "03" },
   { name: "三山区", en: "Sanshan District", no: "04" },
   { name: "合湾区", en: "Hewan District", no: "05" },
   { name: "新胡区", en: "Xinhu District", no: "06" },
   { name: "江洲区", en: "Jiangzhou District", no: "07" }
+];
+
+const mappedDistricts = [
+  {
+    slug: "yinsha", name: "印沙区", en: "YINSHA DISTRICT", color: "#c35e52",
+    path: "M391.5 424.5 C413 420 438 412 461 405 C473 401 484 396 493.3 391.7 C501 406 509 422 517 438 C526 456 535 474 544 490 C552 505 560 519 567.4 530.4 C551 526 533 520 516 515 C497 509 478 502 460.3 495.5 C448 484 437 472 426 460 C414 447 402 435 391.5 424.5 Z",
+    labelX: 469, labelY: 459, viewBox: "340 340 285 255",
+    boundary: "纬地快速路、经天快速路、常印大道（快速路）围合"
+  },
+  {
+    slug: "longshu", name: "陇蜀区", en: "LONGSHU DISTRICT", color: "#b48735",
+    path: "M493.3 391.7 C513 382 535 371 552 363 C560 359 567 355 573.2 352 C580 364 587 379 595.1 392.8 C605 402 615 410 625 419 C633 426 640 432 645.7 437.8 C638 447 630 458 623 467 C619 472 615 476 612.5 479.4 C606 491 602 505 597 517 C595 523 593 528 591 531.7 C588 536 585 540 582.4 543.2 L567.4 530.4 C558 511 548 491 539 472 C530 453 521 435 512 417 C505 404 499 396 493.3 391.7 Z",
+    labelX: 570, labelY: 438, viewBox: "445 305 255 285",
+    boundary: "纬地快速路、经天快速路、凤台大道（快速路）与江面围合"
+  },
+  {
+    slug: "jiangzhou", name: "江洲区", en: "JIANGZHOU DISTRICT", color: "#367c74",
+    path: "M696 376 C683 391 670 406 658 421 C646 436 634 452 623 467 C619 472 615 476 612.5 479.4 C607 491 603 504 598 516 C595 523 593 528 591 531.7 C610 534 632 536 653 538 C675 540 697 543 716.7 544.7 C747 545 778 544 808 544 C836 544 864 543 889 543.2 L889.3 319.3 C866 320 842 320 817 320 C792 320 767 320 744.5 320.3 C736 329 728 339 720 348 C711 359 703 368 696 376 Z",
+    labelX: 757, labelY: 437, viewBox: "555 270 385 330",
+    boundary: "两江中心线向东延伸至海洋边界，包含东侧孤岛"
+  }
 ];
 
 const metroLines = [
@@ -262,25 +283,35 @@ const app = document.querySelector("#app");
 const nav = document.querySelector("#primary-nav");
 
 function selectBusMapStop(stop) {
+  const source = stop.classList.contains("bus-map-hotspot")
+    ? stop
+    : [...app.querySelectorAll(".bus-map-hotspot")].find((item) => item.dataset.mapStop === stop.dataset.mapStop);
+  if (!source) return;
   app.querySelectorAll(".bus-map-stop").forEach((item) => {
-    item.classList.toggle("active", item.dataset.mapStop === stop.dataset.mapStop);
+    item.classList.toggle("active", item.dataset.mapStop === source.dataset.mapStop);
   });
   const mapStopName = app.querySelector("[data-map-stop-name]");
-  const mapStopKind = app.querySelector("[data-map-stop-kind]");
   const mapTransfers = app.querySelector("[data-map-transfers]");
-  if (mapStopName) mapStopName.textContent = stop.dataset.mapStop;
-  if (mapStopKind) mapStopKind.textContent = stop.dataset.mapStopType;
+  const popup = app.querySelector(".bus-map-popup");
+  if (mapStopName) mapStopName.textContent = source.dataset.mapStop;
   if (mapTransfers) {
-    const busNote = stop.dataset.mapBusNote || "双向停靠";
-    const metroBadge = stop.dataset.mapMetroLine
-      ? `<span class="map-transfer-metro" style="--transfer-color:${stop.dataset.mapMetroColor}">
-          <b>${stop.dataset.mapMetroLine}号线</b><em>${stop.dataset.mapMetroStation}站</em>
+    const busNote = source.dataset.mapBusNote || "";
+    const metroBadge = source.dataset.mapMetroLine
+      ? `<span class="map-transfer-metro" style="--transfer-color:${source.dataset.mapMetroColor}">
+          <b>${source.dataset.mapMetroLine}号线</b><em>${source.dataset.mapMetroStation}站</em>
         </span>`
       : "";
     mapTransfers.innerHTML = `
-      <span class="map-transfer-bus"><b>301</b><em>${busNote}</em></span>
+      <span class="map-transfer-bus"><b>301</b>${busNote ? `<em>${busNote}</em>` : ""}</span>
       ${metroBadge}
     `;
+  }
+  if (popup) {
+    const left = parseFloat(source.style.getPropertyValue("--stop-left"));
+    const top = parseFloat(source.style.getPropertyValue("--stop-top"));
+    popup.style.setProperty("--popup-left", `${left}%`);
+    popup.style.setProperty("--popup-top", `${top}%`);
+    popup.classList.toggle("bus-map-popup-left", left > 62);
   }
 }
 
@@ -290,6 +321,19 @@ app.addEventListener("click", (event) => {
     selectBusMapStop(mapStop);
     return;
   }
+  const districtButton = event.target.closest("[data-district-map]");
+  if (districtButton) {
+    const district = mappedDistricts.find((item) => item.slug === districtButton.dataset.districtMap);
+    const focus = app.querySelector("[data-district-focus]");
+    if (!district || !focus) return;
+    app.querySelectorAll("[data-district-map]").forEach((item) => item.classList.toggle("active", item === districtButton));
+    focus.querySelector("[data-district-en]").textContent = district.en;
+    focus.querySelector("[data-district-name]").textContent = district.name;
+    focus.querySelector("[data-district-boundary]").textContent = district.boundary;
+    focus.querySelector("[data-district-map-canvas]").innerHTML = districtSvg(district, true);
+    focus.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
   const link = event.target.closest(".column-switcher-link");
   if (!link || currentPrimaryIndex === null || currentPrimaryIndex < 0) return;
   const currentSection = sections[currentPrimaryIndex];
@@ -297,6 +341,16 @@ app.addEventListener("click", (event) => {
   event.preventDefault();
   history.pushState(null, "", link.getAttribute("href"));
   render();
+});
+
+app.addEventListener("mouseover", (event) => {
+  const mapStop = event.target.closest(".bus-map-hotspot");
+  if (mapStop) selectBusMapStop(mapStop);
+});
+
+app.addEventListener("focusin", (event) => {
+  const mapStop = event.target.closest(".bus-map-hotspot");
+  if (mapStop) selectBusMapStop(mapStop);
 });
 
 app.addEventListener("keydown", (event) => {
@@ -676,7 +730,36 @@ function newsArticleTemplate(section) {
   `;
 }
 
+function districtSvg(district, detail = false) {
+  const clipId = `district-clip-${district.slug}`;
+  return `
+    <svg class="district-map-svg" viewBox="${detail ? district.viewBox : "0 0 1024 1024"}" role="img" aria-label="${district.name}行政区地图">
+      <defs><clipPath id="${clipId}"><path d="${district.path}"/></clipPath></defs>
+      <image href="assets/maps/zezhou-base.svg" x="0" y="0" width="1024" height="1024"/>
+      ${detail ? `
+        <rect x="0" y="0" width="1024" height="1024" fill="#d8dcda" opacity=".74"/>
+        <image href="assets/maps/zezhou-base.svg" x="0" y="0" width="1024" height="1024" clip-path="url(#${clipId})"/>
+      ` : ""}
+      <path class="district-map-shape" d="${district.path}" style="--district-color:${district.color}"/>
+      <text class="district-map-label" x="${district.labelX}" y="${district.labelY}" text-anchor="middle">${district.name}</text>
+    </svg>
+  `;
+}
+
+function districtOverviewSvg() {
+  return `
+    <svg class="district-map-svg district-overview-svg" viewBox="0 0 1024 1024" role="img" aria-label="泽州市行政区划图">
+      <image href="assets/maps/zezhou-base.svg" x="0" y="0" width="1024" height="1024"/>
+      ${mappedDistricts.map((district) => `
+        <path class="district-map-shape" d="${district.path}" style="--district-color:${district.color}"/>
+        <text class="district-map-label" x="${district.labelX}" y="${district.labelY}" text-anchor="middle">${district.name}</text>
+      `).join("")}
+    </svg>
+  `;
+}
+
 function districtsTemplate(section) {
+  const initialDistrict = mappedDistricts[0];
   return `
     <section class="page-hero page-hero-districts page-hero-image">
       <div class="shell page-hero-inner">
@@ -699,16 +782,45 @@ function districtsTemplate(section) {
       </div>
       <div class="district-grid">
         ${districts.map((district) => `
-          <article class="district-card">
+          <${mappedDistricts.some((item) => item.name === district.name) ? "button" : "article"}
+            class="district-card${district.name === initialDistrict.name ? " active" : ""}"
+            ${mappedDistricts.some((item) => item.name === district.name) ? `type="button" data-district-map="${mappedDistricts.find((item) => item.name === district.name).slug}"` : ""}>
             <span class="district-no">${district.no}</span>
             <small>${district.en}</small>
             <h3>${district.name}</h3>
             <div class="district-rule"></div>
-            <p>本栏目收录区域概况、行政驻地、公共设施和交通服务等信息。</p>
-            <span class="district-status">区域信息</span>
-          </article>
+            <p>${mappedDistricts.some((item) => item.name === district.name) ? "查看行政边界、区域底图与毗邻关系。" : "行政边界资料待后续补充。"}</p>
+            <span class="district-status">${mappedDistricts.some((item) => item.name === district.name) ? "查看区图" : "边界待补充"}</span>
+          </${mappedDistricts.some((item) => item.name === district.name) ? "button" : "article"}>
         `).join("")}
       </div>
+      <section class="district-focus section-drawer" data-district-focus>
+        <header>
+          <div><p data-district-en>${initialDistrict.en}</p><h2 data-district-name>${initialDistrict.name}</h2></div>
+          <span data-district-boundary>${initialDistrict.boundary}</span>
+        </header>
+        <div class="district-focus-map" data-district-map-canvas>${districtSvg(initialDistrict, true)}</div>
+        <p class="district-map-note">彩色区域为行政区范围；区外底图采用灰色弱化处理。边界依据道路、江面中心线及海洋边界拟合。</p>
+      </section>
+    </section>
+  `;
+}
+
+function districtMapTemplate(section) {
+  return `
+    ${sectionHeroTemplate(section, 1)}
+    <section class="map-page district-map-page shell section-drawer">
+      <div class="map-section-heading">
+        <div><p>ADMINISTRATIVE DIVISIONS</p><h2>泽州市行政区划图</h2></div>
+        <span class="status-badge status-built"><i></i>行政边界</span>
+      </div>
+      <p class="map-intro">全图依据道路、快速路、两江中心线与东侧海洋边界拟合行政边界；当前展示印沙区、陇蜀区与江洲区。</p>
+      <figure class="map-figure district-overview">
+        <div class="map-image-frame">${districtOverviewSvg()}</div>
+        <figcaption class="district-map-legend">
+          ${mappedDistricts.map((district) => `<span><i style="--district-color:${district.color}"></i>${district.name}</span>`).join("")}
+        </figcaption>
+      </figure>
     </section>
   `;
 }
@@ -806,13 +918,13 @@ function busDirectionTemplate(label, direction, stations) {
 
 function busLocalMapTemplate() {
   const mapStops = [
-    { name: "滨郊南路", x: 850.1, y: 302.8, labelX: 854.1, labelY: 305.4, anchor: "start", type: "首末站 · 双向停靠", busNote: "双向停靠" },
-    { name: "古林南", x: 849.2, y: 280.7, labelX: 853.2, labelY: 283.3, anchor: "start", type: "中途站 · 双向停靠", busNote: "双向停靠", metroLine: "8", metroStation: "古林", metroColor: "#93282c" },
-    { name: "古林北", x: 848.7, y: 266.4, labelX: 852.7, labelY: 269, anchor: "start", type: "中途站 · 双向停靠", busNote: "双向停靠", metroLine: "8", metroStation: "古林", metroColor: "#93282c" },
-    { name: "林郊大道·锦郊路", x: 848.2, y: 251.3, labelX: 852.2, labelY: 253.9, anchor: "start", type: "中途站 · 双向停靠", busNote: "双向停靠" },
-    { name: "林郊大道·文郊东路", x: 842.1, y: 212.8, labelX: 846.1, labelY: 216.8, anchor: "start", type: "方向性站点 · 仅去程停靠", busNote: "仅去程停靠" },
-    { name: "林郊大道·文郊西路", x: 839.2, y: 210.3, labelX: 835.2, labelY: 207.5, anchor: "end", type: "方向性站点 · 仅返程停靠", busNote: "仅返程停靠" },
-    { name: "东郊地铁站", x: 824.8, y: 176.1, labelX: 828.8, labelY: 172.9, anchor: "start", type: "首末站 · 双向停靠 · 地铁接驳", busNote: "双向停靠", metroLine: "1", metroStation: "东郊", metroColor: "#009ace" }
+    { name: "滨郊南路", x: 850.1, y: 302.8, labelX: 854.1, labelY: 305.4, anchor: "start", type: "首末站" },
+    { name: "古林南", x: 849.2, y: 280.7, labelX: 853.2, labelY: 283.3, anchor: "start", type: "中途站", metroLine: "8", metroStation: "古林", metroColor: "#93282c" },
+    { name: "古林北", x: 848.7, y: 266.4, labelX: 852.7, labelY: 269, anchor: "start", type: "中途站", metroLine: "8", metroStation: "古林", metroColor: "#93282c" },
+    { name: "林郊大道·锦郊路", x: 848.2, y: 251.3, labelX: 852.2, labelY: 253.9, anchor: "start", type: "中途站" },
+    { name: "林郊大道·文郊东路", x: 842.1, y: 212.8, labelX: 846.1, labelY: 216.8, anchor: "start", type: "方向性站点", busNote: "开往东郊地铁站方向" },
+    { name: "林郊大道·文郊西路", x: 839.2, y: 210.3, labelX: 835.2, labelY: 207.5, anchor: "end", type: "方向性站点", busNote: "开往滨郊南路方向" },
+    { name: "东郊地铁站", x: 824.8, y: 176.1, labelX: 828.8, labelY: 172.9, anchor: "start", type: "首末站", metroLine: "1", metroStation: "东郊", metroColor: "#009ace" }
   ];
   return `
     <figure class="bus-local-map-card">
@@ -854,7 +966,7 @@ function busLocalMapTemplate() {
                 aria-hidden="true">
                 <circle class="bus-map-stop-hit" cx="${stop.x}" cy="${stop.y}" r="5.6"/>
                 <circle class="${stop.type.includes("方向性") ? "direction" : stop.type.includes("首末站") ? "terminal" : "shared"}"
-                  cx="${stop.x}" cy="${stop.y}" r="${stop.type.includes("首末站") ? 1.9 : 1.35}"/>
+                  cx="${stop.x}" cy="${stop.y}" r="${stop.type.includes("首末站") ? 1.55 : 1.05}"/>
                 <text class="bus-map-stop-label" x="${stop.labelX}" y="${stop.labelY}" text-anchor="${stop.anchor}">${stop.name}</text>
               </g>
             `).join("")}
@@ -865,18 +977,15 @@ function busLocalMapTemplate() {
           <button class="bus-map-hotspot" type="button"
             style="--stop-left:${((stop.x - 795) / 122 * 100).toFixed(2)}%;--stop-top:${((stop.y - 158) / 158 * 100).toFixed(2)}%"
             data-map-stop="${stop.name}" data-map-stop-type="${stop.type}"
-            data-map-bus-note="${stop.busNote}"
+            ${stop.busNote ? `data-map-bus-note="${stop.busNote}"` : ""}
             ${stop.metroLine ? `data-map-metro-line="${stop.metroLine}" data-map-metro-station="${stop.metroStation}" data-map-metro-color="${stop.metroColor}"` : ""}
             aria-label="查看${stop.name}站点信息"></button>
         `).join("")}
-        <aside class="bus-map-popup" aria-live="polite">
-          <small>SELECTED STOP · 已选站点</small>
+        <aside class="bus-map-popup" style="--popup-left:45.16%;--popup-top:91.65%" aria-live="polite">
           <strong data-map-stop-name>滨郊南路</strong>
-          <span data-map-stop-kind>首末站 · 双向停靠</span>
           <div class="bus-map-transfers" data-map-transfers>
-            <span class="map-transfer-bus"><b>301</b><em>双向停靠</em></span>
+            <span class="map-transfer-bus"><b>301</b></span>
           </div>
-          <p>站点详情、周边设施和运营信息将在后续补充。</p>
         </aside>
       </div>
       <figcaption>
@@ -1025,6 +1134,7 @@ async function render() {
   const isMetroPage = secondaryRoute?.section.slug === "transit" && secondaryRoute.secondarySlug === "metro";
   const isBusPage = secondaryRoute?.section.slug === "transit" && secondaryRoute.secondarySlug === "bus";
   const isMapPage = secondaryRoute?.section.slug === "map" && secondaryRoute.secondarySlug === "comprehensive";
+  const isDistrictMapPage = secondaryRoute?.section.slug === "map" && secondaryRoute.secondarySlug === "districts";
   const isArchiveVersionsPage = secondaryRoute?.section.slug === "archives" && secondaryRoute.secondarySlug === "versions";
   const isInnerPage = Boolean(section || secondaryRoute || newsCategory || isNewsArticle);
   const activeSlug = newsCategory || isNewsArticle
@@ -1139,10 +1249,16 @@ async function render() {
           ? archiveVersionsTemplate(secondaryRoute.section)
         : isMapPage
           ? mapTemplate(secondaryRoute.section)
+        : isDistrictMapPage
+          ? districtMapTemplate(secondaryRoute.section)
           : secondaryRoute
             ? secondaryTemplate(secondaryRoute.section, secondaryRoute.index)
             : section
-              ? section.slug === "news" ? newsTemplate(section) : sectionTemplate(section)
+              ? section.slug === "news"
+                ? newsTemplate(section)
+                : section.slug === "districts"
+                  ? districtsTemplate(section)
+                  : sectionTemplate(section)
               : homeTemplate();
   if (isSecondarySwitch && existingDrawer) {
     const nextView = document.createElement("template");
