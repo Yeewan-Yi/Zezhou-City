@@ -518,22 +518,30 @@ function archiveVersionsTemplate(section) {
       </header>
       <p class="archive-intro">本档案依据历次城市总览图，记录泽州建成区、交通骨架和城市组团的演变。阶段时间取自原始图片的文件创建日期，文字说明根据图面变化整理。</p>
 
-      <nav class="archive-stage-nav" aria-label="城市发展阶段">
-        ${cityEras.map((item, index) => `
-          <button class="${index === 0 ? "active" : ""}" type="button" data-archive-stage="${index}" aria-pressed="${index === 0}">
-            <span>${String(index + 1).padStart(2, "0")}</span><strong>${item.title}</strong><small>${item.dates}</small>
-          </button>
-        `).join("")}
-      </nav>
-      <section class="archive-stage-summary" aria-live="polite">
-        <span class="archive-stage-watermark" id="archive-stage-watermark">01</span>
-        <div class="archive-stage-summary-title"><small id="archive-stage-range">当前阶段 / VERSION ${cityEras[0].range}</small><h3 id="archive-stage-title">${cityEras[0].title}</h3></div>
-        <div class="archive-stage-summary-copy"><b>DEVELOPMENT CHRONICLE</b><p id="archive-stage-desc">${cityEras[0].desc}</p></div>
-      </section>
-
-      <article class="archive-viewer">
+      <article class="archive-viewer" id="archive-viewer">
         <figure class="archive-image-frame">
           <img id="archive-version-image" src="assets/archive/versions/zezhou-version-01.webp" alt="泽州市城市版本01：${first.title}" loading="lazy" decoding="async">
+          <div class="archive-stage-overlay" id="archive-stage-overlay">
+            <button class="archive-stage-handle" id="archive-stage-handle" type="button" aria-expanded="false" aria-controls="archive-stage-panel">
+              <span>城市发展阶段</span>
+              <strong><i id="archive-stage-handle-number">01</i><b id="archive-stage-handle-title">${cityEras[0].title}</b></strong>
+              <em>展开</em>
+            </button>
+            <div class="archive-stage-panel" id="archive-stage-panel">
+              <nav class="archive-stage-nav" aria-label="城市发展阶段">
+                ${cityEras.map((item, index) => `
+                  <button class="${index === 0 ? "active" : ""}" type="button" data-archive-stage="${index}" aria-pressed="${index === 0}">
+                    <span>${String(index + 1).padStart(2, "0")}</span><strong>${item.title}</strong><small>${item.dates}</small>
+                  </button>
+                `).join("")}
+              </nav>
+              <section class="archive-stage-summary" aria-live="polite">
+                <span class="archive-stage-watermark" id="archive-stage-watermark">01</span>
+                <div class="archive-stage-summary-title"><small id="archive-stage-range">当前阶段 / VERSION ${cityEras[0].range}</small><h3 id="archive-stage-title">${cityEras[0].title}</h3></div>
+                <div class="archive-stage-summary-copy"><b>DEVELOPMENT CHRONICLE</b><p id="archive-stage-desc">${cityEras[0].desc}</p></div>
+              </section>
+            </div>
+          </div>
         </figure>
         <div class="archive-version-copy">
           <div class="archive-version-meta">
@@ -559,8 +567,6 @@ function archiveVersionsTemplate(section) {
           </button>
         `).join("")}
       </nav>
-
-      <p class="archive-date-note">时间说明：以上日期为对应图片在“25格”资料目录中的创建日期，不等同于城市设定中的法定竣工或投用日期。</p>
     </section>
   `;
 }
@@ -1126,7 +1132,13 @@ async function render() {
     let archiveIndex = 0;
     let archiveStageIndex = 0;
     let archiveRequestId = 0;
+    let archiveRotationTimer = 0;
     const image = document.querySelector("#archive-version-image");
+    const viewer = document.querySelector("#archive-viewer");
+    const stageOverlay = document.querySelector("#archive-stage-overlay");
+    const stageHandle = document.querySelector("#archive-stage-handle");
+    const stageHandleNumber = document.querySelector("#archive-stage-handle-number");
+    const stageHandleTitle = document.querySelector("#archive-stage-handle-title");
     const loadedArchiveSources = new Set([image?.getAttribute("src")]);
     const versionNumber = document.querySelector("#archive-version-number");
     const sourceNumber = document.querySelector("#archive-version-source");
@@ -1141,6 +1153,18 @@ async function render() {
     const stageWatermark = document.querySelector("#archive-stage-watermark");
     const versionButtons = [...document.querySelectorAll("[data-archive-index]")];
     const stageButtons = [...document.querySelectorAll("[data-archive-stage]")];
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const stopArchiveRotation = () => {
+      window.clearTimeout(archiveRotationTimer);
+      archiveRotationTimer = 0;
+    };
+
+    const scheduleArchiveRotation = () => {
+      stopArchiveRotation();
+      if (document.hidden || reducedMotion.matches || viewer.matches(":hover") || viewer.matches(":focus-within")) return;
+      archiveRotationTimer = window.setTimeout(() => showArchiveVersion(archiveIndex + 1), 4000);
+    };
 
     const showArchiveVersion = (nextIndex) => {
       const currentStage = cityEras[archiveStageIndex];
@@ -1169,6 +1193,7 @@ async function render() {
         });
         versionButtons[targetIndex]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
         window.requestAnimationFrame(() => image.classList.remove("changing"));
+        scheduleArchiveRotation();
         const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
         const shouldPreload = !connection?.saveData && !["slow-2g", "2g"].includes(connection?.effectiveType);
         if (shouldPreload && targetIndex < currentStage.end) {
@@ -1210,19 +1235,45 @@ async function render() {
       stageTitle.textContent = nextStage.title;
       stageDescription.textContent = nextStage.desc;
       stageWatermark.textContent = String(archiveStageIndex + 1).padStart(2, "0");
+      stageHandleNumber.textContent = String(archiveStageIndex + 1).padStart(2, "0");
+      stageHandleTitle.textContent = nextStage.title;
       stageCount.textContent = String(nextStage.end - nextStage.start + 1).padStart(2, "0");
       showArchiveVersion(nextStage.start);
+      window.requestAnimationFrame(() => viewer.scrollIntoView({ behavior: "smooth", block: "start" }));
     };
 
     versionButtons.forEach((button) => {
-      button.addEventListener("click", () => showArchiveVersion(Number(button.dataset.archiveIndex)));
+      button.addEventListener("click", () => {
+        stopArchiveRotation();
+        showArchiveVersion(Number(button.dataset.archiveIndex));
+      });
     });
     stageButtons.forEach((button) => {
       button.addEventListener("click", () => showArchiveStage(Number(button.dataset.archiveStage)));
     });
     document.querySelectorAll("[data-archive-step]").forEach((button) => {
-      button.addEventListener("click", () => showArchiveVersion(archiveIndex + Number(button.dataset.archiveStep)));
+      button.addEventListener("click", () => {
+        stopArchiveRotation();
+        showArchiveVersion(archiveIndex + Number(button.dataset.archiveStep));
+      });
     });
+    stageHandle.addEventListener("click", () => {
+      const isOpen = stageOverlay.classList.toggle("open");
+      stageHandle.setAttribute("aria-expanded", String(isOpen));
+      stageHandle.querySelector("em").textContent = isOpen ? "收起" : "展开";
+    });
+    stageOverlay.addEventListener("mouseleave", () => {
+      stageOverlay.classList.remove("open");
+      stageHandle.setAttribute("aria-expanded", "false");
+      stageHandle.querySelector("em").textContent = "展开";
+      if (stageOverlay.contains(document.activeElement)) document.activeElement.blur();
+    });
+    viewer.addEventListener("mouseenter", stopArchiveRotation);
+    viewer.addEventListener("mouseleave", scheduleArchiveRotation);
+    viewer.addEventListener("focusin", stopArchiveRotation);
+    viewer.addEventListener("focusout", () => window.setTimeout(scheduleArchiveRotation, 0));
+    document.addEventListener("visibilitychange", scheduleArchiveRotation);
+    scheduleArchiveRotation();
   }
   if (slug === "home") scheduleDeferredHomeMedia();
   if (!isSecondarySwitch) window.scrollTo(0, 0);
