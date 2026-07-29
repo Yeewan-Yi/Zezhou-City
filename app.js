@@ -267,8 +267,21 @@ function selectBusMapStop(stop) {
   });
   const mapStopName = app.querySelector("[data-map-stop-name]");
   const mapStopKind = app.querySelector("[data-map-stop-kind]");
+  const mapTransfers = app.querySelector("[data-map-transfers]");
   if (mapStopName) mapStopName.textContent = stop.dataset.mapStop;
   if (mapStopKind) mapStopKind.textContent = stop.dataset.mapStopType;
+  if (mapTransfers) {
+    const busNote = stop.dataset.mapBusNote || "双向停靠";
+    const metroBadge = stop.dataset.mapMetroLine
+      ? `<span class="map-transfer-metro" style="--transfer-color:${stop.dataset.mapMetroColor}">
+          <b>${stop.dataset.mapMetroLine}号线</b><em>${stop.dataset.mapMetroStation}站</em>
+        </span>`
+      : "";
+    mapTransfers.innerHTML = `
+      <span class="map-transfer-bus"><b>301</b><em>${busNote}</em></span>
+      ${metroBadge}
+    `;
+  }
 }
 
 app.addEventListener("click", (event) => {
@@ -291,6 +304,16 @@ app.addEventListener("keydown", (event) => {
   if (!mapStop || (event.key !== "Enter" && event.key !== " ")) return;
   event.preventDefault();
   selectBusMapStop(mapStop);
+});
+
+app.addEventListener("mouseover", (event) => {
+  const mapStop = event.target.closest(".bus-map-hotspot");
+  if (mapStop) selectBusMapStop(mapStop);
+});
+
+app.addEventListener("focusin", (event) => {
+  const mapStop = event.target.closest(".bus-map-hotspot");
+  if (mapStop) selectBusMapStop(mapStop);
 });
 
 function submenuHref(sectionSlug, index) {
@@ -783,13 +806,13 @@ function busDirectionTemplate(label, direction, stations) {
 
 function busLocalMapTemplate() {
   const mapStops = [
-    { name: "滨郊南路", x: 850.1, y: 302.8, labelX: 854.5, labelY: 306.2, anchor: "start", type: "首末站 · 双向停靠" },
-    { name: "古林南", x: 849.2, y: 280.7, labelX: 853.6, labelY: 283.8, anchor: "start", type: "中途站 · 双向停靠" },
-    { name: "古林北", x: 848.7, y: 266.4, labelX: 853.1, labelY: 269.5, anchor: "start", type: "中途站 · 双向停靠" },
-    { name: "林郊大道·锦郊路", x: 848.2, y: 251.3, labelX: 852.6, labelY: 254.4, anchor: "start", type: "中途站 · 双向停靠" },
-    { name: "林郊大道·文郊东路", x: 842.1, y: 212.8, labelX: 846.5, labelY: 217.3, anchor: "start", type: "方向性站点 · 仅去程停靠" },
-    { name: "林郊大道·文郊西路", x: 839.2, y: 210.3, labelX: 834.8, labelY: 207.1, anchor: "end", type: "方向性站点 · 仅返程停靠" },
-    { name: "东郊地铁站", x: 824.8, y: 176.1, labelX: 829.3, labelY: 173.2, anchor: "start", type: "首末站 · 双向停靠 · 地铁接驳" }
+    { name: "滨郊南路", x: 850.1, y: 302.8, labelX: 854.1, labelY: 305.4, anchor: "start", type: "首末站 · 双向停靠", busNote: "双向停靠" },
+    { name: "古林南", x: 849.2, y: 280.7, labelX: 853.2, labelY: 283.3, anchor: "start", type: "中途站 · 双向停靠", busNote: "双向停靠", metroLine: "8", metroStation: "古林", metroColor: "#93282c" },
+    { name: "古林北", x: 848.7, y: 266.4, labelX: 852.7, labelY: 269, anchor: "start", type: "中途站 · 双向停靠", busNote: "双向停靠", metroLine: "8", metroStation: "古林", metroColor: "#93282c" },
+    { name: "林郊大道·锦郊路", x: 848.2, y: 251.3, labelX: 852.2, labelY: 253.9, anchor: "start", type: "中途站 · 双向停靠", busNote: "双向停靠" },
+    { name: "林郊大道·文郊东路", x: 842.1, y: 212.8, labelX: 846.1, labelY: 216.8, anchor: "start", type: "方向性站点 · 仅去程停靠", busNote: "仅去程停靠" },
+    { name: "林郊大道·文郊西路", x: 839.2, y: 210.3, labelX: 835.2, labelY: 207.5, anchor: "end", type: "方向性站点 · 仅返程停靠", busNote: "仅返程停靠" },
+    { name: "东郊地铁站", x: 824.8, y: 176.1, labelX: 828.8, labelY: 172.9, anchor: "start", type: "首末站 · 双向停靠 · 地铁接驳", busNote: "双向停靠", metroLine: "1", metroStation: "东郊", metroColor: "#009ace" }
   ];
   return `
     <figure class="bus-local-map-card">
@@ -831,7 +854,7 @@ function busLocalMapTemplate() {
                 aria-hidden="true">
                 <circle class="bus-map-stop-hit" cx="${stop.x}" cy="${stop.y}" r="5.6"/>
                 <circle class="${stop.type.includes("方向性") ? "direction" : stop.type.includes("首末站") ? "terminal" : "shared"}"
-                  cx="${stop.x}" cy="${stop.y}" r="${stop.type.includes("首末站") ? 2.65 : 2.05}"/>
+                  cx="${stop.x}" cy="${stop.y}" r="${stop.type.includes("首末站") ? 1.9 : 1.35}"/>
                 <text class="bus-map-stop-label" x="${stop.labelX}" y="${stop.labelY}" text-anchor="${stop.anchor}">${stop.name}</text>
               </g>
             `).join("")}
@@ -842,12 +865,17 @@ function busLocalMapTemplate() {
           <button class="bus-map-hotspot" type="button"
             style="--stop-left:${((stop.x - 795) / 122 * 100).toFixed(2)}%;--stop-top:${((stop.y - 158) / 158 * 100).toFixed(2)}%"
             data-map-stop="${stop.name}" data-map-stop-type="${stop.type}"
+            data-map-bus-note="${stop.busNote}"
+            ${stop.metroLine ? `data-map-metro-line="${stop.metroLine}" data-map-metro-station="${stop.metroStation}" data-map-metro-color="${stop.metroColor}"` : ""}
             aria-label="查看${stop.name}站点信息"></button>
         `).join("")}
         <aside class="bus-map-popup" aria-live="polite">
           <small>SELECTED STOP · 已选站点</small>
           <strong data-map-stop-name>滨郊南路</strong>
           <span data-map-stop-kind>首末站 · 双向停靠</span>
+          <div class="bus-map-transfers" data-map-transfers>
+            <span class="map-transfer-bus"><b>301</b><em>双向停靠</em></span>
+          </div>
           <p>站点详情、周边设施和运营信息将在后续补充。</p>
         </aside>
       </div>

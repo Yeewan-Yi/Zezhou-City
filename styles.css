@@ -522,25 +522,25 @@ body.returning-up .page-hero:not(.page-hero-subpage) .page-hero-copy { animation
 .bus-stop-list strong { font-size: 15px; font-weight: 600; }
 .bus-stop-list em { min-width: 88px; justify-self: start; margin-left: -14px; padding: 5px 8px; color: #925b0d; border: 1px solid rgba(216,166,77,.45); border-radius: 3px; background: #fff6df; font-size: 10px; font-style: normal; text-align: center; white-space: nowrap; }
 .bus-stop-list li.outbound-only > i, .bus-stop-list li.inbound-only > i { background: #d8a64d; box-shadow: 0 0 0 2px #d8a64d; }
-.bus-local-map-card { min-width: 0; margin: 0; display: flex; flex-direction: column; background: #eef2eb; }
+.bus-local-map-card { min-width: 0; align-self: start; margin: 0; display: flex; flex-direction: column; background: #eef2eb; }
 .bus-local-map-card > header { min-height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px 22px; border-bottom: 1px solid rgba(23,75,69,.14); }
 .bus-local-map-card > header small { color: #a97726; font-size: 9px; letter-spacing: .16em; }
 .bus-local-map-card > header h3 { margin: 5px 0 0; font-family: "Songti SC", serif; font-size: 22px; font-weight: 600; }
 .bus-local-map-card > header > span { padding: 6px 10px; color: var(--green); border: 1px solid rgba(23,75,69,.22); border-radius: 999px; background: rgba(255,255,255,.68); font-size: 10px; white-space: nowrap; }
-.bus-local-map-frame { min-height: 470px; position: relative; flex: 1; overflow: hidden; background: #e8ece6; }
-.bus-local-map-frame svg { width: 100%; height: 100%; min-height: 470px; display: block; }
+.bus-local-map-frame { position: relative; flex: none; overflow: hidden; aspect-ratio: 759.04 / 983.03; background: #e8ece6; }
+.bus-local-map-frame svg { width: 100%; height: 100%; display: block; }
 .bus-map-base { filter: grayscale(.72) saturate(.28) brightness(1.06) contrast(.88); opacity: .66; }
 .bus-map-route-halo { fill: none; stroke: rgba(255,255,255,.9); stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; }
 .bus-map-route { fill: none; stroke-width: .48; stroke-linecap: round; stroke-linejoin: round; }
 .bus-map-route-outbound { stroke: #176058; }
 .bus-map-route-inbound { stroke: #c68720; stroke-dasharray: 2.3 1.35; }
-.bus-map-stops circle { fill: #fff; stroke: #176058; stroke-width: .72; }
+.bus-map-stops circle { fill: #fff; stroke: #176058; stroke-width: .52; transition: fill .16s, stroke .16s, transform .16s; }
 .bus-map-stops circle.direction { fill: #ffe5a4; stroke: #a56d10; }
 .bus-map-stops circle.terminal { fill: #176058; stroke: #fff; stroke-width: .85; }
 .bus-map-stop { cursor: pointer; outline: none; }
 .bus-map-stop-hit { fill: transparent !important; stroke: transparent !important; pointer-events: all; }
 .bus-map-stop-label { fill: #143d39; stroke: rgba(248,249,246,.92); stroke-width: .8px; paint-order: stroke; font-family: "Microsoft YaHei UI", sans-serif; font-size: 2.35px; font-weight: 700; letter-spacing: .01em; pointer-events: none; }
-.bus-map-stop:hover > circle:not(.bus-map-stop-hit), .bus-map-stop:focus > circle:not(.bus-map-stop-hit), .bus-map-stop.active > circle:not(.bus-map-stop-hit) { stroke: #f8d47e; stroke-width: 1px; transform-box: fill-box; transform-origin: center; transform: scale(1.22); }
+.bus-map-stop.active > circle:not(.bus-map-stop-hit) { fill: #f1c86f; stroke: #0c514b; stroke-width: .8px; transform-box: fill-box; transform-origin: center; transform: scale(1.3); }
 .bus-map-stop:hover .bus-map-stop-label, .bus-map-stop:focus .bus-map-stop-label, .bus-map-stop.active .bus-map-stop-label { fill: #9b650c; }
 .bus-map-hotspot { width: 30px; height: 30px; position: absolute; left: var(--stop-left); top: var(--stop-top); z-index: 1; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; transform: translate(-50%, -50%); }
 .bus-map-hotspot:focus-visible { outline: 3px solid #f1c86f; outline-offset: 2px; background: rgba(255,255,255,.45); }
@@ -548,6 +548,14 @@ body.returning-up .page-hero:not(.page-hero-subpage) .page-hero-copy { animation
 .bus-map-popup small { display: block; color: #f1c86f; font-size: 8px; letter-spacing: .12em; }
 .bus-map-popup strong { display: block; margin-top: 6px; font-family: "Songti SC", serif; font-size: 17px; }
 .bus-map-popup span { display: block; margin-top: 3px; color: rgba(255,255,255,.72); font-size: 10px; }
+.bus-map-transfers { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 11px; }
+.bus-map-transfers > span { display: inline-flex; align-items: center; gap: 6px; margin: 0; }
+.bus-map-transfers b, .bus-map-transfers em { font-style: normal; }
+.map-transfer-bus b { width: 31px; height: 31px; display: grid; place-items: center; color: #fff; border: 2px solid rgba(255,255,255,.78); border-radius: 50%; background: #176058; font: 700 10px/1 Arial, sans-serif; }
+.map-transfer-bus em { color: rgba(255,255,255,.68); font-size: 9px; }
+.map-transfer-metro { min-height: 29px; overflow: hidden; border-radius: 3px; background: #fff; }
+.map-transfer-metro b { align-self: stretch; display: grid; place-items: center; padding: 0 8px; color: #fff; background: var(--transfer-color); font: 700 10px/1 Arial, sans-serif; }
+.map-transfer-metro em { padding-right: 8px; color: #314541; font-size: 9px; }
 .bus-map-popup p { margin: 9px 0 0; color: rgba(255,255,255,.57); font-size: 9px; line-height: 1.55; }
 .bus-local-map-card figcaption { min-height: 52px; display: flex; align-items: center; flex-wrap: wrap; gap: 14px; padding: 10px 18px; color: var(--muted); border-top: 1px solid rgba(23,75,69,.14); background: rgba(255,255,255,.7); font-size: 10px; }
 .bus-local-map-card figcaption span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
@@ -830,7 +838,7 @@ body.view-transitioning #app { min-height: 100vh; background: #0b302d; overflow:
   .bus-direction-toggle { width: 100%; border-radius: 12px; }
   .bus-direction { padding: 28px 18px 22px; }
   .bus-local-map-card > header { padding: 16px 18px; }
-  .bus-local-map-frame, .bus-local-map-frame svg { min-height: 390px; }
+  .bus-local-map-frame { min-height: 0; }
   .bus-stop-list li { grid-template-columns: 22px 30px 1fr; }
   .bus-stop-list em { grid-column: 3; width: fit-content; margin: -8px 0 0 -8px; }
   .bus-route-note { align-items: flex-start; flex-direction: column; padding: 17px 18px; }
