@@ -13,7 +13,7 @@ const sections = [
 const submenus = {
   overview: ["城市名片", "历史沿革", "自然地理", "人口与经济", "城市规划"],
   map: ["综合地图", "行政区划图", "道路地图", "公共交通图", "设施地图"],
-  districts: ["印沙区", "陇府区", "古丘区", "三山区", "合湾区", "新胡区", "江洲区"],
+  districts: ["印沙区", "陇蜀区", "古丘区", "三山区", "合湾区", "新胡区", "江洲区"],
   roads: ["道路名录", "桥梁与隧道", "广场与地标", "地名由来", "命名规则"],
   transit: ["地铁", "公交", "城际铁路", "铁路车站", "对外交通"],
   facilities: ["政府机关", "教育", "医疗", "文化体育", "公园绿地", "市政设施"],
@@ -25,7 +25,7 @@ const submenus = {
 const submenuSlugs = {
   overview: ["profile", "history", "geography", "economy", "planning"],
   map: ["comprehensive", "districts", "roads", "transit", "facilities"],
-  districts: ["yinsha", "longfu", "guqiu", "sanshan", "hewan", "xinhu", "jiangzhou"],
+  districts: ["yinsha", "longshu", "guqiu", "sanshan", "hewan", "xinhu", "jiangzhou"],
   roads: ["directory", "bridges", "landmarks", "origins", "naming"],
   transit: ["metro", "bus", "intercity", "railway", "external"],
   facilities: ["government", "education", "healthcare", "culture", "parks", "municipal"],
@@ -138,20 +138,20 @@ const districts = [
 const mappedDistricts = [
   {
     slug: "yinsha", name: "印沙区", en: "YINSHA DISTRICT", color: "#c35e52",
-    path: "M391.5 424.5 C413 420 438 412 461 405 C473 401 484 396 493.3 391.7 C501 406 509 422 517 438 C526 456 535 474 544 490 C552 505 560 519 567.4 530.4 C551 526 533 520 516 515 C497 509 478 502 460.3 495.5 C448 484 437 472 426 460 C414 447 402 435 391.5 424.5 Z",
+    path: "M391.5 424.5 C417 418.2 450 409.4 476.8 400.1 C483.2 397.9 488.9 394.8 493.3 391.7 C501.6 405.5 511.2 425.6 518.9 441 C528.6 461.3 539.1 484.4 547.6 504.2 C553.4 516.7 560.8 526.1 567.4 530.4 C551.2 524 530.7 515.8 512.1 509.4 C488.1 502.7 464.4 490.1 442.9 474.9 C425.7 462.4 408.9 441.8 391.5 424.5 Z",
     labelX: 469, labelY: 459, viewBox: "340 340 285 255",
     boundary: "纬地快速路、经天快速路、常印大道（快速路）围合"
   },
   {
     slug: "longshu", name: "陇蜀区", en: "LONGSHU DISTRICT", color: "#b48735",
-    path: "M493.3 391.7 C513 382 535 371 552 363 C560 359 567 355 573.2 352 C580 364 587 379 595.1 392.8 C605 402 615 410 625 419 C633 426 640 432 645.7 437.8 C638 447 630 458 623 467 C619 472 615 476 612.5 479.4 C606 491 602 505 597 517 C595 523 593 528 591 531.7 C588 536 585 540 582.4 543.2 L567.4 530.4 C558 511 548 491 539 472 C530 453 521 435 512 417 C505 404 499 396 493.3 391.7 Z",
+    path: "M493.3 391.7 C513.7 382.6 535.9 371.2 555.8 363 C562.6 359.6 568.4 355.6 573.2 352 C579.2 361.8 583.8 374.3 589.5 383.8 C594.6 392.1 599.8 400.6 603.9 407.3 C615.8 417.2 632.7 431 645.7 437.8 C637.2 448.8 628.2 460.8 620.5 470.4 C617.2 474.5 614.5 477.5 612.5 479.4 C607.3 490.8 602.7 504.9 597.5 517.4 C595.3 523 593.1 528.1 591 531.7 C588.3 536 585.3 540.2 582.4 543.2 L567.4 530.4 C560.9 518.2 554.4 505.1 547.6 491.4 C538 472.1 528.2 451 518.9 431.9 C510.2 414.1 501.7 398.5 493.3 391.7 Z",
     labelX: 570, labelY: 438, viewBox: "445 305 255 285",
     boundary: "纬地快速路、经天快速路、凤台大道（快速路）与江面围合"
   },
   {
     slug: "jiangzhou", name: "江洲区", en: "JIANGZHOU DISTRICT", color: "#367c74",
-    path: "M696 376 C683 391 670 406 658 421 C646 436 634 452 623 467 C619 472 615 476 612.5 479.4 C607 491 603 504 598 516 C595 523 593 528 591 531.7 C610 534 632 536 653 538 C675 540 697 543 716.7 544.7 C747 545 778 544 808 544 C836 544 864 543 889 543.2 L889.3 319.3 C866 320 842 320 817 320 C792 320 767 320 744.5 320.3 C736 329 728 339 720 348 C711 359 703 368 696 376 Z",
-    labelX: 757, labelY: 437, viewBox: "555 270 385 330",
+    path: "M696 376 C683.1 391 670.2 406.5 658.1 421.2 C645.7 436.5 633.8 452.4 623 467 C618.8 472.6 615.1 477.1 612.5 479.4 C607.4 491.4 602.9 504.2 598.1 516.2 C595.5 522.9 593.1 528.1 591 531.7 C610.6 534.1 632.1 536.3 653.2 538.3 C675 540.4 697.3 543 716.7 544.7 C749.8 545.8 783.4 545.1 816.5 544.5 C842.3 544.1 866.8 543.6 889 543.2 C934 543.1 979 543.2 1024 543.2 L1024 319.3 L889.3 319.3 C865.8 319.7 841.2 319.9 817.1 320 C791.9 320.1 767.1 320.1 744.5 320.3 C736.4 329.6 728.2 339.1 720.2 348.4 C711.3 358.6 703 368.2 696 376 Z",
+    labelX: 757, labelY: 437, viewBox: "555 270 469 410",
     boundary: "两江中心线向东延伸至海洋边界，包含东侧孤岛"
   }
 ];
@@ -759,7 +759,6 @@ function districtOverviewSvg() {
 }
 
 function districtsTemplate(section) {
-  const initialDistrict = mappedDistricts[0];
   return `
     <section class="page-hero page-hero-districts page-hero-image">
       <div class="shell page-hero-inner">
@@ -782,26 +781,18 @@ function districtsTemplate(section) {
       </div>
       <div class="district-grid">
         ${districts.map((district) => `
-          <${mappedDistricts.some((item) => item.name === district.name) ? "button" : "article"}
-            class="district-card${district.name === initialDistrict.name ? " active" : ""}"
-            ${mappedDistricts.some((item) => item.name === district.name) ? `type="button" data-district-map="${mappedDistricts.find((item) => item.name === district.name).slug}"` : ""}>
+          <${mappedDistricts.some((item) => item.name === district.name) ? "a" : "article"}
+            class="district-card"
+            ${mappedDistricts.some((item) => item.name === district.name) ? `href="#districts-${mappedDistricts.find((item) => item.name === district.name).slug}"` : ""}>
             <span class="district-no">${district.no}</span>
             <small>${district.en}</small>
             <h3>${district.name}</h3>
             <div class="district-rule"></div>
             <p>${mappedDistricts.some((item) => item.name === district.name) ? "查看行政边界、区域底图与毗邻关系。" : "行政边界资料待后续补充。"}</p>
             <span class="district-status">${mappedDistricts.some((item) => item.name === district.name) ? "查看区图" : "边界待补充"}</span>
-          </${mappedDistricts.some((item) => item.name === district.name) ? "button" : "article"}>
+          </${mappedDistricts.some((item) => item.name === district.name) ? "a" : "article"}>
         `).join("")}
       </div>
-      <section class="district-focus section-drawer" data-district-focus>
-        <header>
-          <div><p data-district-en>${initialDistrict.en}</p><h2 data-district-name>${initialDistrict.name}</h2></div>
-          <span data-district-boundary>${initialDistrict.boundary}</span>
-        </header>
-        <div class="district-focus-map" data-district-map-canvas>${districtSvg(initialDistrict, true)}</div>
-        <p class="district-map-note">彩色区域为行政区范围；区外底图采用灰色弱化处理。边界依据道路、江面中心线及海洋边界拟合。</p>
-      </section>
     </section>
   `;
 }
@@ -821,6 +812,28 @@ function districtMapTemplate(section) {
           ${mappedDistricts.map((district) => `<span><i style="--district-color:${district.color}"></i>${district.name}</span>`).join("")}
         </figcaption>
       </figure>
+    </section>
+  `;
+}
+
+function districtSecondaryTemplate(section, district, index) {
+  return `
+    ${sectionHeroTemplate(section, index)}
+    <section class="district-secondary-page shell section-drawer">
+      <div class="map-section-heading">
+        <div><p>${district.en}</p><h2>${district.name}行政区地图</h2></div>
+        <span class="status-badge status-built"><i></i>边界已核对</span>
+      </div>
+      <p class="map-intro">${district.boundary}。地图保留行政区内原始色彩，行政区外统一灰显，以清楚表达不规则行政范围。</p>
+      <figure class="district-secondary-figure">
+        <div class="district-secondary-map">${districtSvg(district, true)}</div>
+        <figcaption>
+          <strong>${district.name}</strong>
+          <span>边界依据道路中心线、河道中心线、河岸与海洋边界重新拟合；手绘参考线仅用于确认区位和毗邻关系。</span>
+        </figcaption>
+      </figure>
+      ${columnSwitcherTemplate(section, index, "bottom")}
+      ${lowerBackButtonTemplate(section)}
     </section>
   `;
 }
@@ -1135,6 +1148,9 @@ async function render() {
   const isBusPage = secondaryRoute?.section.slug === "transit" && secondaryRoute.secondarySlug === "bus";
   const isMapPage = secondaryRoute?.section.slug === "map" && secondaryRoute.secondarySlug === "comprehensive";
   const isDistrictMapPage = secondaryRoute?.section.slug === "map" && secondaryRoute.secondarySlug === "districts";
+  const mappedDistrictPage = secondaryRoute?.section.slug === "districts"
+    ? mappedDistricts.find((district) => district.slug === secondaryRoute.secondarySlug)
+    : null;
   const isArchiveVersionsPage = secondaryRoute?.section.slug === "archives" && secondaryRoute.secondarySlug === "versions";
   const isInnerPage = Boolean(section || secondaryRoute || newsCategory || isNewsArticle);
   const activeSlug = newsCategory || isNewsArticle
@@ -1251,6 +1267,8 @@ async function render() {
           ? mapTemplate(secondaryRoute.section)
         : isDistrictMapPage
           ? districtMapTemplate(secondaryRoute.section)
+        : mappedDistrictPage
+          ? districtSecondaryTemplate(secondaryRoute.section, mappedDistrictPage, secondaryRoute.index)
           : secondaryRoute
             ? secondaryTemplate(secondaryRoute.section, secondaryRoute.index)
             : section
