@@ -759,6 +759,60 @@ function busDirectionTemplate(label, direction, stations) {
   `;
 }
 
+function busLocalMapTemplate() {
+  return `
+    <figure class="bus-local-map-card">
+      <header>
+        <div><small>LOCAL ROUTE MAP</small><h3>301路局部线路图</h3></div>
+        <span>去返程叠加</span>
+      </header>
+      <div class="bus-local-map-frame">
+        <svg viewBox="795 158 122 158" role="img" aria-labelledby="bus-301-map-title bus-301-map-desc">
+          <title id="bus-301-map-title">301路公交局部线路图</title>
+          <desc id="bus-301-map-desc">展示滨郊南路至东郊地铁站的去程和返程站点、方向性停靠站及线路轨迹。</desc>
+          <defs>
+            <marker id="bus-arrow-outbound" markerUnits="userSpaceOnUse" markerWidth="4" markerHeight="4" refX="3.4" refY="2" orient="auto">
+              <path d="M0,0 L4,2 L0,4 Z" fill="#176058"/>
+            </marker>
+            <marker id="bus-arrow-inbound" markerUnits="userSpaceOnUse" markerWidth="4" markerHeight="4" refX="3.4" refY="2" orient="auto">
+              <path d="M0,0 L4,2 L0,4 Z" fill="#d29a35"/>
+            </marker>
+            <filter id="bus-route-shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="1" stdDeviation="1.1" flood-color="#173b37" flood-opacity=".28"/>
+            </filter>
+          </defs>
+          <image href="assets/maps/zezhou-bus-301-source.svg" x="0" y="0" width="1024" height="1024"/>
+          <g fill="none" stroke="#fff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" opacity=".9">
+            <polyline points="850.1,302.8 849.2,280.7 848.7,266.4 848.2,251.3 842.1,212.8 824.8,176.1"/>
+            <polyline points="824.8,176.1 839.2,210.3 848.2,251.3 848.7,266.4 849.2,280.7 850.1,302.8"/>
+          </g>
+          <polyline class="bus-map-route bus-map-route-outbound"
+            points="850.1,302.8 849.2,280.7 848.7,266.4 848.2,251.3 842.1,212.8 824.8,176.1"
+            marker-end="url(#bus-arrow-outbound)"/>
+          <polyline class="bus-map-route bus-map-route-inbound"
+            points="824.8,176.1 839.2,210.3 848.2,251.3 848.7,266.4 849.2,280.7 850.1,302.8"
+            marker-end="url(#bus-arrow-inbound)"/>
+          <g class="bus-map-stops" filter="url(#bus-route-shadow)">
+            <circle class="shared" cx="850.1" cy="302.8" r="2.2"/>
+            <circle class="shared" cx="849.2" cy="280.7" r="2.2"/>
+            <circle class="shared" cx="848.7" cy="266.4" r="2.2"/>
+            <circle class="shared" cx="848.2" cy="251.3" r="2.2"/>
+            <circle class="direction outbound" cx="842.1" cy="212.8" r="2.35"/>
+            <circle class="direction inbound" cx="839.2" cy="210.3" r="2.35"/>
+            <circle class="terminal" cx="824.8" cy="176.1" r="3"/>
+          </g>
+        </svg>
+      </div>
+      <figcaption>
+        <span><i class="outbound"></i>去程</span>
+        <span><i class="inbound"></i>返程</span>
+        <span><b></b>双向停靠</span>
+        <a href="assets/maps/zezhou-bus-301-source.svg" target="_blank" rel="noopener">打开原图 ↗</a>
+      </figcaption>
+    </figure>
+  `;
+}
+
 function busTemplate(section) {
   return `
     ${sectionHeroTemplate(section, 1)}
@@ -802,11 +856,14 @@ function busTemplate(section) {
                 <small>点击切换方向</small>
               </button>
             </header>
-            <div class="bus-direction-view">
-              ${busDirectionTemplate("滨郊南路 → 东郊地铁站", "outbound", busRoute301.outbound)}
-              <div data-bus-inbound hidden>
-                ${busDirectionTemplate("东郊地铁站 → 滨郊南路", "inbound", busRoute301.inbound)}
+            <div class="bus-route-body">
+              <div class="bus-direction-view">
+                ${busDirectionTemplate("滨郊南路 → 东郊地铁站", "outbound", busRoute301.outbound)}
+                <div data-bus-inbound hidden>
+                  ${busDirectionTemplate("东郊地铁站 → 滨郊南路", "inbound", busRoute301.inbound)}
+                </div>
               </div>
+              ${busLocalMapTemplate()}
             </div>
             <footer class="bus-route-note">
               <span><i class="shared-sample"></i>双向共同停靠</span>
