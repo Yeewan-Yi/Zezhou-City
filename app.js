@@ -144,13 +144,13 @@ const mappedDistricts = [
   },
   {
     slug: "longshu", name: "陇蜀区", en: "LONGSHU DISTRICT", color: "#b48735",
-    path: "M493.3 391.7 C513.7 382.6 535.9 371.2 555.8 363 C562.6 359.6 568.4 355.6 573.2 352 C579.2 361.8 583.8 374.3 589.5 383.8 C594.6 392.1 599.8 400.6 603.9 407.3 C615.8 417.2 632.7 431 645.7 437.8 C637.2 448.8 628.2 460.8 620.5 470.4 C617.2 474.5 614.5 477.5 612.5 479.4 C607.3 490.8 602.7 504.9 597.5 517.4 C595.3 523 593.1 528.1 591 531.7 C588.3 536 585.3 540.2 582.4 543.2 L567.4 530.4 C560.9 518.2 554.4 505.1 547.6 491.4 C538 472.1 528.2 451 518.9 431.9 C510.2 414.1 501.7 398.5 493.3 391.7 Z",
+    path: "M493.3 391.7 C513.7 382.6 535.9 371.2 555.8 363 C562.6 359.6 568.4 355.6 573.2 352 C579.2 361.8 583.8 374.3 589.5 383.8 C594.6 392.1 599.8 400.6 603.9 407.3 C615.8 417.2 632.7 431 645.7 437.8 C637.2 448.8 628.2 460.8 620.5 470.4 C617.2 474.5 614.5 477.5 612.5 479.4 C607.3 490.8 602.7 504.9 597.5 517.4 C595.3 523 593.1 528.1 591 531.7 C588.3 536 585.3 540.2 582.4 543.2 L567.4 530.4 C560.8 526.1 553.4 516.7 547.6 504.2 C539.1 484.4 528.6 461.3 518.9 441 C511.2 425.6 501.6 405.5 493.3 391.7 Z",
     labelX: 570, labelY: 438, viewBox: "445 305 255 285",
     boundary: "纬地快速路、经天快速路、凤台大道（快速路）与江面围合"
   },
   {
     slug: "jiangzhou", name: "江洲区", en: "JIANGZHOU DISTRICT", color: "#367c74",
-    path: "M696 376 C683.1 391 670.2 406.5 658.1 421.2 C645.7 436.5 633.8 452.4 623 467 C618.8 472.6 615.1 477.1 612.5 479.4 C607.4 491.4 602.9 504.2 598.1 516.2 C595.5 522.9 593.1 528.1 591 531.7 C610.6 534.1 632.1 536.3 653.2 538.3 C675 540.4 697.3 543 716.7 544.7 C749.8 545.8 783.4 545.1 816.5 544.5 C842.3 544.1 866.8 543.6 889 543.2 C934 543.1 979 543.2 1024 543.2 L1024 319.3 L889.3 319.3 C865.8 319.7 841.2 319.9 817.1 320 C791.9 320.1 767.1 320.1 744.5 320.3 C736.4 329.6 728.2 339.1 720.2 348.4 C711.3 358.6 703 368.2 696 376 Z",
+    path: "M645.7 437.8 C637.2 448.8 628.2 460.8 620.5 470.4 C617.2 474.5 614.5 477.5 612.5 479.4 C607.3 490.8 602.7 504.9 597.5 517.4 C595.3 523 593.1 528.1 591 531.7 C610.6 534.1 632.1 536.3 653.2 538.3 C675 540.4 697.3 543 716.7 544.7 C749.8 545.8 783.4 545.1 816.5 544.5 C842.3 544.1 866.8 543.6 889 543.2 C934 543.1 979 543.2 1024 543.2 L1024 319.3 L889.3 319.3 C865.8 319.7 841.2 319.9 817.1 320 C791.9 320.1 767.1 320.1 744.5 320.3 C736.4 329.6 728.2 339.1 720.2 348.4 C711.3 358.6 703 368.2 696 376 C683.1 391 670.2 406.5 658.1 421.2 C653.7 426.7 649.5 432.2 645.7 437.8 Z",
     labelX: 757, labelY: 437, viewBox: "555 270 469 410",
     boundary: "两江中心线向东延伸至海洋边界，包含东侧孤岛"
   }
@@ -805,7 +805,7 @@ function districtMapTemplate(section) {
         <div><p>ADMINISTRATIVE DIVISIONS</p><h2>泽州市行政区划图</h2></div>
         <span class="status-badge status-built"><i></i>行政边界</span>
       </div>
-      <p class="map-intro">全图依据道路、快速路、两江中心线与东侧海洋边界拟合行政边界；当前展示印沙区、陇蜀区与江洲区。</p>
+      <p class="map-intro">本图展示印沙区、陇蜀区与江洲区行政范围。区界以城市快速路、主要道路、两江中心线及东侧海洋界线为准。</p>
       <figure class="map-figure district-overview">
         <div class="map-image-frame">${districtOverviewSvg()}</div>
         <figcaption class="district-map-legend">
@@ -822,14 +822,14 @@ function districtSecondaryTemplate(section, district, index) {
     <section class="district-secondary-page shell section-drawer">
       <div class="map-section-heading">
         <div><p>${district.en}</p><h2>${district.name}行政区地图</h2></div>
-        <span class="status-badge status-built"><i></i>边界已核对</span>
+        <span class="status-badge status-built"><i></i>行政区地图</span>
       </div>
-      <p class="map-intro">${district.boundary}。地图保留行政区内原始色彩，行政区外统一灰显，以清楚表达不规则行政范围。</p>
+      <p class="map-intro">${district.boundary}。地图以彩色区域展示本区行政范围，区外区域采用灰色底图区分。</p>
       <figure class="district-secondary-figure">
         <div class="district-secondary-map">${districtSvg(district, true)}</div>
         <figcaption>
           <strong>${district.name}</strong>
-          <span>边界依据道路中心线、河道中心线、河岸与海洋边界重新拟合；手绘参考线仅用于确认区位和毗邻关系。</span>
+          <span>图示区界以道路中心线、河道中心线、河岸及海洋界线为界，供市民和游客查阅行政区位及毗邻关系。</span>
         </figcaption>
       </figure>
       ${columnSwitcherTemplate(section, index, "bottom")}
@@ -892,7 +892,7 @@ function transitTemplate(section) {
           <div><p>NETWORK MASTER PLAN</p><h3>泽州市地铁规划总图</h3></div>
           <span class="status-badge status-planned"><i></i>规划线网</span>
         </header>
-        <p class="map-intro">总图用于核对线路走向、站点位置和换乘关系；点击上方线路，可查看更适合站台导向阅读的单线线路图。</p>
+        <p class="map-intro">总图展示线路走向、站点位置和换乘关系；点击上方线路，可查看便于出行查询的单线线路图。</p>
         <figure class="map-figure">
           <div class="map-image-frame planned-network">
             <img src="assets/zezhou-metro-plan.png" alt="泽州市地铁规划线网图" loading="lazy" decoding="async">
