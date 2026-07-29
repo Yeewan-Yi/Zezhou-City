@@ -798,7 +798,7 @@ function busLocalMapTemplate() {
         <span>去返程叠加</span>
       </header>
       <div class="bus-local-map-frame">
-        <svg viewBox="795 158 122 158" role="img" aria-labelledby="bus-301-map-title bus-301-map-desc">
+        <svg viewBox="5856.23 1893.02 759.04 983.03" role="img" aria-labelledby="bus-301-map-title bus-301-map-desc">
           <title id="bus-301-map-title">301路公交局部线路图</title>
           <desc id="bus-301-map-desc">展示滨郊南路至东郊地铁站的去程和返程站点、方向性停靠站及线路轨迹。</desc>
           <defs>
@@ -812,7 +812,8 @@ function busLocalMapTemplate() {
               <feDropShadow dx="0" dy="1" stdDeviation="1.1" flood-color="#173b37" flood-opacity=".28"/>
             </filter>
           </defs>
-          <image href="assets/maps/zezhou-bus-301-source.svg" x="0" y="0" width="1024" height="1024"/>
+          <image class="bus-map-base" href="assets/maps/zezhou-base.svg" x="910" y="910" width="6371" height="6371"/>
+          <g class="bus-map-overlay" transform="translate(910 910) scale(6.2216796875)">
           <g class="bus-map-route-halo">
             <path d="M850.1 302.8 C849.9 294 849.5 286 849.2 280.7 C849 275.2 848.8 270.4 848.7 266.4 C848.6 260.4 848.5 255.4 848.2 251.3 C847.3 239.6 845.5 222.8 842.1 212.8 C838.3 200.5 830.2 183.7 824.8 176.1"/>
             <path d="M824.8 176.1 C830.6 185.4 835.8 198.5 839.2 210.3 C843.2 222.6 846.8 239.1 848.2 251.3 C848.5 257.2 848.6 261.7 848.7 266.4 C848.8 271.8 849 276.6 849.2 280.7 C849.5 288.4 849.9 296.8 850.1 302.8"/>
@@ -835,6 +836,7 @@ function busLocalMapTemplate() {
               </g>
             `).join("")}
           </g>
+          </g>
         </svg>
         ${mapStops.map((stop) => `
           <button class="bus-map-hotspot" type="button"
@@ -853,7 +855,7 @@ function busLocalMapTemplate() {
         <span><i class="outbound"></i>去程</span>
         <span><i class="inbound"></i>返程</span>
         <span><b></b>双向停靠</span>
-        <a href="assets/maps/zezhou-bus-301-source.svg" target="_blank" rel="noopener">打开原图 ↗</a>
+        <span class="bus-map-source">基于泽州市现状底图绘制</span>
       </figcaption>
     </figure>
   `;
