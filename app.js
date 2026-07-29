@@ -125,6 +125,21 @@ const busRoute301 = {
   ]
 };
 
+const busRoute401 = {
+  number: "401",
+  type: "江洲区区内公交线路",
+  outbound: [
+    ["洲角广场", "shared"], ["泽州九中", "shared"], ["江洲新城", "shared"],
+    ["江洲工业园", "shared"], ["工气石化", "shared"], ["工气园北", "shared"],
+    ["白塔山", "shared"], ["北庭", "shared"], ["汉密佳苑", "shared"], ["江洲北站", "shared"]
+  ],
+  inbound: [
+    ["江洲北站", "shared"], ["汉密佳苑", "shared"], ["北庭", "shared"],
+    ["白塔山", "shared"], ["工气园北", "shared"], ["工气石化", "shared"],
+    ["江洲工业园", "shared"], ["江洲新城", "shared"], ["泽州九中", "shared"], ["洲角广场", "shared"]
+  ]
+};
+
 const districts = [
   { name: "印沙区", en: "Yinsha District", no: "01" },
   { name: "陇蜀区", en: "Longshu District", no: "02" },
@@ -283,26 +298,31 @@ const app = document.querySelector("#app");
 const nav = document.querySelector("#primary-nav");
 
 function selectBusMapStop(stop) {
+  const mapCard = stop.closest(".bus-local-map-card");
+  if (!mapCard) return;
   const source = stop.classList.contains("bus-map-hotspot")
     ? stop
-    : [...app.querySelectorAll(".bus-map-hotspot")].find((item) => item.dataset.mapStop === stop.dataset.mapStop);
+    : [...mapCard.querySelectorAll(".bus-map-hotspot")].find((item) => item.dataset.mapStop === stop.dataset.mapStop);
   if (!source) return;
-  app.querySelectorAll(".bus-map-stop").forEach((item) => {
+  mapCard.querySelectorAll(".bus-map-stop").forEach((item) => {
     item.classList.toggle("active", item.dataset.mapStop === source.dataset.mapStop);
   });
-  const mapStopName = app.querySelector("[data-map-stop-name]");
-  const mapTransfers = app.querySelector("[data-map-transfers]");
-  const popup = app.querySelector(".bus-map-popup");
+  const mapStopName = mapCard.querySelector("[data-map-stop-name]");
+  const mapTransfers = mapCard.querySelector("[data-map-transfers]");
+  const popup = mapCard.querySelector(".bus-map-popup");
   if (mapStopName) mapStopName.textContent = source.dataset.mapStop;
   if (mapTransfers) {
     const busNote = source.dataset.mapBusNote || "";
-    const metroBadge = source.dataset.mapMetroLine
-      ? `<span class="map-transfer-metro" style="--transfer-color:${source.dataset.mapMetroColor}">
-          <b>${source.dataset.mapMetroLine}号线</b><em>${source.dataset.mapMetroStation}站</em>
-        </span>`
-      : "";
+    const metroLines = source.dataset.mapMetroLines
+      ? source.dataset.mapMetroLines.split(",").map((item) => item.split(":"))
+      : source.dataset.mapMetroLine ? [[source.dataset.mapMetroLine, source.dataset.mapMetroColor]] : [];
+    const metroBadge = metroLines.map(([line, color]) => `
+      <span class="map-transfer-metro" style="--transfer-color:${color}">
+        <b style="color:${line === "5" ? "#111" : "#fff"}">${line}号线</b><em>${source.dataset.mapMetroStation || source.dataset.mapStop}站</em>
+      </span>`).join("");
+    const busNumber = source.dataset.mapBusNumber || "301";
     mapTransfers.innerHTML = `
-      <span class="map-transfer-bus"><b>301</b>${busNote ? `<em>${busNote}</em>` : ""}</span>
+      <span class="map-transfer-bus"><b>${busNumber}</b>${busNote ? `<em>${busNote}</em>` : ""}</span>
       ${metroBadge}
     `;
   }
@@ -675,6 +695,7 @@ function newsTemplate(section) {
 
 function newsCategoryTemplate(section, category) {
   const isZezhouNews = category.slug === "zezhou";
+  const isTrafficNews = category.slug === "traffic";
   const categoryIndex = newsCategories.findIndex((item) => item.slug === category.slug);
   return `
     ${sectionHeroTemplate(section, categoryIndex)}
@@ -687,6 +708,17 @@ function newsCategoryTemplate(section, category) {
             <small>泽州要闻</small>
             <h3>泽州市市长专题调研城市官网建设工作</h3>
             <p>加快搭建权威、便捷、开放的城市信息窗口</p>
+          </div>
+          <b aria-hidden="true">→</b>
+        </a>
+      ` : isTrafficNews ? `
+        <div class="news-list-heading"><p>TRAFFIC UPDATES</p><h2>交通调整公告</h2></div>
+        <a class="news-list-item" href="#news-article-20260730-401">
+          <time datetime="2026-07-30"><strong>30</strong><span>2026.07</span></time>
+          <div>
+            <small>交通调整</small>
+            <h3>关于开通江洲区401路公交线路的公告</h3>
+            <p>完善江洲新城、江洲工业园等片区公共交通服务</p>
           </div>
           <b aria-hidden="true">→</b>
         </a>
@@ -743,6 +775,35 @@ function districtSvg(district, detail = false) {
       <path class="district-map-shape" d="${district.path}" style="--district-color:${district.color}"/>
       <text class="district-map-label" x="${district.labelX}" y="${district.labelY}" text-anchor="middle">${district.name}</text>
     </svg>
+  `;
+}
+
+function trafficNewsArticleTemplate(section) {
+  return `
+    ${sectionHeroTemplate(section, 2, { href: "#news-traffic", label: "交通调整" })}
+    <section class="news-page shell section-drawer">
+      <article class="news-article">
+        <header class="news-article-header">
+          <p class="news-label">交通调整</p>
+          <h2>关于开通江洲区401路公交线路的公告</h2>
+          <p class="news-subtitle">进一步完善江洲区公共交通网络，便利沿线居民出行</p>
+          <div class="news-meta">
+            <time datetime="2026-07-30">发布时间：2026年7月30日</time>
+            <span>来源：泽州市交通运输局</span>
+          </div>
+        </header>
+        <div class="news-article-body">
+          <p>为进一步完善江洲区公共交通网络，加强江洲新城片区、江洲工业园区与江洲北站综合交通枢纽之间的联系，方便沿线居民通勤、就学和换乘出行，自2026年7月30日起开通401路公交线路。</p>
+          <p>401路由洲角广场开往江洲北站，沿途停靠泽州九中、江洲新城、江洲工业园、工气石化、工气园北、白塔山、北庭、汉密佳苑等站点，重点服务江洲新城居住片区、江洲工业园区、工气石化片区、白塔山片区及江洲北站周边区域。</p>
+          <p>江洲新城、工气石化、白塔山、北庭、江洲北站等同名站点可换乘相应地铁线路。其中，江洲新城站可换乘地铁2号线、5号线，江洲北站可换乘地铁2号线、4号线，其余同名站点可换乘地铁2号线。</p>
+          <p>线路具体运营时间、班次安排及站点服务信息以沿线公交站牌和运营单位公布内容为准。请广大市民合理安排出行时间，乘车过程中自觉遵守公共交通乘车秩序。</p>
+        </div>
+        <footer class="news-article-footer">
+          <span>责任编辑：泽州城市门户编辑组</span>
+          <span>泽州市交通运输局</span>
+        </footer>
+      </article>
+    </section>
   `;
 }
 
@@ -1011,6 +1072,65 @@ function busLocalMapTemplate() {
   `;
 }
 
+function busLocalMap401Template() {
+  const mapStops = [
+    { name: "洲角广场", x: 671.5, y: 510.4, labelX: 676, labelY: 516, anchor: "start", type: "首末站" },
+    { name: "泽州九中", x: 705.5, y: 492.2, labelX: 705.5, labelY: 498, anchor: "middle", type: "中途站" },
+    { name: "江洲新城", x: 739.9, y: 482.3, labelX: 739.9, labelY: 488, anchor: "middle", type: "中途站", metroLines: "2:#a6093d,5:#f2da51" },
+    { name: "江洲工业园", x: 813.2, y: 500.7, labelX: 813.2, labelY: 507, anchor: "middle", type: "中途站" },
+    { name: "工气石化", x: 885, y: 468.4, labelX: 885, labelY: 475, anchor: "middle", type: "中途站", metroLines: "2:#a6093d" },
+    { name: "工气园北", x: 916.9, y: 430, labelX: 912.5, labelY: 432, anchor: "end", type: "中途站" },
+    { name: "白塔山", x: 934, y: 383.1, labelX: 939, labelY: 386, anchor: "start", type: "中途站", metroLines: "2:#a6093d" },
+    { name: "北庭", x: 925.8, y: 289.4, labelX: 931, labelY: 292, anchor: "start", type: "中途站", metroLines: "2:#a6093d" },
+    { name: "汉密佳苑", x: 887.6, y: 276.5, labelX: 884, labelY: 273, anchor: "end", type: "中途站" },
+    { name: "江洲北站", x: 851, y: 306.1, labelX: 851, labelY: 314, anchor: "middle", type: "首末站", metroLines: "2:#a6093d,4:#7d55c7" }
+  ];
+  const routePath = "M671.5 510.4 C683 503 695 497 705.5 492.2 C717 487 728 482 739.9 482.3 C763 483 786 499 813.2 500.7 C838 499 865 482 885 468.4 C901 458 911 442 916.9 430 C924 412 930 396 934 383.1 C944 354 954 323 925.8 289.4 C914 275 899 274 887.6 276.5 C871 279 858 291 851 306.1";
+  return `
+    <figure class="bus-local-map-card bus-local-map-card-401">
+      <header>
+        <div><small>LOCAL ROUTE MAP</small><h3>401路局部线路图</h3></div>
+        <span>去返程叠加</span>
+      </header>
+      <div class="bus-local-map-frame" style="--map-aspect:330 / 290">
+        <svg viewBox="640 250 330 290" role="img" aria-labelledby="bus-401-map-title bus-401-map-desc">
+          <title id="bus-401-map-title">401路公交局部线路图</title>
+          <desc id="bus-401-map-desc">展示洲角广场至江洲北站的往返线路、沿途站点和轨道交通换乘信息。</desc>
+          <defs>
+            <marker id="bus-401-arrow-outbound" markerUnits="userSpaceOnUse" markerWidth="3" markerHeight="3" refX="2.6" refY="1.5" orient="auto"><path d="M0,0 L3,1.5 L0,3 Z" fill="#176058"/></marker>
+            <marker id="bus-401-arrow-inbound" markerUnits="userSpaceOnUse" markerWidth="3" markerHeight="3" refX="2.6" refY="1.5" orient="auto"><path d="M0,0 L3,1.5 L0,3 Z" fill="#d29a35"/></marker>
+          </defs>
+          <image class="bus-map-base" href="assets/maps/zezhou-base-20260730.svg" x="0" y="0" width="1024" height="1024"/>
+          <g class="bus-map-route-halo"><path d="${routePath}"/><path d="${routePath}"/></g>
+          <path class="bus-map-route bus-map-route-outbound" d="${routePath}" marker-end="url(#bus-401-arrow-outbound)"/>
+          <path class="bus-map-route bus-map-route-inbound" d="${routePath}" marker-start="url(#bus-401-arrow-inbound)"/>
+          <g class="bus-map-stops">
+            ${mapStops.map((stop, index) => `
+              <g class="bus-map-stop${index === 0 ? " active" : ""}" data-map-stop="${stop.name}" aria-hidden="true">
+                <circle class="bus-map-stop-hit" cx="${stop.x}" cy="${stop.y}" r="5.6"/>
+                <circle class="${stop.type === "首末站" ? "terminal" : "shared"}" cx="${stop.x}" cy="${stop.y}" r="${stop.type === "首末站" ? 1.55 : 1.05}"/>
+                <text class="bus-map-stop-label" x="${stop.labelX}" y="${stop.labelY}" text-anchor="${stop.anchor}">${stop.name}</text>
+              </g>`).join("")}
+          </g>
+        </svg>
+        ${mapStops.map((stop) => `
+          <button class="bus-map-hotspot" type="button"
+            style="--stop-left:${((stop.x - 640) / 330 * 100).toFixed(2)}%;--stop-top:${((stop.y - 250) / 290 * 100).toFixed(2)}%"
+            data-map-stop="${stop.name}" data-map-stop-type="${stop.type}" data-map-bus-number="401"
+            ${stop.metroLines ? `data-map-metro-lines="${stop.metroLines}" data-map-metro-station="${stop.name}"` : ""}
+            aria-label="查看${stop.name}站点信息"></button>`).join("")}
+        <aside class="bus-map-popup" style="--popup-left:9.55%;--popup-top:89.79%" aria-live="polite">
+          <strong data-map-stop-name>洲角广场</strong>
+          <div class="bus-map-transfers" data-map-transfers><span class="map-transfer-bus"><b>401</b></span></div>
+        </aside>
+      </div>
+      <figcaption>
+        <span><i class="outbound"></i>去程</span><span><i class="inbound"></i>返程</span><span><b></b>双向停靠</span>
+        <span class="bus-map-source">江洲区公交线路图</span>
+      </figcaption>
+    </figure>`;
+}
+
 function busTemplate(section) {
   return `
     ${sectionHeroTemplate(section, 1)}
@@ -1049,6 +1169,7 @@ function busTemplate(section) {
                 <span>${busRoute301.type} · 双向运营 · 非环线</span>
               </div>
               <button class="bus-direction-toggle" type="button" data-bus-direction="outbound"
+                data-outbound-start="滨郊南路" data-outbound-end="东郊地铁站"
                 aria-label="切换至返程方向">
                 <span data-direction-start>滨郊南路</span><i>→</i><span data-direction-end>东郊地铁站</span>
                 <small>点击切换方向</small>
@@ -1066,6 +1187,35 @@ function busTemplate(section) {
             <footer class="bus-route-note">
               <span><i class="shared-sample"></i>双向共同停靠</span>
               <span><i class="direction-sample"></i>方向性停靠站</span>
+            </footer>
+          </article>
+          <article class="bus-route-card">
+            <header class="bus-route-header">
+              <div class="bus-route-number"><small>BUS</small><strong>${busRoute401.number}</strong></div>
+              <div>
+                <p>OUTER DISTRICT SERVICE · JIANGZHOU</p>
+                <h2>${busRoute401.number}路</h2>
+                <span>${busRoute401.type} · 双向运营 · 非环线</span>
+              </div>
+              <button class="bus-direction-toggle" type="button" data-bus-direction="outbound"
+                data-outbound-start="洲角广场" data-outbound-end="江洲北站"
+                aria-label="切换至返程方向">
+                <span data-direction-start>洲角广场</span><i>→</i><span data-direction-end>江洲北站</span>
+                <small>点击切换方向</small>
+              </button>
+            </header>
+            <div class="bus-route-body">
+              <div class="bus-direction-view">
+                ${busDirectionTemplate("洲角广场 → 江洲北站", "outbound", busRoute401.outbound)}
+                <div data-bus-inbound hidden>
+                  ${busDirectionTemplate("江洲北站 → 洲角广场", "inbound", busRoute401.inbound)}
+                </div>
+              </div>
+              ${busLocalMap401Template()}
+            </div>
+            <footer class="bus-route-note">
+              <span><i class="shared-sample"></i>双向共同停靠</span>
+              <span>同名地铁站可换乘相应线路</span>
             </footer>
           </article>
         </section>
@@ -1137,7 +1287,10 @@ async function render() {
   const slug = location.hash.replace(/^#/, "") || "home";
   const section = sections.find((item) => item.slug === slug);
   const newsCategory = newsCategories.find((item) => slug === `news-${item.slug}`);
-  const isNewsArticle = slug === "news-article-20260726";
+  const isMayorNewsArticle = slug === "news-article-20260726";
+  const isTrafficNewsArticle = slug === "news-article-20260730-401";
+  const isNewsArticle = isMayorNewsArticle || isTrafficNewsArticle;
+  const newsArticleCategoryIndex = isTrafficNewsArticle ? 2 : 0;
   const newsSection = sections.find((item) => item.slug === "news");
   const secondaryRoute = sections
     .flatMap((item) => submenuSlugs[item.slug].map((secondarySlug, index) => ({
@@ -1162,7 +1315,7 @@ async function render() {
     ? -1
     : sections.findIndex((item) => item.slug === activeSlug);
   const targetSecondaryIndex = isNewsArticle
-    ? 0
+    ? newsArticleCategoryIndex
     : newsCategory
       ? newsCategories.findIndex((item) => item.slug === newsCategory.slug)
       : secondaryRoute?.index ?? null;
@@ -1254,7 +1407,9 @@ async function render() {
   document.body.classList.toggle("home-page", !isInnerPage);
   document.body.classList.toggle("inner-page", isInnerPage);
   const nextMarkup = isNewsArticle
-    ? newsArticleTemplate(newsSection)
+    ? isTrafficNewsArticle
+      ? trafficNewsArticleTemplate(newsSection)
+      : newsArticleTemplate(newsSection)
     : newsCategory
       ? newsCategoryTemplate(newsSection, newsCategory)
       : isMetroPage
@@ -1287,7 +1442,7 @@ async function render() {
       existingDrawer.replaceWith(nextDrawer);
     }
     const secondaryTitle = isNewsArticle
-      ? newsCategories[0].title
+      ? newsCategories[newsArticleCategoryIndex].title
       : newsCategory
         ? newsCategory.title
         : submenus[secondaryRoute.section.slug][secondaryRoute.index];
@@ -1305,13 +1460,16 @@ async function render() {
       : secondaryRoute?.section;
   if (parentSection) {
     const activeColumnIndex = isNewsArticle
-      ? 0
+      ? newsArticleCategoryIndex
       : newsCategory
         ? newsCategories.findIndex((item) => item.slug === newsCategory.slug)
         : secondaryRoute.index;
     const drawer = app.querySelector(".section-drawer");
     const backRoute = isNewsArticle
-      ? { href: "#news-zezhou", label: "泽州要闻" }
+      ? {
+          href: isTrafficNewsArticle ? "#news-traffic" : "#news-zezhou",
+          label: isTrafficNewsArticle ? "交通调整" : "泽州要闻"
+        }
       : null;
     drawer?.insertAdjacentHTML("afterbegin", columnSwitcherTemplate(parentSection, activeColumnIndex, "top"));
     drawer?.insertAdjacentHTML("beforeend", columnSwitcherTemplate(parentSection, activeColumnIndex, "bottom"));
@@ -1326,7 +1484,9 @@ async function render() {
     }, 620);
   }
   document.title = isNewsArticle
-    ? "泽州市市长专题调研城市官网建设工作｜泽州市门户"
+    ? isTrafficNewsArticle
+      ? "关于开通江洲区401路公交线路的公告｜泽州市门户"
+      : "泽州市市长专题调研城市官网建设工作｜泽州市门户"
     : newsCategory
       ? `${newsCategory.title}｜泽州市门户`
       : secondaryRoute
@@ -1371,29 +1531,32 @@ async function render() {
       });
     });
 
-    const directionToggle = document.querySelector(".bus-direction-toggle");
-    directionToggle?.addEventListener("click", () => {
-      const showInbound = directionToggle.dataset.busDirection === "outbound";
-      const outbound = document.querySelector(".bus-direction-outbound");
-      const inboundWrap = document.querySelector("[data-bus-inbound]");
-      if (outbound) outbound.hidden = showInbound;
-      if (inboundWrap) inboundWrap.hidden = !showInbound;
-      directionToggle.dataset.busDirection = showInbound ? "inbound" : "outbound";
-      directionToggle.querySelector("[data-direction-start]").textContent = showInbound ? "东郊地铁站" : "滨郊南路";
-      directionToggle.querySelector("[data-direction-end]").textContent = showInbound ? "滨郊南路" : "东郊地铁站";
-      directionToggle.setAttribute("aria-label", showInbound ? "切换至去程方向" : "切换至返程方向");
-      const activeDirection = showInbound
-        ? inboundWrap?.querySelector(".bus-direction")
-        : outbound;
-      activeDirection?.animate([
-        { opacity: 0, transform: "translateX(22px)" },
-        { opacity: 1, transform: "translateX(0)" }
-      ], {
-        duration: 360,
-        easing: "cubic-bezier(.2,.78,.2,1)"
+    document.querySelectorAll(".bus-direction-toggle").forEach((directionToggle) => {
+      directionToggle.addEventListener("click", () => {
+        const routeCard = directionToggle.closest(".bus-route-card");
+        const showInbound = directionToggle.dataset.busDirection === "outbound";
+        const outbound = routeCard?.querySelector(".bus-direction-outbound");
+        const inboundWrap = routeCard?.querySelector("[data-bus-inbound]");
+        const outboundStart = directionToggle.dataset.outboundStart;
+        const outboundEnd = directionToggle.dataset.outboundEnd;
+        if (outbound) outbound.hidden = showInbound;
+        if (inboundWrap) inboundWrap.hidden = !showInbound;
+        directionToggle.dataset.busDirection = showInbound ? "inbound" : "outbound";
+        directionToggle.querySelector("[data-direction-start]").textContent = showInbound ? outboundEnd : outboundStart;
+        directionToggle.querySelector("[data-direction-end]").textContent = showInbound ? outboundStart : outboundEnd;
+        directionToggle.setAttribute("aria-label", showInbound ? "切换至去程方向" : "切换至返程方向");
+        const activeDirection = showInbound
+          ? inboundWrap?.querySelector(".bus-direction")
+          : outbound;
+        activeDirection?.animate([
+          { opacity: 0, transform: "translateX(22px)" },
+          { opacity: 1, transform: "translateX(0)" }
+        ], {
+          duration: 360,
+          easing: "cubic-bezier(.2,.78,.2,1)"
+        });
       });
     });
-
   }
   if (isArchiveVersionsPage) {
     let archiveIndex = 0;
