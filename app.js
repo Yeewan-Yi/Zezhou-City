@@ -705,20 +705,6 @@ function newsTemplate(section) {
         </div>
         <span>2026年7月28日至30日 · 共1条</span>
       </header>
-      <div class="news-recent-days" aria-label="近三日新闻公告发布情况">
-        <div class="news-recent-day is-current">
-          <time datetime="2026-07-30"><strong>30</strong><span>07月</span></time>
-          <p><b>1条新发布</b><span>交通调整</span></p>
-        </div>
-        <div class="news-recent-day">
-          <time datetime="2026-07-29"><strong>29</strong><span>07月</span></time>
-          <p><b>暂无新增</b><span>信息持续更新</span></p>
-        </div>
-        <div class="news-recent-day">
-          <time datetime="2026-07-28"><strong>28</strong><span>07月</span></time>
-          <p><b>暂无新增</b><span>信息持续更新</span></p>
-        </div>
-      </div>
       <a class="news-recent-feature" href="#news-article-20260730-401">
         <span class="news-recent-label">最新发布 · 交通调整</span>
         <div>
