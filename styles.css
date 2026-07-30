@@ -33,6 +33,9 @@ a { color: inherit; text-decoration: none; }
   box-shadow: none;
   backdrop-filter: blur(1.5px);
 }
+.home-page .header {
+  position: fixed;
+}
 .brand-nav-row { min-height: 108px; display: flex; align-items: center; gap: 48px; }
 .brand { display: flex; align-items: center; gap: 16px; }
 .seal { position: relative; width: 62px; height: 62px; display: grid; place-items: center; flex: none; }
