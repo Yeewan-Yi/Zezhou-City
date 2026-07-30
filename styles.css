@@ -549,6 +549,8 @@ a.district-card { display: block; color: inherit; text-decoration: none; cursor:
 .bus-stop-list li:first-child > i, .bus-stop-list li:last-child > i { width: 16px; height: 16px; margin-left: 3px; }
 .bus-stop-order { color: #929c9b; font: 11px Georgia, serif; }
 .bus-stop-list strong { font-size: 15px; font-weight: 600; }
+.bus-stop-metro-transfers { display: inline-flex; align-items: center; justify-self: start; gap: 3px; }
+.bus-stop-metro-transfers b { width: 23px; min-width: 23px; height: 34px; display: grid; place-items: center; padding: 0; color: #fff; background: var(--transfer-color); border-radius: 2px; font: 700 13px/1 Arial, sans-serif; }
 .bus-stop-list em { min-width: 88px; justify-self: start; margin-left: -14px; padding: 5px 8px; color: #925b0d; border: 1px solid rgba(216,166,77,.45); border-radius: 3px; background: #fff6df; font-size: 10px; font-style: normal; text-align: center; white-space: nowrap; }
 .bus-stop-list li.outbound-only > i, .bus-stop-list li.inbound-only > i { background: #d8a64d; box-shadow: 0 0 0 2px #d8a64d; }
 .bus-local-map-card { min-width: 0; align-self: start; margin: 0; display: flex; flex-direction: column; background: #eef2eb; }
@@ -876,6 +878,7 @@ body.view-transitioning #app { min-height: 100vh; background: #0b302d; overflow:
   .bus-local-map-card > header { padding: 16px 18px; }
   .bus-local-map-frame { min-height: 0; }
   .bus-stop-list li { grid-template-columns: 22px 30px 1fr; }
+  .bus-stop-metro-transfers { grid-column: 3; margin-top: -8px; }
   .bus-stop-list em { grid-column: 3; width: fit-content; margin: -8px 0 0 -8px; }
   .bus-route-note { align-items: flex-start; flex-direction: column; padding: 17px 18px; }
   .column-switcher { grid-template-columns: 1fr 1fr; }
