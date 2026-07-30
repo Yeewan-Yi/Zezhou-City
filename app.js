@@ -316,10 +316,13 @@ function selectBusMapStop(stop) {
     const metroLines = source.dataset.mapMetroLines
       ? source.dataset.mapMetroLines.split(",").map((item) => item.split(":"))
       : source.dataset.mapMetroLine ? [[source.dataset.mapMetroLine, source.dataset.mapMetroColor]] : [];
-    const metroBadge = metroLines.map(([line, color]) => `
-      <span class="map-transfer-metro" style="--transfer-color:${color}">
-        <b style="color:${line === "5" ? "#111" : "#fff"}">${line}号线</b><em>${source.dataset.mapMetroStation || source.dataset.mapStop}站</em>
-      </span>`).join("");
+    const metroBadge = metroLines.length ? `
+      <span class="map-transfer-metro map-transfer-metro-group">
+        <span class="map-transfer-metro-lines">
+          ${metroLines.map(([line, color]) => `<b style="--transfer-color:${color};color:${line === "5" ? "#111" : "#fff"}">${line}</b>`).join("")}
+        </span>
+        <em>${source.dataset.mapMetroStation || source.dataset.mapStop}站</em>
+      </span>` : "";
     const busNumber = source.dataset.mapBusNumber || "301";
     mapTransfers.innerHTML = `
       <span class="map-transfer-bus"><b>${busNumber}</b>${busNote ? `<em>${busNote}</em>` : ""}</span>
@@ -332,6 +335,7 @@ function selectBusMapStop(stop) {
     popup.style.setProperty("--popup-left", `${left}%`);
     popup.style.setProperty("--popup-top", `${top}%`);
     popup.classList.toggle("bus-map-popup-left", left > 62);
+    popup.classList.add("visible");
   }
 }
 
@@ -363,7 +367,11 @@ app.addEventListener("click", (event) => {
   render();
 });
 
-app.addEventListener("mouseover", (event) => {
+document.addEventListener("mouseover", (event) => {
+  const activeFrame = event.target.closest(".bus-local-map-frame");
+  document.querySelectorAll(".bus-map-popup.visible").forEach((popup) => {
+    if (!activeFrame || !activeFrame.contains(popup)) popup.classList.remove("visible");
+  });
   const mapStop = event.target.closest(".bus-map-hotspot");
   if (mapStop) selectBusMapStop(mapStop);
 });
@@ -371,6 +379,13 @@ app.addEventListener("mouseover", (event) => {
 app.addEventListener("focusin", (event) => {
   const mapStop = event.target.closest(".bus-map-hotspot");
   if (mapStop) selectBusMapStop(mapStop);
+});
+
+app.addEventListener("mouseout", (event) => {
+  const frame = event.target.closest(".bus-local-map-frame");
+  if (frame && !frame.contains(event.relatedTarget)) {
+    frame.querySelector(".bus-map-popup")?.classList.remove("visible");
+  }
 });
 
 app.addEventListener("keydown", (event) => {
@@ -378,16 +393,6 @@ app.addEventListener("keydown", (event) => {
   if (!mapStop || (event.key !== "Enter" && event.key !== " ")) return;
   event.preventDefault();
   selectBusMapStop(mapStop);
-});
-
-app.addEventListener("mouseover", (event) => {
-  const mapStop = event.target.closest(".bus-map-hotspot");
-  if (mapStop) selectBusMapStop(mapStop);
-});
-
-app.addEventListener("focusin", (event) => {
-  const mapStop = event.target.closest(".bus-map-hotspot");
-  if (mapStop) selectBusMapStop(mapStop);
 });
 
 function submenuHref(sectionSlug, index) {
@@ -1131,7 +1136,7 @@ function busLocalMap401Template() {
     </figure>`;
 }
 
-function busTemplate(section) {
+function legacyBusTemplate(section) {
   return `
     ${sectionHeroTemplate(section, 1)}
     <section class="bus-page shell section-drawer">
@@ -1224,6 +1229,88 @@ function busTemplate(section) {
   `;
 }
 
+function busRouteCardTemplate(route) {
+  const is401 = route.number === "401";
+  const start = is401 ? "洲角广场" : "滨郊南路";
+  const end = is401 ? "江洲北站" : "东郊地铁站";
+  return `
+    <article class="bus-route-card">
+      <header class="bus-route-header">
+        <div class="bus-route-number"><small>BUS</small><strong>${route.number}</strong></div>
+        <div>
+          <p>OUTER DISTRICT SERVICE · ${is401 ? "JIANGZHOU" : "SANSHAN"}</p>
+          <h2>${route.number}路</h2>
+          <span>${route.type} · 双向运营 · 非环线</span>
+        </div>
+        <button class="bus-direction-toggle" type="button" data-bus-direction="outbound"
+          data-outbound-start="${start}" data-outbound-end="${end}" aria-label="切换至返程方向">
+          <span data-direction-start>${start}</span><i>→</i><span data-direction-end>${end}</span>
+          <small>点击切换方向</small>
+        </button>
+      </header>
+      <div class="bus-route-body">
+        <div class="bus-direction-view">
+          ${busDirectionTemplate(`${start} → ${end}`, "outbound", route.outbound)}
+          <div data-bus-inbound hidden>${busDirectionTemplate(`${end} → ${start}`, "inbound", route.inbound)}</div>
+        </div>
+        ${is401 ? busLocalMap401Template() : busLocalMapTemplate()}
+      </div>
+      <footer class="bus-route-note">
+        <span><i class="shared-sample"></i>双向共同停靠</span>
+        ${is401 ? "<span>同名地铁站可换乘相应线路</span>" : '<span><i class="direction-sample"></i>方向性停靠站</span>'}
+      </footer>
+    </article>`;
+}
+
+function busTemplate(section) {
+  return `
+    ${sectionHeroTemplate(section, 1)}
+    <section class="bus-page shell section-drawer">
+      <header class="bus-page-heading">
+        <p>ZEZHOU CITY BUS</p>
+        <h2>公交线路与编号体系</h2>
+      </header>
+      <div class="bus-numbering" role="tablist" aria-label="按编号范围查看公交线路">
+        ${busNumbering.map((item, index) => `
+          <button class="bus-number-tab${index === 0 ? " active" : ""}" type="button" role="tab" aria-selected="${index === 0}"
+            aria-controls="bus-range-panel-${index}" data-bus-range="${index}">
+            <span>${item.range}</span><small>${item.en}</small><h3>${item.title}</h3><p>${item.desc}</p><b aria-hidden="true">查看线路 →</b>
+          </button>`).join("")}
+      </div>
+      <div class="bus-range-results" aria-live="polite">
+        ${busNumbering.slice(0, 3).map((item, index) => `
+          <section class="bus-range-panel" id="bus-range-panel-${index}" data-bus-panel="${index}" role="tabpanel"${index === 0 ? "" : " hidden"}>
+            <div class="bus-range-empty"><small>${item.en}</small><h3>${item.range}</h3><p>该编号范围当前暂无已公布线路。</p></div>
+          </section>`).join("")}
+        <section class="bus-range-panel" id="bus-range-panel-3" data-bus-panel="3" role="tabpanel" hidden>
+          <div class="bus-route-directory">
+            <div class="news-list-heading"><p>OUTER DISTRICT ROUTES</p><h2>郊区分区线路</h2></div>
+            <a class="news-list-item" href="#transit-bus-301">
+              <span class="bus-directory-number">301</span>
+              <div><small>三山区东郊街道</small><h3>301路</h3><p>滨郊南路—东郊地铁站</p></div><b aria-hidden="true">→</b>
+            </a>
+            <a class="news-list-item" href="#transit-bus-401">
+              <span class="bus-directory-number">401</span>
+              <div><small>江洲区</small><h3>401路</h3><p>洲角广场—江洲北站</p></div><b aria-hidden="true">→</b>
+            </a>
+          </div>
+        </section>
+      </div>
+    </section>`;
+}
+
+function busRouteDetailTemplate(section, route) {
+  return `
+    ${sectionHeroTemplate(section, 1, { href: "#transit-bus", label: "公交" })}
+    <section class="bus-page bus-route-detail-page shell section-drawer">
+      <header class="bus-page-heading">
+        <p>ZEZHOU CITY BUS · ROUTE ${route.number}</p>
+        <h2>${route.number}路线路信息</h2>
+      </header>
+      ${busRouteCardTemplate(route)}
+    </section>`;
+}
+
 function metroLineDiagram(line) {
   const stationCards = line.stations.map(([name, transfers, outsideTransfers = []], stationIndex) => {
     const englishName = metroEnglishNames[line.number]?.[stationIndex] || "";
@@ -1292,6 +1379,12 @@ async function render() {
   const isNewsArticle = isMayorNewsArticle || isTrafficNewsArticle;
   const newsArticleCategoryIndex = isTrafficNewsArticle ? 2 : 0;
   const newsSection = sections.find((item) => item.slug === "news");
+  const busRouteDetail = slug === "transit-bus-301"
+    ? busRoute301
+    : slug === "transit-bus-401"
+      ? busRoute401
+      : null;
+  const transitSection = sections.find((item) => item.slug === "transit");
   const secondaryRoute = sections
     .flatMap((item) => submenuSlugs[item.slug].map((secondarySlug, index) => ({
       section: item, secondarySlug, index, route: `${item.slug}-${secondarySlug}`
@@ -1305,9 +1398,11 @@ async function render() {
     ? mappedDistricts.find((district) => district.slug === secondaryRoute.secondarySlug)
     : null;
   const isArchiveVersionsPage = secondaryRoute?.section.slug === "archives" && secondaryRoute.secondarySlug === "versions";
-  const isInnerPage = Boolean(section || secondaryRoute || newsCategory || isNewsArticle);
+  const isInnerPage = Boolean(section || secondaryRoute || newsCategory || isNewsArticle || busRouteDetail);
   const activeSlug = newsCategory || isNewsArticle
     ? "news"
+    : busRouteDetail
+      ? "transit"
     : secondaryRoute
       ? secondaryRoute.section.slug
       : slug;
@@ -1316,6 +1411,8 @@ async function render() {
     : sections.findIndex((item) => item.slug === activeSlug);
   const targetSecondaryIndex = isNewsArticle
     ? newsArticleCategoryIndex
+    : busRouteDetail
+      ? 1
     : newsCategory
       ? newsCategories.findIndex((item) => item.slug === newsCategory.slug)
       : secondaryRoute?.index ?? null;
@@ -1406,7 +1503,9 @@ async function render() {
 
   document.body.classList.toggle("home-page", !isInnerPage);
   document.body.classList.toggle("inner-page", isInnerPage);
-  const nextMarkup = isNewsArticle
+  const nextMarkup = busRouteDetail
+    ? busRouteDetailTemplate(transitSection, busRouteDetail)
+    : isNewsArticle
     ? isTrafficNewsArticle
       ? trafficNewsArticleTemplate(newsSection)
       : newsArticleTemplate(newsSection)
@@ -1453,7 +1552,9 @@ async function render() {
   } else {
     app.innerHTML = nextMarkup;
   }
-  const parentSection = isNewsArticle
+  const parentSection = busRouteDetail
+    ? transitSection
+    : isNewsArticle
     ? newsSection
     : newsCategory
       ? newsSection
@@ -1461,11 +1562,15 @@ async function render() {
   if (parentSection) {
     const activeColumnIndex = isNewsArticle
       ? newsArticleCategoryIndex
+      : busRouteDetail
+        ? 1
       : newsCategory
         ? newsCategories.findIndex((item) => item.slug === newsCategory.slug)
         : secondaryRoute.index;
     const drawer = app.querySelector(".section-drawer");
-    const backRoute = isNewsArticle
+    const backRoute = busRouteDetail
+      ? { href: "#transit-bus", label: "公交" }
+      : isNewsArticle
       ? {
           href: isTrafficNewsArticle ? "#news-traffic" : "#news-zezhou",
           label: isTrafficNewsArticle ? "交通调整" : "泽州要闻"
@@ -1483,7 +1588,9 @@ async function render() {
       }
     }, 620);
   }
-  document.title = isNewsArticle
+  document.title = busRouteDetail
+    ? `${busRouteDetail.number}路｜泽州市门户`
+    : isNewsArticle
     ? isTrafficNewsArticle
       ? "关于开通江洲区401路公交线路的公告｜泽州市门户"
       : "泽州市市长专题调研城市官网建设工作｜泽州市门户"
@@ -1512,7 +1619,7 @@ async function render() {
       });
     });
   }
-  if (isBusPage) {
+  if (isBusPage || busRouteDetail) {
     const busPrompt = document.querySelector(".bus-range-prompt");
     const busTabs = document.querySelectorAll(".bus-number-tab");
     const busPanels = document.querySelectorAll(".bus-range-panel");
