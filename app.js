@@ -319,7 +319,7 @@ function selectBusMapStop(stop) {
     const metroBadge = metroLines.length ? `
       <span class="map-transfer-metro map-transfer-metro-group">
         <span class="map-transfer-metro-lines">
-          ${metroLines.map(([line, color]) => `<b style="--transfer-color:${color};color:${line === "5" ? "#111" : "#fff"}">${line}</b>`).join("")}
+          ${metroLines.map(([line, color]) => `<b style="--transfer-color:${color};color:${line === "5" ? "#111" : "#fff"}">${metroLines.length === 1 ? `${line}号线` : line}</b>`).join("")}
         </span>
         <em>${source.dataset.mapMetroStation || source.dataset.mapStop}站</em>
       </span>` : "";
