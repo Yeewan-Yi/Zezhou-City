@@ -695,7 +695,41 @@ function archiveVersionsTemplate(section) {
 }
 
 function newsTemplate(section) {
-  return sectionHeroTemplate(section);
+  return `
+    ${sectionHeroTemplate(section)}
+    <section class="news-recent shell" aria-labelledby="recent-news-title">
+      <header class="news-recent-heading">
+        <div>
+          <p>LATEST 72 HOURS</p>
+          <h2 id="recent-news-title">近三日发布</h2>
+        </div>
+        <span>2026年7月28日至30日 · 共1条</span>
+      </header>
+      <div class="news-recent-days" aria-label="近三日新闻公告发布情况">
+        <div class="news-recent-day is-current">
+          <time datetime="2026-07-30"><strong>30</strong><span>07月</span></time>
+          <p><b>1条新发布</b><span>交通调整</span></p>
+        </div>
+        <div class="news-recent-day">
+          <time datetime="2026-07-29"><strong>29</strong><span>07月</span></time>
+          <p><b>暂无新增</b><span>信息持续更新</span></p>
+        </div>
+        <div class="news-recent-day">
+          <time datetime="2026-07-28"><strong>28</strong><span>07月</span></time>
+          <p><b>暂无新增</b><span>信息持续更新</span></p>
+        </div>
+      </div>
+      <a class="news-recent-feature" href="#news-article-20260730-401">
+        <span class="news-recent-label">最新发布 · 交通调整</span>
+        <div>
+          <h3>关于开通江洲区401路公交线路的公告</h3>
+          <p>完善江洲新城、江洲工业园等片区公共交通服务</p>
+        </div>
+        <time datetime="2026-07-30">2026.07.30</time>
+        <b aria-hidden="true">→</b>
+      </a>
+    </section>
+  `;
 }
 
 function newsCategoryTemplate(section, category) {
