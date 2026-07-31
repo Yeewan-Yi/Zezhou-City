@@ -736,7 +736,7 @@ function facilityProfileTemplate(section, secondaryIndex, profile) {
       <div class="facility-profile-grid">
         <aside class="facility-gallery" aria-label="${profile.name}图片">
           <figure>
-            ${profile.images.map(([src, alt], index) => `<img src="${src}" alt="${alt}" loading="${index ? "lazy" : "eager"}" decoding="async"${index ? " hidden" : ""}>`).join("")}
+            ${profile.images.map(([src, alt], index) => `<img src="${src}" alt="${alt}" loading="eager" decoding="async"${index ? " hidden" : ""}>`).join("")}
             <figcaption><span data-gallery-current>01</span><i>/</i><span>${String(profile.images.length).padStart(2, "0")}</span></figcaption>
           </figure>
           <div class="facility-gallery-controls">
@@ -1937,18 +1937,28 @@ async function render() {
       if (next === galleryIndex && !userInitiated) return;
       const previous = images[galleryIndex];
       const incoming = images[next];
+      images.forEach((image, index) => {
+        image.getAnimations().forEach((animation) => animation.cancel());
+        if (index !== galleryIndex && index !== next) image.hidden = true;
+      });
+      previous.hidden = false;
       incoming.hidden = false;
-      incoming.animate([
+      const incomingAnimation = incoming.animate([
         { opacity: 0, transform: "scale(1.025)" },
         { opacity: 1, transform: "scale(1)" }
       ], { duration: 620, easing: "cubic-bezier(.2,.72,.2,1)" });
-      previous.animate([
+      const outgoingAnimation = previous.animate([
         { opacity: 1 },
         { opacity: 0 }
-      ], { duration: 420, easing: "ease", fill: "forwards" }).finished
-        .then(() => { if (previous !== images[galleryIndex]) previous.hidden = true; })
-        .catch(() => {});
+      ], { duration: 420, easing: "ease", fill: "forwards" });
       galleryIndex = next;
+      outgoingAnimation.finished
+        .then(() => {
+          if (previous !== images[galleryIndex]) previous.hidden = true;
+          outgoingAnimation.cancel();
+        })
+        .catch(() => {});
+      incomingAnimation.finished.catch(() => {});
       current.textContent = String(next + 1).padStart(2, "0");
       dots.forEach((dot, index) => dot.classList.toggle("active", index === next));
     };
