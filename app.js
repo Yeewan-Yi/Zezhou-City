@@ -417,10 +417,32 @@ nav.innerHTML = sections
 nav.querySelectorAll("a").forEach((link) => {
   link.addEventListener("click", () => link.blur());
 });
+let alignedSubmenuItem = null;
+function alignSubmenuToPrimary(item) {
+  const submenuInner = item.querySelector(".submenu-inner");
+  if (!submenuInner) return;
+  alignedSubmenuItem = item;
+  window.requestAnimationFrame(() => {
+    const itemRect = item.getBoundingClientRect();
+    const submenuWidth = submenuInner.getBoundingClientRect().width;
+    const preferredCenter = itemRect.left + itemRect.width / 2;
+    const edgeInset = 24;
+    const safeCenter = Math.max(
+      submenuWidth / 2 + edgeInset,
+      Math.min(preferredCenter, window.innerWidth - submenuWidth / 2 - edgeInset)
+    );
+    submenuInner.style.setProperty("--submenu-center", `${safeCenter}px`);
+  });
+}
 nav.querySelectorAll(".nav-item").forEach((item) => {
+  item.addEventListener("mouseenter", () => alignSubmenuToPrimary(item));
+  item.addEventListener("focusin", () => alignSubmenuToPrimary(item));
   item.addEventListener("mouseleave", () => {
     if (item.contains(document.activeElement)) document.activeElement.blur();
   });
+});
+window.addEventListener("resize", () => {
+  if (alignedSubmenuItem) alignSubmenuToPrimary(alignedSubmenuItem);
 });
 
 function homeTemplate() {
@@ -1003,6 +1025,7 @@ function districtOverviewSvg() {
 }
 
 function districtsTemplate(section) {
+  const initialDistrict = mappedDistricts[0];
   return `
     <section class="page-hero page-hero-districts page-hero-image">
       <div class="shell page-hero-inner">
@@ -1025,18 +1048,26 @@ function districtsTemplate(section) {
       </div>
       <div class="district-grid">
         ${districts.map((district) => `
-          <${mappedDistricts.some((item) => item.name === district.name) ? "a" : "article"}
-            class="district-card"
-            ${mappedDistricts.some((item) => item.name === district.name) ? `href="#districts-${mappedDistricts.find((item) => item.name === district.name).slug}"` : ""}>
+          <${mappedDistricts.some((item) => item.name === district.name) ? "button" : "article"}
+            class="district-card${district.name === initialDistrict.name ? " active" : ""}"
+            ${mappedDistricts.some((item) => item.name === district.name) ? `type="button" data-district-map="${mappedDistricts.find((item) => item.name === district.name).slug}"` : ""}>
             <span class="district-no">${district.no}</span>
             <small>${district.en}</small>
             <h3>${district.name}</h3>
             <div class="district-rule"></div>
             <p>${mappedDistricts.some((item) => item.name === district.name) ? "查看行政边界、区域底图与毗邻关系。" : "行政边界资料待后续补充。"}</p>
             <span class="district-status">${mappedDistricts.some((item) => item.name === district.name) ? "查看区图" : "边界待补充"}</span>
-          </${mappedDistricts.some((item) => item.name === district.name) ? "a" : "article"}>
+          </${mappedDistricts.some((item) => item.name === district.name) ? "button" : "article"}>
         `).join("")}
       </div>
+      <section class="district-focus section-drawer" data-district-focus>
+        <header>
+          <div><p data-district-en>${initialDistrict.en}</p><h2 data-district-name>${initialDistrict.name}</h2></div>
+          <span data-district-boundary>${initialDistrict.boundary}</span>
+        </header>
+        <div class="district-focus-map" data-district-map-canvas>${districtSvg(initialDistrict, true)}</div>
+        <p class="district-map-note">彩色区域为行政区范围；区外底图采用灰色弱化处理。边界依据道路、江面中心线及海洋边界拟合。</p>
+      </section>
     </section>
   `;
 }
