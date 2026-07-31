@@ -406,7 +406,7 @@ nav.innerHTML = sections
       <div class="submenu" aria-label="${section.title}二级导航">
         <div class="submenu-inner">
           ${submenus[section.slug].map((item, index) => {
-            return `<a href="${submenuHref(section.slug, index)}">${item}</a>`;
+            return `<a href="${submenuHref(section.slug, index)}" data-section="${section.slug}" data-secondary-index="${index}">${item}</a>`;
           }).join("")}
         </div>
       </div>
@@ -1777,6 +1777,17 @@ async function render() {
         : "泽州市门户";
   nav.querySelectorAll(".nav-link").forEach((link) => {
     link.classList.toggle("active", link.dataset.slug === activeSlug);
+  });
+  nav.querySelectorAll(".submenu a").forEach((link) => {
+    const isActive = link.dataset.section === activeSlug
+      && targetSecondaryIndex !== null
+      && Number(link.dataset.secondaryIndex) === targetSecondaryIndex;
+    link.classList.toggle("active", isActive);
+    if (isActive) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
   });
   if (isMetroPage) {
     const lineView = document.querySelector("#metro-line-view");
