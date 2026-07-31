@@ -1234,7 +1234,7 @@ function busLocalMapTemplate() {
         <span>去返程叠加</span>
       </header>
       <div class="bus-local-map-frame">
-        <svg viewBox="5856.23 1893.02 759.04 983.03" role="img" aria-labelledby="bus-301-map-title bus-301-map-desc">
+        <svg viewBox="5611.96 1893.02 759.04 983.03" role="img" aria-labelledby="bus-301-map-title bus-301-map-desc">
           <title id="bus-301-map-title">301路公交局部线路图</title>
           <desc id="bus-301-map-desc">展示滨郊南路至东郊地铁站的去程和返程站点、方向性停靠站及线路轨迹。</desc>
           <defs>
