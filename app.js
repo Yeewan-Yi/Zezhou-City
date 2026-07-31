@@ -674,7 +674,14 @@ const facilityProfiles = {
     ],
     sections: [
       ["学校简介", "本栏目当前暂无可公开信息。"],
-      ["地理位置与周边环境", "学校位于印沙区广印路沿线，周边城市道路衔接顺畅，邻近连续居住街区与公共服务用地。由校址向北可接入纬地快速路，向东可经片区道路联系经天快速路，便于师生通勤及跨片区到达。", "assets/maps/zezhou-school-01-area.svg"],
+      ["地理位置与周边环境", "学校位于印沙区广印路沿线，周边城市道路衔接顺畅，邻近连续居住街区与公共服务用地。由校址向北可接入纬地快速路，向东可经片区道路联系经天快速路，便于师生通勤及跨片区到达。", {
+        src: "assets/maps/zezhou-base.svg",
+        viewBox: "3150.95 3077.03 1200 1200",
+        x: 1820,
+        y: 1820,
+        width: 4551,
+        height: 4551
+      }],
       ["办学规模", "本栏目当前暂无可公开信息。"]
     ],
     transit: { bus: [], metro: [] }
@@ -759,13 +766,15 @@ function facilityProfileTemplate(section, secondaryIndex, profile) {
             <dl>${profile.facts.map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join("")}</dl>
           </section>
           ${facilityTransitTemplate(profile)}
-          ${profile.sections.map(([title, content, mapSrc], index) => `
+          ${profile.sections.map(([title, content, map], index) => `
             <section class="facility-detail-section">
               <header><span>${String(index + 3).padStart(2, "0")}</span><div><small>PUBLIC INFORMATION</small><h3>${title}</h3></div></header>
-              ${mapSrc ? `
+              ${map ? `
                 <div class="facility-location-content">
                   <figure class="facility-location-map">
-                    <img src="${mapSrc}" alt="${profile.name}地理位置与周边环境地图" loading="lazy" decoding="async">
+                    <svg viewBox="${map.viewBox}" role="img" aria-label="${profile.name}地理位置与周边环境地图">
+                      <image href="${map.src}" x="${map.x}" y="${map.y}" width="${map.width}" height="${map.height}"/>
+                    </svg>
                     <figcaption><span>学校位置</span><strong>${profile.name}</strong></figcaption>
                   </figure>
                   <p>${content}</p>
