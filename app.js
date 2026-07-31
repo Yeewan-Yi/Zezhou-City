@@ -684,7 +684,7 @@ const facilityProfiles = {
     ],
     transit: {
       bus: [],
-      metro: [{ line: "3", station: "元江站", color: "#b3ca0e" }]
+      metro: [{ line: "3", station: "元江站", color: "#009a44" }]
     }
   }
 };
