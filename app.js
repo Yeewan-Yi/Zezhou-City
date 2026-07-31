@@ -836,6 +836,7 @@ function newsTemplate(section) {
 
 function newsCategoryTemplate(section, category) {
   const isZezhouNews = category.slug === "zezhou";
+  const isProjectNews = category.slug === "projects";
   const isTrafficNews = category.slug === "traffic";
   const categoryIndex = newsCategories.findIndex((item) => item.slug === category.slug);
   return `
@@ -849,6 +850,17 @@ function newsCategoryTemplate(section, category) {
             <small>泽州要闻</small>
             <h3>泽州市市长专题调研城市官网建设工作</h3>
             <p>加快搭建权威、便捷、开放的城市信息窗口</p>
+          </div>
+          <b aria-hidden="true">→</b>
+        </a>
+      ` : isProjectNews ? `
+        <div class="news-list-heading"><p>PROJECT NOTICES</p><h2>工程公告</h2></div>
+        <a class="news-list-item" href="#news-article-20260731-jinjiao">
+          <time datetime="2026-07-31"><strong>31</strong><span>2026.07</span></time>
+          <div>
+            <small>工程公告</small>
+            <h3>关于三山区锦郊路正式通车的公告</h3>
+            <p>完善三山区道路网络，强化与世锦大道、江洲北路方向的交通联系</p>
           </div>
           <b aria-hidden="true">→</b>
         </a>
@@ -942,6 +954,36 @@ function trafficNewsArticleTemplate(section) {
         <footer class="news-article-footer">
           <span>责任编辑：泽州城市门户编辑组</span>
           <span>泽州市交通运输局</span>
+        </footer>
+      </article>
+    </section>
+  `;
+}
+
+function projectNewsArticleTemplate(section) {
+  return `
+    ${sectionHeroTemplate(section, 1, { href: "#news-projects", label: "工程公告" })}
+    <section class="news-page shell section-drawer">
+      <article class="news-article">
+        <header class="news-article-header">
+          <p class="news-label">工程公告</p>
+          <h2>关于三山区锦郊路正式通车的公告</h2>
+          <p class="news-subtitle">进一步完善区域路网结构，提升三山区对外交通衔接能力</p>
+          <div class="news-meta">
+            <time datetime="2026-07-31">发布时间：2026年7月31日</time>
+            <span>来源：泽州市住房和城乡建设局</span>
+          </div>
+        </header>
+        <div class="news-article-body">
+          <p>为进一步完善三山区道路交通网络，改善沿线交通条件，提升片区通行效率，经工程建设、质量验收及通车准备，三山区锦郊路已具备开放交通条件，现正式通车。</p>
+          <p>锦郊路位于三山区，呈东北—西南走向，按双向四车道标准建设，是三山区道路体系中的重要次级主干道。道路通车后，将进一步健全片区内部交通骨架，增强沿线地块之间的联系，为居民日常出行和区域后续开发建设提供更加便捷的道路条件。</p>
+          <p>本次通车实现了锦郊路与相关连接道路的有效贯通。车辆可经连接节点衔接世锦大道，前往泽州主城区或转入世锦快速路；亦可衔接江洲北路，通往江洲区。该路段投入使用后，将进一步加强三山区与主城区、江洲区之间的道路联系，发挥分流区域交通、完善路网微循环的重要作用。</p>
+          <p>请广大交通参与者自觉遵守道路交通安全法律法规，按照交通标志、标线及现场设施指引有序通行，合理选择出行路线，共同维护安全、畅通、文明的道路交通环境。</p>
+          <p>特此公告。</p>
+        </div>
+        <footer class="news-article-footer">
+          <span>责任编辑：泽州城市门户编辑组</span>
+          <span>泽州市住房和城乡建设局</span>
         </footer>
       </article>
     </section>
@@ -1545,8 +1587,9 @@ async function render() {
   const newsCategory = newsCategories.find((item) => slug === `news-${item.slug}`);
   const isMayorNewsArticle = slug === "news-article-20260726";
   const isTrafficNewsArticle = slug === "news-article-20260730-401";
-  const isNewsArticle = isMayorNewsArticle || isTrafficNewsArticle;
-  const newsArticleCategoryIndex = isTrafficNewsArticle ? 2 : 0;
+  const isProjectNewsArticle = slug === "news-article-20260731-jinjiao";
+  const isNewsArticle = isMayorNewsArticle || isTrafficNewsArticle || isProjectNewsArticle;
+  const newsArticleCategoryIndex = isProjectNewsArticle ? 1 : isTrafficNewsArticle ? 2 : 0;
   const newsSection = sections.find((item) => item.slug === "news");
   const busRouteDetail = slug === "transit-bus-301"
     ? busRoute301
@@ -1680,6 +1723,8 @@ async function render() {
     : isNewsArticle
     ? isTrafficNewsArticle
       ? trafficNewsArticleTemplate(newsSection)
+      : isProjectNewsArticle
+        ? projectNewsArticleTemplate(newsSection)
       : newsArticleTemplate(newsSection)
     : newsCategory
       ? newsCategoryTemplate(newsSection, newsCategory)
@@ -1746,8 +1791,8 @@ async function render() {
       ? { href: "#transit-bus", label: "公交" }
       : isNewsArticle
       ? {
-          href: isTrafficNewsArticle ? "#news-traffic" : "#news-zezhou",
-          label: isTrafficNewsArticle ? "交通调整" : "泽州要闻"
+          href: isProjectNewsArticle ? "#news-projects" : isTrafficNewsArticle ? "#news-traffic" : "#news-zezhou",
+          label: isProjectNewsArticle ? "工程公告" : isTrafficNewsArticle ? "交通调整" : "泽州要闻"
         }
       : null;
     drawer?.insertAdjacentHTML("afterbegin", columnSwitcherTemplate(parentSection, activeColumnIndex, "top"));
@@ -1767,6 +1812,8 @@ async function render() {
     : isNewsArticle
     ? isTrafficNewsArticle
       ? "关于开通江洲区401路公交线路的公告｜泽州市门户"
+      : isProjectNewsArticle
+        ? "关于三山区锦郊路正式通车的公告｜泽州市门户"
       : "泽州市市长专题调研城市官网建设工作｜泽州市门户"
     : newsCategory
       ? `${newsCategory.title}｜泽州市门户`
