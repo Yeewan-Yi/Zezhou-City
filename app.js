@@ -674,7 +674,7 @@ const facilityProfiles = {
     ],
     sections: [
       ["学校简介", "本栏目当前暂无可公开信息。"],
-      ["地理位置与周边环境", "本栏目当前暂无可公开信息。"],
+      ["地理位置与周边环境", "学校位于印沙区广印路沿线，周边城市道路衔接顺畅，邻近连续居住街区与公共服务用地。由校址向北可接入纬地快速路，向东可经片区道路联系经天快速路，便于师生通勤及跨片区到达。", "assets/maps/zezhou-school-01-area.svg"],
       ["办学规模", "本栏目当前暂无可公开信息。"]
     ],
     transit: { bus: [], metro: [] }
@@ -759,10 +759,17 @@ function facilityProfileTemplate(section, secondaryIndex, profile) {
             <dl>${profile.facts.map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join("")}</dl>
           </section>
           ${facilityTransitTemplate(profile)}
-          ${profile.sections.map(([title, content], index) => `
+          ${profile.sections.map(([title, content, mapSrc], index) => `
             <section class="facility-detail-section">
               <header><span>${String(index + 3).padStart(2, "0")}</span><div><small>PUBLIC INFORMATION</small><h3>${title}</h3></div></header>
-              <p class="facility-empty">${content}</p>
+              ${mapSrc ? `
+                <div class="facility-location-content">
+                  <figure class="facility-location-map">
+                    <img src="${mapSrc}" alt="${profile.name}地理位置与周边环境地图" loading="lazy" decoding="async">
+                    <figcaption><span>学校位置</span><strong>${profile.name}</strong></figcaption>
+                  </figure>
+                  <p>${content}</p>
+                </div>` : `<p class="facility-empty">${content}</p>`}
             </section>`).join("")}
         </div>
       </div>
@@ -1241,7 +1248,7 @@ function busLocalMapTemplate() {
               <feDropShadow dx="0" dy="1" stdDeviation="1.1" flood-color="#173b37" flood-opacity=".28"/>
             </filter>
           </defs>
-          <image class="bus-map-base" href="assets/maps/zezhou-base.svg" x="910" y="910" width="6371" height="6371"/>
+          <image class="bus-map-base" href="assets/maps/zezhou-base.svg" x="1820" y="1820" width="4551" height="4551"/>
           <g class="bus-map-overlay" transform="translate(910 910) scale(6.2216796875)">
           <g class="bus-map-route-halo">
             <path d="M850.1 302.8 C849.9 294 849.5 286 849.2 280.7 C849 275.2 848.8 270.4 848.7 266.4 C848.6 260.4 848.5 255.4 848.2 251.3 C847.3 239.6 845.5 222.8 842.1 212.8 C838.3 200.5 830.2 183.7 824.8 176.1"/>
