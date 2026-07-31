@@ -1778,9 +1778,7 @@ async function render() {
             : section
               ? section.slug === "news"
                 ? newsTemplate(section)
-                : section.slug === "districts"
-                  ? districtsTemplate(section)
-                  : sectionTemplate(section)
+                : sectionTemplate(section)
               : homeTemplate();
   if (isSecondarySwitch && existingDrawer) {
     const nextView = document.createElement("template");
