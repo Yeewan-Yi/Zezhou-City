@@ -631,6 +631,122 @@ function secondaryTemplate(section, secondaryIndex) {
   `;
 }
 
+const facilityProfiles = {
+  education: {
+    kind: "教育设施",
+    eyebrow: "PUBLIC EDUCATION",
+    name: "泽州市第一中心学校",
+    englishName: "Zezhou No. 1 Central School",
+    summary: "公办完全中学，承担初中与高中阶段教育。",
+    images: [
+      ["assets/facilities/school-01.jpg", "泽州市第一中心学校校园外观"],
+      ["assets/facilities/school-02.jpg", "泽州市第一中心学校校园建筑"],
+      ["assets/facilities/school-03.jpg", "泽州市第一中心学校校园环境"]
+    ],
+    facts: [
+      ["学校类型", "公办"],
+      ["教育阶段", "完全中学"],
+      ["所属区域", "印沙区"],
+      ["详细地址", "印沙区广印路街道广印路6号"],
+      ["建设日期", "2025年7月16日"]
+    ],
+    sections: [
+      ["学校简介", "本栏目当前暂无可公开信息。"],
+      ["地理位置与周边环境", "本栏目当前暂无可公开信息。"],
+      ["办学规模", "本栏目当前暂无可公开信息。"]
+    ],
+    transit: { bus: [], metro: [] }
+  },
+  healthcare: {
+    kind: "医疗设施",
+    eyebrow: "PUBLIC HEALTHCARE",
+    name: "省人民医院",
+    englishName: "Provincial People’s Hospital",
+    summary: "服务泽州市区域医疗需求的综合医院。",
+    images: [
+      ["assets/facilities/hospital-01.jpg", "省人民医院建筑外观"],
+      ["assets/facilities/hospital-02.jpg", "省人民医院主入口"],
+      ["assets/facilities/hospital-03.jpg", "省人民医院院区环境"],
+      ["assets/facilities/hospital-04.jpg", "省人民医院建筑与周边环境"]
+    ],
+    facts: [
+      ["医院类型", "综合医院"],
+      ["所属区域", "印沙区、古丘区"],
+      ["详细地址", "印沙区元江街道、古丘区滨江街道"],
+      ["建设日期", "2025年7月16日"]
+    ],
+    sections: [
+      ["地理位置与周边环境", "本栏目当前暂无可公开信息。"],
+      ["道路交通", "本栏目当前暂无可公开信息。"],
+      ["医疗服务", "本栏目当前暂无可公开信息。"],
+      ["医院设施", "本栏目当前暂无可公开信息。"],
+      ["周边医疗资源", "本栏目当前暂无可公开信息。"]
+    ],
+    transit: {
+      bus: [],
+      metro: [{ line: "3", station: "元江站", color: "#b3ca0e" }]
+    }
+  }
+};
+
+function facilityTransitTemplate(profile) {
+  const empty = '<p class="facility-empty">本栏目当前暂无可公开信息。</p>';
+  const buses = profile.transit.bus.length
+    ? profile.transit.bus.map((item) => `<li><b class="facility-bus-badge">${item.line}</b><span><strong>${item.station}</strong>${item.direction ? `<small>开往${item.direction}方向</small>` : ""}</span></li>`).join("")
+    : "";
+  const metros = profile.transit.metro.length
+    ? profile.transit.metro.map((item) => `<li><b class="facility-metro-badge" style="--line-color:${item.color}">${item.line}号线</b><span><strong>${item.station}</strong></span></li>`).join("")
+    : "";
+  return `
+    <section class="facility-detail-section facility-transit">
+      <header><span>02</span><div><small>TRANSPORT</small><h3>公共交通</h3></div></header>
+      <div class="facility-transit-grid">
+        <article><h4>公交</h4>${buses ? `<ul>${buses}</ul>` : empty}</article>
+        <article><h4>地铁</h4>${metros ? `<ul>${metros}</ul>` : empty}</article>
+      </div>
+    </section>`;
+}
+
+function facilityProfileTemplate(section, secondaryIndex, profile) {
+  return `
+    ${sectionHeroTemplate(section, secondaryIndex)}
+    <section class="facility-profile shell section-drawer" data-facility-profile>
+      <div class="facility-profile-grid">
+        <aside class="facility-gallery" aria-label="${profile.name}图片">
+          <figure>
+            ${profile.images.map(([src, alt], index) => `<img src="${src}" alt="${alt}" loading="${index ? "lazy" : "eager"}" decoding="async"${index ? " hidden" : ""}>`).join("")}
+            <figcaption><span data-gallery-current>01</span><i>/</i><span>${String(profile.images.length).padStart(2, "0")}</span></figcaption>
+          </figure>
+          <div class="facility-gallery-controls">
+            <button type="button" data-gallery-prev aria-label="上一张图片">←</button>
+            <div role="tablist" aria-label="选择图片">
+              ${profile.images.map((_, index) => `<button type="button" data-gallery-index="${index}" class="${index ? "" : "active"}" aria-label="第${index + 1}张图片"></button>`).join("")}
+            </div>
+            <button type="button" data-gallery-next aria-label="下一张图片">→</button>
+          </div>
+        </aside>
+        <div class="facility-content">
+          <header class="facility-title">
+            <p>${profile.eyebrow} · ${profile.kind}</p>
+            <h2>${profile.name}</h2>
+            <strong>${profile.englishName}</strong>
+            <span>${profile.summary}</span>
+          </header>
+          <section class="facility-detail-section">
+            <header><span>01</span><div><small>ESSENTIAL INFORMATION</small><h3>基本信息</h3></div></header>
+            <dl>${profile.facts.map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join("")}</dl>
+          </section>
+          ${facilityTransitTemplate(profile)}
+          ${profile.sections.map(([title, content], index) => `
+            <section class="facility-detail-section">
+              <header><span>${String(index + 3).padStart(2, "0")}</span><div><small>PUBLIC INFORMATION</small><h3>${title}</h3></div></header>
+              <p class="facility-empty">${content}</p>
+            </section>`).join("")}
+        </div>
+      </div>
+    </section>`;
+}
+
 function archiveVersionsTemplate(section) {
   const first = cityVersions[0];
   return `
@@ -1403,6 +1519,7 @@ function metroLineDiagram(line) {
 let currentPrimaryIndex = null;
 let currentSecondaryIndex = null;
 let renderVersion = 0;
+let facilityGalleryTimer = 0;
 
 async function animateView(keyframes, duration) {
   if (!app.animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -1420,6 +1537,7 @@ async function animateView(keyframes, duration) {
 
 async function render() {
   const version = ++renderVersion;
+  window.clearInterval(facilityGalleryTimer);
   const preservedScrollY = window.scrollY;
   app.getAnimations?.().forEach((animation) => animation.cancel());
   const slug = location.hash.replace(/^#/, "") || "home";
@@ -1445,6 +1563,9 @@ async function render() {
   const isBusPage = secondaryRoute?.section.slug === "transit" && secondaryRoute.secondarySlug === "bus";
   const isMapPage = secondaryRoute?.section.slug === "map" && secondaryRoute.secondarySlug === "comprehensive";
   const isDistrictMapPage = secondaryRoute?.section.slug === "map" && secondaryRoute.secondarySlug === "districts";
+  const facilityProfile = secondaryRoute?.section.slug === "facilities"
+    ? facilityProfiles[secondaryRoute.secondarySlug]
+    : null;
   const mappedDistrictPage = secondaryRoute?.section.slug === "districts"
     ? mappedDistricts.find((district) => district.slug === secondaryRoute.secondarySlug)
     : null;
@@ -1574,6 +1695,8 @@ async function render() {
           ? districtMapTemplate(secondaryRoute.section)
         : mappedDistrictPage
           ? districtSecondaryTemplate(secondaryRoute.section, mappedDistrictPage, secondaryRoute.index)
+        : facilityProfile
+          ? facilityProfileTemplate(secondaryRoute.section, secondaryRoute.index, facilityProfile)
           : secondaryRoute
             ? secondaryTemplate(secondaryRoute.section, secondaryRoute.index)
             : section
@@ -1715,6 +1838,52 @@ async function render() {
         });
       });
     });
+  }
+  if (facilityProfile) {
+    const gallery = document.querySelector("[data-facility-profile] .facility-gallery");
+    const images = [...gallery.querySelectorAll("figure img")];
+    const dots = [...gallery.querySelectorAll("[data-gallery-index]")];
+    const current = gallery.querySelector("[data-gallery-current]");
+    let galleryIndex = 0;
+    const showGalleryImage = (nextIndex, userInitiated = false) => {
+      const next = (nextIndex + images.length) % images.length;
+      if (next === galleryIndex && !userInitiated) return;
+      const previous = images[galleryIndex];
+      const incoming = images[next];
+      incoming.hidden = false;
+      incoming.animate([
+        { opacity: 0, transform: "scale(1.025)" },
+        { opacity: 1, transform: "scale(1)" }
+      ], { duration: 620, easing: "cubic-bezier(.2,.72,.2,1)" });
+      previous.animate([
+        { opacity: 1 },
+        { opacity: 0 }
+      ], { duration: 420, easing: "ease", fill: "forwards" }).finished
+        .then(() => { if (previous !== images[galleryIndex]) previous.hidden = true; })
+        .catch(() => {});
+      galleryIndex = next;
+      current.textContent = String(next + 1).padStart(2, "0");
+      dots.forEach((dot, index) => dot.classList.toggle("active", index === next));
+    };
+    const restartGallery = () => {
+      window.clearInterval(facilityGalleryTimer);
+      facilityGalleryTimer = window.setInterval(() => showGalleryImage(galleryIndex + 1), 4000);
+    };
+    gallery.querySelector("[data-gallery-prev]").addEventListener("click", () => {
+      showGalleryImage(galleryIndex - 1, true);
+      restartGallery();
+    });
+    gallery.querySelector("[data-gallery-next]").addEventListener("click", () => {
+      showGalleryImage(galleryIndex + 1, true);
+      restartGallery();
+    });
+    dots.forEach((dot) => dot.addEventListener("click", () => {
+      showGalleryImage(Number(dot.dataset.galleryIndex), true);
+      restartGallery();
+    }));
+    gallery.addEventListener("mouseenter", () => window.clearInterval(facilityGalleryTimer));
+    gallery.addEventListener("mouseleave", restartGallery);
+    restartGallery();
   }
   if (isArchiveVersionsPage) {
     let archiveIndex = 0;

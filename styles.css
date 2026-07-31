@@ -815,6 +815,47 @@ body.switching-secondary .section-drawer { animation: none; }
 .section-drawer.drawer-horizontal { animation: none; }
 html.switching-secondary { scroll-behavior: auto; }
 html.switching-secondary, body.switching-secondary { overflow-anchor: none; }
+.facility-profile { padding-top: 0; }
+.facility-profile-grid { display: grid; grid-template-columns: minmax(360px,.82fr) minmax(480px,1.18fr); gap: clamp(34px,5vw,76px); align-items: start; }
+.facility-gallery { position: sticky; top: 28px; padding-top: 30px; }
+.facility-gallery figure { position: relative; aspect-ratio: 4 / 5; margin: 0; overflow: hidden; background: #dfe5df; }
+.facility-gallery figure::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 0 1px rgba(9,48,45,.12); }
+.facility-gallery figure img { width: 100%; height: 100%; position: absolute; inset: 0; display: block; object-fit: cover; }
+.facility-gallery figure img[hidden] { display: none; }
+.facility-gallery figcaption { position: absolute; right: 18px; bottom: 18px; z-index: 2; display: flex; gap: 7px; padding: 9px 12px; color: #fff; background: rgba(8,43,40,.78); font: 11px Georgia,serif; letter-spacing: .12em; backdrop-filter: blur(8px); }
+.facility-gallery figcaption i { opacity: .48; font-style: normal; }
+.facility-gallery-controls { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; min-height: 58px; border: 1px solid var(--line); border-top: 0; background: #fff; }
+.facility-gallery-controls > button { height: 100%; color: var(--green); border: 0; background: transparent; cursor: pointer; font-size: 18px; }
+.facility-gallery-controls > button:hover, .facility-gallery-controls > button:focus-visible { color: #fff; background: var(--green); outline: none; }
+.facility-gallery-controls div { display: flex; justify-content: center; gap: 9px; }
+.facility-gallery-controls div button { width: 22px; height: 3px; padding: 0; border: 0; background: #cbd2cf; cursor: pointer; transition: width .25s, background .25s; }
+.facility-gallery-controls div button.active { width: 38px; background: #b17822; }
+.facility-content { min-width: 0; padding-top: 62px; }
+.facility-title { padding-bottom: 46px; border-bottom: 1px solid var(--line); }
+.facility-title > p { margin: 0 0 18px; color: #9b681f; font-size: 10px; font-weight: 700; letter-spacing: .2em; }
+.facility-title h2 { margin: 0; color: #123d39; font-family: "Songti SC",serif; font-size: clamp(38px,4.2vw,60px); font-weight: 500; line-height: 1.16; }
+.facility-title > strong { display: block; margin-top: 11px; color: #778481; font: 15px Georgia,serif; letter-spacing: .05em; }
+.facility-title > span { display: block; max-width: 620px; margin-top: 30px; color: var(--muted); font-size: 15px; line-height: 1.9; }
+.facility-detail-section { padding: 48px 0; border-bottom: 1px solid var(--line); scroll-margin-top: 24px; }
+.facility-detail-section > header { display: grid; grid-template-columns: 56px 1fr; gap: 18px; align-items: start; margin-bottom: 28px; }
+.facility-detail-section > header > span { color: #c08b35; font: 26px Georgia,serif; }
+.facility-detail-section header small { display: block; margin-bottom: 6px; color: #899390; font-size: 8px; letter-spacing: .2em; }
+.facility-detail-section h3 { margin: 0; color: #173d39; font-family: "Songti SC",serif; font-size: 27px; font-weight: 500; }
+.facility-detail-section dl { margin: 0; border-top: 1px solid #dce1de; }
+.facility-detail-section dl div { display: grid; grid-template-columns: 125px 1fr; min-height: 58px; align-items: center; border-bottom: 1px solid #e2e6e3; }
+.facility-detail-section dt { color: #84908d; font-size: 12px; }
+.facility-detail-section dd { margin: 0; color: #183d39; font-size: 14px; }
+.facility-empty { margin: 0; padding: 18px 20px; color: #7b8582; border-left: 2px solid #c59a53; background: #f1f2ee; font-size: 13px; line-height: 1.8; }
+.facility-transit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.facility-transit-grid article { min-height: 150px; padding: 22px; border: 1px solid var(--line); background: #fff; }
+.facility-transit-grid h4 { margin: 0 0 18px; color: #173d39; font-size: 13px; }
+.facility-transit-grid ul { margin: 0; padding: 0; list-style: none; }
+.facility-transit-grid li { display: flex; align-items: center; gap: 13px; }
+.facility-transit-grid li span { display: flex; flex-direction: column; gap: 3px; }
+.facility-transit-grid li strong { color: #183d39; font-size: 14px; }
+.facility-transit-grid li small { color: #7d8986; font-size: 10px; }
+.facility-bus-badge { min-width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center; padding: 0 7px; color: #fff; border-radius: 50%; background: #145b4f; font: 13px Georgia,serif; }
+.facility-metro-badge { min-width: 74px; height: 32px; display: inline-flex; align-items: center; justify-content: center; padding: 0 11px; color: #fff; border-radius: 4px; background: var(--line-color); box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); font-size: 14px; }
 @keyframes drawer-rise {
   from { opacity: 0; transform: translateY(180px); }
   to { opacity: 1; transform: translateY(0); }
@@ -859,6 +900,7 @@ body.view-transitioning #app { min-height: 100vh; background: #0b302d; overflow:
   .archive-stage-nav { display: flex; padding: 12px; overflow-x: auto; scrollbar-color: #a8bdb7 transparent; }
   .archive-stage-nav::before { right: 28px; left: 28px; width: 1180px; }
   .archive-stage-nav button { flex: 0 0 190px; }
+  .facility-profile-grid { grid-template-columns: minmax(290px,.8fr) minmax(400px,1.2fr); gap: 32px; }
 }
 @media (max-width: 680px) {
   .shell { width: min(100% - 30px, 1240px); }
@@ -969,6 +1011,16 @@ body.view-transitioning #app { min-height: 100vh; background: #0b302d; overflow:
   .archive-version-copy h3 { font-size: 30px; }
   .archive-era-grid { grid-template-columns: 1fr; }
   .archive-era-grid article { min-height: 190px; }
+  .facility-profile-grid { grid-template-columns: 1fr; }
+  .facility-gallery { position: relative; top: auto; padding-top: 0; }
+  .facility-gallery figure { aspect-ratio: 4 / 3; }
+  .facility-content { padding-top: 32px; }
+  .facility-title { padding-bottom: 36px; }
+  .facility-title h2 { font-size: 37px; }
+  .facility-detail-section { padding: 38px 0; }
+  .facility-detail-section > header { grid-template-columns: 45px 1fr; }
+  .facility-detail-section dl div { grid-template-columns: 96px 1fr; gap: 12px; padding: 10px 0; }
+  .facility-transit-grid { grid-template-columns: 1fr; }
   .section-drawer { margin-top: -120px; padding: 24px 15px 60px; }
   .footer-inner { flex-direction: column; gap: 30px; }
 }
