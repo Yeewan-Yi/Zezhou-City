@@ -442,7 +442,8 @@ nav.querySelectorAll("a").forEach((link) => {
 document.querySelector(".brand")?.addEventListener("click", (event) => {
   if (location.hash === "#home" || !location.hash) {
     event.preventDefault();
-    window.scrollTo(0, 0);
+    if (homeLenis) homeLenis.scrollTo(0, { immediate: true });
+    else window.scrollTo(0, 0);
   }
 });
 let alignedSubmenuItem = null;
@@ -879,6 +880,7 @@ function archiveVersionsTemplate(section) {
 }
 
 let homeScrollCleanup = null;
+let homeLenis = null;
 function setupHomeScrollExperience() {
   homeScrollCleanup?.();
   const hero = document.querySelector(".hero");
@@ -889,6 +891,19 @@ function setupHomeScrollExperience() {
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let frame = 0;
+
+  if (!reducedMotion && typeof window.Lenis === "function") {
+    homeLenis = new window.Lenis({
+      autoRaf: true,
+      smoothWheel: true,
+      lerp: .16,
+      wheelMultiplier: .9,
+      syncTouch: false,
+      anchors: true,
+      stopInertiaOnNavigate: true,
+      overscroll: false
+    });
+  }
 
   const update = () => {
     frame = 0;
@@ -904,12 +919,15 @@ function setupHomeScrollExperience() {
 
   window.addEventListener("scroll", requestUpdate, { passive: true });
   window.addEventListener("resize", requestUpdate);
+  homeLenis?.on("scroll", requestUpdate);
   update();
 
   homeScrollCleanup = () => {
     window.removeEventListener("scroll", requestUpdate);
     window.removeEventListener("resize", requestUpdate);
     if (frame) window.cancelAnimationFrame(frame);
+    homeLenis?.destroy();
+    homeLenis = null;
     document.body.classList.remove("home-content-covered");
     homeScrollCleanup = null;
   };
