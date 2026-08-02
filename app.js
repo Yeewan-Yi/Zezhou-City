@@ -857,15 +857,24 @@ function newsTemplate(section) {
           <p>LATEST 72 HOURS</p>
           <h2 id="recent-news-title">近三日发布</h2>
         </div>
-        <span>2026年7月28日至30日 · 共1条</span>
+        <span>2026年7月31日至8月2日 · 共2条</span>
       </header>
-      <a class="news-recent-feature" href="#news-article-20260730-401">
-        <span class="news-recent-label">最新发布 · 交通调整</span>
+      <a class="news-recent-feature" href="#news-article-20260802-expressway-extension">
+        <span class="news-recent-label">规划公示</span>
         <div>
-          <h3>关于开通江洲区401路公交线路的公告</h3>
-          <p>完善江洲新城、江洲工业园等片区公共交通服务</p>
+          <h3>关于凤台快速路、绕城高速北延及林郊快速路西延工程的规划公示</h3>
+          <p>完善城市北部快速路网，强化三条快速通道之间的转换联系</p>
         </div>
-        <time datetime="2026-07-30">2026.07.30</time>
+        <time datetime="2026-08-02">2026.08.02</time>
+        <b aria-hidden="true">→</b>
+      </a>
+      <a class="news-recent-feature" href="#news-article-20260731-jinjiao">
+        <span class="news-recent-label">工程公告</span>
+        <div>
+          <h3>关于三山区锦郊路正式通车的公告</h3>
+          <p>完善三山区道路网络，强化与世锦大道、江洲北路方向的交通联系</p>
+        </div>
+        <time datetime="2026-07-31">2026.07.31</time>
         <b aria-hidden="true">→</b>
       </a>
     </section>
