@@ -482,29 +482,31 @@ function homeTemplate() {
         <h1>泽州市，<br>山水交织的现代都市。</h1>
         <p class="hero-lead">汇集泽州市空间规划、公共交通、道路地名与城市生活信息，为市民和游客提供清晰便捷的城市指引。</p>
         <div class="hero-actions">
-          <a href="#overview">认识泽州市</a>
-          <a href="#map" class="ghost">打开城市地图</a>
+          <a href="#overview-profile">认识泽州市</a>
+          <a href="#map-comprehensive" class="ghost">打开城市地图</a>
         </div>
       </div>
     </section>
 
-    <section class="directory shell">
-      <div class="section-heading">
-        <div><p>EXPLORE THE CITY</p><h2>城市导航</h2></div>
-        <span>按主题浏览城市概况、公共服务、交通出行与建设信息。</span>
-      </div>
-      <div class="section-grid">
-        ${sections.map((section) => `
-          <a href="#${section.slug}" class="section-card">
-            <span class="card-no">${section.mark}</span>
-            <div>
-              <small>${section.en}</small>
-              <h3>${section.title}</h3>
-              <p>${section.desc}</p>
-            </div>
-            <span class="arrow" aria-hidden="true">↗</span>
-          </a>
-        `).join("")}
+    <section class="directory-panel">
+      <div class="directory shell">
+        <div class="section-heading">
+          <div><p>EXPLORE THE CITY</p><h2>城市导航</h2></div>
+          <span>按主题浏览城市概况、公共服务、交通出行与建设信息。</span>
+        </div>
+        <div class="section-grid">
+          ${sections.map((section) => `
+            <a href="#${section.slug}" class="section-card">
+              <span class="card-no">${section.mark}</span>
+              <div>
+                <small>${section.en}</small>
+                <h3>${section.title}</h3>
+                <p>${section.desc}</p>
+              </div>
+              <span class="arrow" aria-hidden="true">↗</span>
+            </a>
+          `).join("")}
+        </div>
       </div>
     </section>
   `;
@@ -868,6 +870,102 @@ function archiveVersionsTemplate(section) {
       </nav>
     </section>
   `;
+}
+
+let homeScrollCleanup = null;
+function setupHomeScrollExperience() {
+  homeScrollCleanup?.();
+  const hero = document.querySelector(".hero");
+  const heroContent = hero?.querySelector(".hero-content");
+  const directoryPanel = document.querySelector(".directory-panel");
+  const header = document.querySelector(".header");
+  if (!hero || !heroContent || !directoryPanel || !header) return;
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const useWheelInertia = !reducedMotion && window.matchMedia("(min-width: 981px) and (pointer: fine)").matches;
+  let targetScroll = window.scrollY;
+  let easedScroll = targetScroll;
+  let frame = 0;
+  let inertiaFrame = 0;
+  let scrollTarget = window.scrollY;
+  let scrollPosition = scrollTarget;
+
+  const draw = () => {
+    easedScroll += (targetScroll - easedScroll) * (reducedMotion ? 1 : .115);
+    const progress = Math.min(Math.max(easedScroll / Math.max(hero.offsetHeight * .78, 1), 0), 1);
+    heroContent.style.setProperty("--home-copy-offset", reducedMotion ? "0px" : `${easedScroll * -.68}px`);
+    heroContent.style.setProperty("--home-copy-opacity", String(Math.max(0, 1 - progress * 1.08)));
+    document.body.classList.toggle("home-content-covered", directoryPanel.getBoundingClientRect().top <= 0);
+
+    if (Math.abs(targetScroll - easedScroll) > .15) {
+      frame = window.requestAnimationFrame(draw);
+    } else {
+      easedScroll = targetScroll;
+      frame = 0;
+    }
+  };
+  const requestDraw = () => {
+    targetScroll = window.scrollY;
+    if (!inertiaFrame) {
+      scrollTarget = window.scrollY;
+      scrollPosition = scrollTarget;
+    }
+    if (!frame) frame = window.requestAnimationFrame(draw);
+  };
+  const runInertia = () => {
+    const distance = scrollTarget - scrollPosition;
+    scrollPosition += distance * .095;
+    window.scrollTo(0, scrollPosition);
+    if (Math.abs(distance) > .35) {
+      inertiaFrame = window.requestAnimationFrame(runInertia);
+    } else {
+      window.scrollTo(0, scrollTarget);
+      scrollPosition = scrollTarget;
+      inertiaFrame = 0;
+    }
+  };
+  const handleWheel = (event) => {
+    if (!useWheelInertia || event.ctrlKey) return;
+    event.preventDefault();
+    const unit = event.deltaMode === 1 ? 22 : event.deltaMode === 2 ? window.innerHeight : 1;
+    const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
+    if (!inertiaFrame) scrollPosition = window.scrollY;
+    scrollTarget = Math.min(Math.max(scrollTarget + event.deltaY * unit, 0), maxScroll);
+    if (!inertiaFrame) inertiaFrame = window.requestAnimationFrame(runInertia);
+  };
+  const cancelInertia = () => {
+    if (inertiaFrame) window.cancelAnimationFrame(inertiaFrame);
+    inertiaFrame = 0;
+    scrollTarget = window.scrollY;
+    scrollPosition = scrollTarget;
+  };
+  const handleKeydown = (event) => {
+    if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(event.key)) cancelInertia();
+  };
+  const handleResize = () => {
+    targetScroll = window.scrollY;
+    easedScroll = targetScroll;
+    draw();
+  };
+
+  window.addEventListener("scroll", requestDraw, { passive: true });
+  window.addEventListener("resize", handleResize);
+  window.addEventListener("wheel", handleWheel, { passive: false });
+  window.addEventListener("pointerdown", cancelInertia, { passive: true });
+  window.addEventListener("keydown", handleKeydown);
+  draw();
+
+  homeScrollCleanup = () => {
+    window.removeEventListener("scroll", requestDraw);
+    window.removeEventListener("resize", handleResize);
+    window.removeEventListener("wheel", handleWheel);
+    window.removeEventListener("pointerdown", cancelInertia);
+    window.removeEventListener("keydown", handleKeydown);
+    if (frame) window.cancelAnimationFrame(frame);
+    if (inertiaFrame) window.cancelAnimationFrame(inertiaFrame);
+    document.body.classList.remove("home-content-covered");
+    homeScrollCleanup = null;
+  };
 }
 
 function archiveScreenshotsTemplate(section) {
@@ -1399,7 +1497,6 @@ function busLocalMapTemplate() {
         <span><i class="outbound"></i>去程</span>
         <span><i class="inbound"></i>返程</span>
         <span><b></b>双向停靠</span>
-        <span class="bus-map-source">基于泽州市现状底图绘制</span>
       </figcaption>
     </figure>
   `;
@@ -1484,7 +1581,6 @@ function busLocalMap401Template() {
       </div>
       <figcaption>
         <span><i class="outbound"></i>去程</span><span><i class="inbound"></i>返程</span><span><b></b>双向停靠</span>
-        <span class="bus-map-source">江洲区公交线路图</span>
       </figcaption>
     </figure>`;
 }
@@ -1723,6 +1819,8 @@ async function animateView(keyframes, duration) {
 
 async function render() {
   const version = ++renderVersion;
+  homeScrollCleanup?.();
+  document.body.classList.remove("home-content-covered");
   window.clearInterval(facilityGalleryTimer);
   const preservedScrollY = window.scrollY;
   app.getAnimations?.().forEach((animation) => animation.cancel());
@@ -2264,8 +2362,11 @@ async function render() {
     document.addEventListener("visibilitychange", scheduleArchiveRotation);
     scheduleArchiveRotation();
   }
-  if (slug === "home") scheduleDeferredHomeMedia();
   if (!isSecondarySwitch) window.scrollTo(0, 0);
+  if (slug === "home") {
+    scheduleDeferredHomeMedia();
+    setupHomeScrollExperience();
+  }
   currentPrimaryIndex = targetPrimaryIndex;
   currentSecondaryIndex = targetSecondaryIndex;
 
