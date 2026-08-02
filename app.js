@@ -439,6 +439,12 @@ nav.innerHTML = sections
 nav.querySelectorAll("a").forEach((link) => {
   link.addEventListener("click", () => link.blur());
 });
+document.querySelector(".brand")?.addEventListener("click", (event) => {
+  if (location.hash === "#home" || !location.hash) {
+    event.preventDefault();
+    window.scrollTo(0, 0);
+  }
+});
 let alignedSubmenuItem = null;
 function alignSubmenuToPrimary(item) {
   const submenuInner = item.querySelector(".submenu-inner");
@@ -882,92 +888,28 @@ function setupHomeScrollExperience() {
   if (!hero || !heroContent || !directoryPanel || !header) return;
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const useWheelInertia = !reducedMotion && window.matchMedia("(min-width: 981px) and (pointer: fine)").matches;
-  let targetScroll = window.scrollY;
-  let easedScroll = targetScroll;
   let frame = 0;
-  let inertiaFrame = 0;
-  let scrollTarget = window.scrollY;
-  let scrollPosition = scrollTarget;
 
-  const draw = () => {
-    easedScroll += (targetScroll - easedScroll) * (reducedMotion ? 1 : .2);
-    const progress = Math.min(Math.max(easedScroll / Math.max(hero.offsetHeight * .78, 1), 0), 1);
-    heroContent.style.setProperty("--home-copy-offset", reducedMotion ? "0px" : `${easedScroll * -.68}px`);
+  const update = () => {
+    frame = 0;
+    const scrollY = window.scrollY;
+    const progress = Math.min(Math.max(scrollY / Math.max(hero.offsetHeight * .78, 1), 0), 1);
+    heroContent.style.setProperty("--home-copy-offset", reducedMotion ? "0px" : `${scrollY * -.68}px`);
     heroContent.style.setProperty("--home-copy-opacity", String(Math.max(0, 1 - progress * 1.08)));
     document.body.classList.toggle("home-content-covered", directoryPanel.getBoundingClientRect().top <= 0);
-
-    if (Math.abs(targetScroll - easedScroll) > .15) {
-      frame = window.requestAnimationFrame(draw);
-    } else {
-      easedScroll = targetScroll;
-      frame = 0;
-    }
   };
-  const requestDraw = () => {
-    targetScroll = window.scrollY;
-    if (!inertiaFrame) {
-      scrollTarget = window.scrollY;
-      scrollPosition = scrollTarget;
-    }
-    if (!frame) frame = window.requestAnimationFrame(draw);
-  };
-  const runInertia = () => {
-    const distance = scrollTarget - scrollPosition;
-    scrollPosition += distance * .18;
-    window.scrollTo(0, scrollPosition);
-    if (Math.abs(distance) > .35) {
-      inertiaFrame = window.requestAnimationFrame(runInertia);
-    } else {
-      window.scrollTo(0, scrollTarget);
-      scrollPosition = scrollTarget;
-      inertiaFrame = 0;
-    }
-  };
-  const handleWheel = (event) => {
-    if (!useWheelInertia || event.ctrlKey) return;
-    event.preventDefault();
-    const unit = event.deltaMode === 1 ? 22 : event.deltaMode === 2 ? window.innerHeight : 1;
-    const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
-    if (!inertiaFrame) scrollPosition = window.scrollY;
-    const requestedTarget = scrollTarget + event.deltaY * unit;
-    const limitedTarget = Math.min(
-      Math.max(requestedTarget, scrollPosition - 200),
-      scrollPosition + 200
-    );
-    scrollTarget = Math.min(Math.max(limitedTarget, 0), maxScroll);
-    if (!inertiaFrame) inertiaFrame = window.requestAnimationFrame(runInertia);
-  };
-  const cancelInertia = () => {
-    if (inertiaFrame) window.cancelAnimationFrame(inertiaFrame);
-    inertiaFrame = 0;
-    scrollTarget = window.scrollY;
-    scrollPosition = scrollTarget;
-  };
-  const handleKeydown = (event) => {
-    if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(event.key)) cancelInertia();
-  };
-  const handleResize = () => {
-    targetScroll = window.scrollY;
-    easedScroll = targetScroll;
-    draw();
+  const requestUpdate = () => {
+    if (!frame) frame = window.requestAnimationFrame(update);
   };
 
-  window.addEventListener("scroll", requestDraw, { passive: true });
-  window.addEventListener("resize", handleResize);
-  window.addEventListener("wheel", handleWheel, { passive: false });
-  window.addEventListener("pointerdown", cancelInertia, { passive: true });
-  window.addEventListener("keydown", handleKeydown);
-  draw();
+  window.addEventListener("scroll", requestUpdate, { passive: true });
+  window.addEventListener("resize", requestUpdate);
+  update();
 
   homeScrollCleanup = () => {
-    window.removeEventListener("scroll", requestDraw);
-    window.removeEventListener("resize", handleResize);
-    window.removeEventListener("wheel", handleWheel);
-    window.removeEventListener("pointerdown", cancelInertia);
-    window.removeEventListener("keydown", handleKeydown);
+    window.removeEventListener("scroll", requestUpdate);
+    window.removeEventListener("resize", requestUpdate);
     if (frame) window.cancelAnimationFrame(frame);
-    if (inertiaFrame) window.cancelAnimationFrame(inertiaFrame);
     document.body.classList.remove("home-content-covered");
     homeScrollCleanup = null;
   };
