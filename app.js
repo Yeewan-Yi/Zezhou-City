@@ -41,6 +41,28 @@ const newsCategories = [
   { slug: "planning", title: "规划公示", en: "Planning Notices", desc: "发布城市规划方案及相关公示信息" }
 ];
 
+const newsItems = [
+  { date: "2026-08-02", category: "planning", label: "规划公示", href: "#news-article-20260802-expressway-extension", title: "关于凤台快速路、绕城高速北延及林郊快速路西延工程的规划公示", summary: "完善城市北部快速路网，强化三条快速通道之间的转换联系" },
+  { date: "2026-07-31", category: "projects", label: "工程公告", href: "#news-article-20260731-jinjiao", title: "关于三山区锦郊路正式通车的公告", summary: "完善三山区道路网络，强化与世锦大道、江洲北路方向的交通联系" },
+  { date: "2026-07-30", category: "traffic", label: "交通调整", href: "#news-article-20260730-401", title: "关于开通江洲区401路公交线路的公告", summary: "完善江洲新城、江洲工业园等片区公共交通服务" },
+  { date: "2026-07-26", category: "zezhou", label: "泽州要闻", href: "#news-article-20260726", title: "泽州市市长专题调研城市官网建设工作", summary: "加快搭建权威、便捷、开放的城市信息窗口" }
+];
+
+const archiveCityImages = [
+  { src: "assets/zezhou-archives.jpg", title: "建设档案·城市发展全景", desc: "从高处俯瞰泽州城市建设肌理，快速道路、街区与绿地共同勾勒城市持续生长的空间轮廓。" },
+  { src: "assets/zezhou-districts.jpg", title: "行政区划·都市交通景观", desc: "立体交通设施穿行于密集城区之中，呈现不同行政片区之间紧密衔接的城市景象。" },
+  { src: "assets/zezhou-facilities.jpg", title: "公共设施·城市服务片区", desc: "城市公共设施与周边道路、建筑相互结合，记录泽州公共服务空间的建设面貌。" },
+  { src: "assets/zezhou-home-2.jpg", title: "城市门户·快速路交汇", desc: "多层次道路在中心城区交汇，展示泽州快速交通网络与现代城市界面的组合。" },
+  { src: "assets/zezhou-home-3.jpg", title: "城市门户·滨水发展轴", desc: "滨水空间与连续建成区共同延展，呈现城市依托河流组织公共空间与发展轴线的格局。" },
+  { src: "assets/zezhou-life.jpg", title: "城市生活·滨水休闲空间", desc: "沿河景观、城市道路与生活街区相互交织，展现泽州市民日常活动所依托的公共环境。" },
+  { src: "assets/zezhou-map-hero.jpg", title: "城市地图·区域总览", desc: "以区域尺度观察泽州城市结构，集中呈现山水基底、建成区和主要交通走廊。" },
+  { src: "assets/zezhou-news.jpg", title: "新闻公告·建设现场", desc: "记录城市道路与公共工程持续推进的现场，为泽州建设动态留下直观影像。" },
+  { src: "assets/zezhou-overview.jpg", title: "城市概览·中心城区", desc: "中心城区建筑与道路形成连续界面，体现泽州主要城市功能集中发展的空间特征。" },
+  { src: "assets/zezhou-roads.jpg", title: "道路地名·城市交通走廊", desc: "宽阔道路串联城市街区与重要节点，展示泽州层次分明的道路系统。" },
+  { src: "assets/facilities/hospital-01.jpg", title: "省人民医院·建筑外观", desc: "省人民医院主体建筑影像，记录市级医疗服务设施的整体外观与建设形态。" },
+  { src: "assets/facilities/school-01.jpg", title: "泽州市第一中心学校·校园外观", desc: "校园总体外观及主要建筑影像，展现公办完全中学的整体建设风貌。" },
+];
+
 const cityVersions = [
   { source: "01", era: "筑城起步", title: "区域骨架初现", desc: "城市建设尚未大规模展开，山体、水系和外围通道共同构成泽州最初的空间底盘。" },
   { source: "03", era: "筑城起步", title: "首片街区落地", desc: "北部交通节点附近出现首批连续街区，城市由单一通道开始向成片建设转变。" },
@@ -848,35 +870,64 @@ function archiveVersionsTemplate(section) {
   `;
 }
 
+function archiveScreenshotsTemplate(section) {
+  return `
+    ${sectionHeroTemplate(section, 3)}
+    <section class="archive-gallery-page shell section-drawer" aria-labelledby="archive-gallery-title">
+      <header class="archive-gallery-heading">
+        <div><p>CITY IMAGE ARCHIVE</p><h2 id="archive-gallery-title">泽州城市影像</h2></div>
+        <span>${archiveCityImages.length}幅馆藏影像</span>
+      </header>
+      <p class="archive-gallery-intro">本栏目汇集现有城市主题与公共设施代表影像，以图文对照方式记录泽州的空间面貌、建设现场和公共生活。</p>
+      <div class="archive-gallery-list">
+        ${archiveCityImages.map((item, index) => `
+          <article class="archive-gallery-item">
+            <figure><img src="${item.src}" alt="${item.title}" loading="lazy" decoding="async"${index === 0 ? ' fetchpriority="high"' : ""}></figure>
+            <div><small>IMAGE ${String(index + 1).padStart(2, "0")}</small><h3>${item.title}</h3><i aria-hidden="true"></i><p>${item.desc}</p></div>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function newsFeatureTemplate(item) {
+  return `
+    <a class="news-recent-feature" href="${item.href}">
+      <span class="news-recent-label">${item.label}</span>
+      <div><h3>${item.title}</h3><p>${item.summary}</p></div>
+      <time datetime="${item.date}">${item.date.replaceAll("-", ".")}</time>
+      <b aria-hidden="true">→</b>
+    </a>`;
+}
+
+function newsListItemTemplate(item) {
+  const [year, month, day] = item.date.split("-");
+  return `
+    <a class="news-list-item" href="${item.href}">
+      <time datetime="${item.date}"><strong>${day}</strong><span>${year}.${month}</span></time>
+      <div><small>${item.label}</small><h3>${item.title}</h3><p>${item.summary}</p></div>
+      <b aria-hidden="true">→</b>
+    </a>`;
+}
+
 function newsTemplate(section) {
+  const recentItems = newsItems.filter((item) => item.date >= "2026-07-31");
   return `
     ${sectionHeroTemplate(section)}
     <section class="news-recent shell" aria-labelledby="recent-news-title">
       <header class="news-recent-heading">
-        <div>
-          <p>LATEST 72 HOURS</p>
-          <h2 id="recent-news-title">近三日发布</h2>
-        </div>
-        <span>2026年7月31日至8月2日 · 共2条</span>
+        <div><p>LATEST 72 HOURS</p><h2 id="recent-news-title">近三日发布</h2></div>
+        <span>2026年7月31日至8月2日 · 共${recentItems.length}条</span>
       </header>
-      <a class="news-recent-feature" href="#news-article-20260802-expressway-extension">
-        <span class="news-recent-label">规划公示</span>
-        <div>
-          <h3>关于凤台快速路、绕城高速北延及林郊快速路西延工程的规划公示</h3>
-          <p>完善城市北部快速路网，强化三条快速通道之间的转换联系</p>
-        </div>
-        <time datetime="2026-08-02">2026.08.02</time>
-        <b aria-hidden="true">→</b>
-      </a>
-      <a class="news-recent-feature" href="#news-article-20260731-jinjiao">
-        <span class="news-recent-label">工程公告</span>
-        <div>
-          <h3>关于三山区锦郊路正式通车的公告</h3>
-          <p>完善三山区道路网络，强化与世锦大道、江洲北路方向的交通联系</p>
-        </div>
-        <time datetime="2026-07-31">2026.07.31</time>
-        <b aria-hidden="true">→</b>
-      </a>
+      ${recentItems.map(newsFeatureTemplate).join("")}
+    </section>
+    <section class="news-recent news-all shell" aria-labelledby="all-news-title">
+      <header class="news-recent-heading">
+        <div><p>ALL NEWS</p><h2 id="all-news-title">全部新闻</h2></div>
+        <span>共${newsItems.length}条 · 按发布时间倒序</span>
+      </header>
+      ${newsItems.map(newsFeatureTemplate).join("")}
     </section>
   `;
 }
@@ -1707,6 +1758,7 @@ async function render() {
     ? mappedDistricts.find((district) => district.slug === secondaryRoute.secondarySlug)
     : null;
   const isArchiveVersionsPage = secondaryRoute?.section.slug === "archives" && secondaryRoute.secondarySlug === "versions";
+  const isArchiveScreenshotsPage = secondaryRoute?.section.slug === "archives" && secondaryRoute.secondarySlug === "screenshots";
   const isInnerPage = Boolean(section || secondaryRoute || newsCategory || isNewsArticle || busRouteDetail);
   const activeSlug = newsCategory || isNewsArticle
     ? "news"
@@ -1830,6 +1882,8 @@ async function render() {
           ? busTemplate(secondaryRoute.section)
         : isArchiveVersionsPage
           ? archiveVersionsTemplate(secondaryRoute.section)
+        : isArchiveScreenshotsPage
+          ? archiveScreenshotsTemplate(secondaryRoute.section)
         : isMapPage
           ? mapTemplate(secondaryRoute.section)
         : isDistrictMapPage
