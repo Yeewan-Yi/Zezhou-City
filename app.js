@@ -891,7 +891,7 @@ function setupHomeScrollExperience() {
   let scrollPosition = scrollTarget;
 
   const draw = () => {
-    easedScroll += (targetScroll - easedScroll) * (reducedMotion ? 1 : .115);
+    easedScroll += (targetScroll - easedScroll) * (reducedMotion ? 1 : .2);
     const progress = Math.min(Math.max(easedScroll / Math.max(hero.offsetHeight * .78, 1), 0), 1);
     heroContent.style.setProperty("--home-copy-offset", reducedMotion ? "0px" : `${easedScroll * -.68}px`);
     heroContent.style.setProperty("--home-copy-opacity", String(Math.max(0, 1 - progress * 1.08)));
@@ -914,7 +914,7 @@ function setupHomeScrollExperience() {
   };
   const runInertia = () => {
     const distance = scrollTarget - scrollPosition;
-    scrollPosition += distance * .095;
+    scrollPosition += distance * .18;
     window.scrollTo(0, scrollPosition);
     if (Math.abs(distance) > .35) {
       inertiaFrame = window.requestAnimationFrame(runInertia);
@@ -930,7 +930,12 @@ function setupHomeScrollExperience() {
     const unit = event.deltaMode === 1 ? 22 : event.deltaMode === 2 ? window.innerHeight : 1;
     const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
     if (!inertiaFrame) scrollPosition = window.scrollY;
-    scrollTarget = Math.min(Math.max(scrollTarget + event.deltaY * unit, 0), maxScroll);
+    const requestedTarget = scrollTarget + event.deltaY * unit;
+    const limitedTarget = Math.min(
+      Math.max(requestedTarget, scrollPosition - 200),
+      scrollPosition + 200
+    );
+    scrollTarget = Math.min(Math.max(limitedTarget, 0), maxScroll);
     if (!inertiaFrame) inertiaFrame = window.requestAnimationFrame(runInertia);
   };
   const cancelInertia = () => {
