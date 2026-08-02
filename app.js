@@ -876,6 +876,7 @@ function newsCategoryTemplate(section, category) {
   const isZezhouNews = category.slug === "zezhou";
   const isProjectNews = category.slug === "projects";
   const isTrafficNews = category.slug === "traffic";
+  const isPlanningNews = category.slug === "planning";
   const categoryIndex = newsCategories.findIndex((item) => item.slug === category.slug);
   return `
     ${sectionHeroTemplate(section, categoryIndex)}
@@ -910,6 +911,17 @@ function newsCategoryTemplate(section, category) {
             <small>交通调整</small>
             <h3>关于开通江洲区401路公交线路的公告</h3>
             <p>完善江洲新城、江洲工业园等片区公共交通服务</p>
+          </div>
+          <b aria-hidden="true">→</b>
+        </a>
+      ` : isPlanningNews ? `
+        <div class="news-list-heading"><p>PLANNING NOTICES</p><h2>规划公示</h2></div>
+        <a class="news-list-item" href="#news-article-20260802-expressway-extension">
+          <time datetime="2026-08-02"><strong>02</strong><span>2026.08</span></time>
+          <div>
+            <small>规划公示</small>
+            <h3>关于凤台快速路、绕城高速北延及林郊快速路西延工程的规划公示</h3>
+            <p>完善城市北部快速路网，强化三条快速通道之间的转换联系</p>
           </div>
           <b aria-hidden="true">→</b>
         </a>
@@ -1022,6 +1034,31 @@ function projectNewsArticleTemplate(section) {
         <footer class="news-article-footer">
           <span>责任编辑：泽州城市门户编辑组</span>
           <span>泽州市住房和城乡建设局</span>
+        </footer>
+      </article>
+    </section>
+  `;
+}
+
+function planningNewsArticleTemplate(section) {
+  return `
+    ${sectionHeroTemplate(section, 3, { href: "#news-planning", label: "规划公示" })}
+    <section class="news-page shell section-drawer">
+      <article class="news-article">
+        <header class="news-article-header">
+          <p class="news-label">规划公示</p>
+          <h2>关于凤台快速路、绕城高速北延及林郊快速路西延工程的规划公示</h2>
+          <div class="news-meta">
+            <time datetime="2026-08-02">公示时间：2026年8月2日</time>
+            <span>来源：泽州市自然资源和规划局</span>
+          </div>
+        </header>
+        <div class="news-article-body">
+          <p>为完善城市北部快速路网、提升跨区域交通转换效率，我市计划自2026年8月2日起组织实施凤台快速路和绕城高速北延、林郊快速路西延工程，并通过新建立交桥分别实现凤台快速路、绕城高速与林郊快速路的衔接，进一步增强各快速通道之间的互联互通能力，分担既有道路交通压力，改善北部片区对外交通条件；项目预计于2026年8月4日具备通车条件。</p>
+        </div>
+        <footer class="news-article-footer">
+          <span>责任编辑：泽州城市门户编辑组</span>
+          <span>泽州市自然资源和规划局</span>
         </footer>
       </article>
     </section>
@@ -1635,8 +1672,9 @@ async function render() {
   const isMayorNewsArticle = slug === "news-article-20260726";
   const isTrafficNewsArticle = slug === "news-article-20260730-401";
   const isProjectNewsArticle = slug === "news-article-20260731-jinjiao";
-  const isNewsArticle = isMayorNewsArticle || isTrafficNewsArticle || isProjectNewsArticle;
-  const newsArticleCategoryIndex = isProjectNewsArticle ? 1 : isTrafficNewsArticle ? 2 : 0;
+  const isPlanningNewsArticle = slug === "news-article-20260802-expressway-extension";
+  const isNewsArticle = isMayorNewsArticle || isTrafficNewsArticle || isProjectNewsArticle || isPlanningNewsArticle;
+  const newsArticleCategoryIndex = isPlanningNewsArticle ? 3 : isProjectNewsArticle ? 1 : isTrafficNewsArticle ? 2 : 0;
   const newsSection = sections.find((item) => item.slug === "news");
   const busRouteDetail = slug === "transit-bus-301"
     ? busRoute301
@@ -1772,6 +1810,8 @@ async function render() {
       ? trafficNewsArticleTemplate(newsSection)
       : isProjectNewsArticle
         ? projectNewsArticleTemplate(newsSection)
+        : isPlanningNewsArticle
+          ? planningNewsArticleTemplate(newsSection)
       : newsArticleTemplate(newsSection)
     : newsCategory
       ? newsCategoryTemplate(newsSection, newsCategory)
@@ -1836,8 +1876,8 @@ async function render() {
       ? { href: "#transit-bus", label: "公交" }
       : isNewsArticle
       ? {
-          href: isProjectNewsArticle ? "#news-projects" : isTrafficNewsArticle ? "#news-traffic" : "#news-zezhou",
-          label: isProjectNewsArticle ? "工程公告" : isTrafficNewsArticle ? "交通调整" : "泽州要闻"
+          href: isPlanningNewsArticle ? "#news-planning" : isProjectNewsArticle ? "#news-projects" : isTrafficNewsArticle ? "#news-traffic" : "#news-zezhou",
+          label: isPlanningNewsArticle ? "规划公示" : isProjectNewsArticle ? "工程公告" : isTrafficNewsArticle ? "交通调整" : "泽州要闻"
         }
       : null;
     drawer?.insertAdjacentHTML("afterbegin", columnSwitcherTemplate(parentSection, activeColumnIndex, "top"));
@@ -1859,6 +1899,8 @@ async function render() {
       ? "关于开通江洲区401路公交线路的公告｜泽州市门户"
       : isProjectNewsArticle
         ? "关于三山区锦郊路正式通车的公告｜泽州市门户"
+        : isPlanningNewsArticle
+          ? "关于凤台快速路、绕城高速北延及林郊快速路西延工程的规划公示｜泽州市门户"
       : "泽州市市长专题调研城市官网建设工作｜泽州市门户"
     : newsCategory
       ? `${newsCategory.title}｜泽州市门户`
