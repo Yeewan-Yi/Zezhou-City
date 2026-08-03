@@ -162,6 +162,28 @@ const busRoute401 = {
   ]
 };
 
+const busRoute333 = {
+  number: "333",
+  type: "三山区东郊街道环线公交",
+  circular: true,
+  outboundLabel: "333（外环）",
+  inboundLabel: "333（内环）",
+  outbound: [
+    ["东郊地铁站", "shared", [1]], ["丁香名郊北", "shared"], ["云创园", "shared"],
+    ["湖郊路", "shared"], ["慧郊中路·文郊西路", "shared"], ["慧郊南路·锦郊路", "shared"],
+    ["三山滨郊体育中心", "shared"], ["三山滨郊体育中心南", "shared"], ["滨郊南路", "shared"],
+    ["城北三山汇南", "shared"], ["知郊苑·知锦苑", "shared"], ["知郊苑·知仁苑", "shared"],
+    ["省人民医院新北院区", "shared"], ["东郊二中", "shared"]
+  ],
+  inbound: [
+    ["东郊地铁站", "shared", [1]], ["东郊二中", "shared"], ["省人民医院新北院区", "shared"],
+    ["知郊苑·知仁苑", "shared"], ["知郊苑·知锦苑", "shared"], ["城北三山汇南", "shared"],
+    ["滨郊南路", "shared"], ["三山滨郊体育中心南", "shared"], ["三山滨郊体育中心", "shared"],
+    ["慧郊南路·锦郊路", "shared"], ["慧郊中路·文郊西路", "shared"], ["湖郊路", "shared"],
+    ["云创园", "shared"], ["丁香名郊北", "shared"]
+  ]
+};
+
 const districts = [
   { name: "印沙区", en: "Yinsha District", no: "01" },
   { name: "陇蜀区", en: "Longshu District", no: "02" },
@@ -345,9 +367,10 @@ function selectBusMapStop(stop) {
         </span>
         <em>${source.dataset.mapMetroStation || source.dataset.mapStop}站</em>
       </span>` : "";
-    const busNumber = source.dataset.mapBusNumber || "301";
+    const busNumbers = (source.dataset.mapBusLines || source.dataset.mapBusNumber || "301").split(",");
+    const busBadge = busNumbers.map((number) => `<span class="map-transfer-bus"><b>${number}</b>${busNote ? `<em>${busNote}</em>` : ""}</span>`).join("");
     mapTransfers.innerHTML = `
-      <span class="map-transfer-bus"><b>${busNumber}</b>${busNote ? `<em>${busNote}</em>` : ""}</span>
+      ${busBadge}
       ${metroBadge}
     `;
   }
@@ -1358,11 +1381,11 @@ function transitTemplate(section) {
   `;
 }
 
-function busDirectionTemplate(label, direction, stations) {
+function busDirectionTemplate(label, direction, stations, badge, circular = false) {
   return `
-    <section class="bus-direction bus-direction-${direction}">
+    <section class="bus-direction bus-direction-${direction}${circular ? " bus-direction-circular" : ""}">
       <header>
-        <span>${direction === "outbound" ? "去" : "返"}</span>
+        <span>${badge || (direction === "outbound" ? "去" : "返")}</span>
         <div><small>${direction.toUpperCase()}</small><h3>${label}</h3></div>
       </header>
       <ol class="bus-stop-list">
@@ -1550,6 +1573,79 @@ function busLocalMap401Template() {
     </figure>`;
 }
 
+function busLocalMap333Template() {
+  const mapStops = [
+    { name: "东郊地铁站", x: 6050.03, y: 1983.5, labelX: 6036, labelY: 1970, anchor: "end", type: "环线首末站", busLines: "333,301", metroLines: "1:#009ace", metroStation: "东郊" },
+    { name: "丁香名郊北", x: 5919.12, y: 2087.12, labelX: 5905, labelY: 2078, anchor: "end", type: "环线站点" },
+    { name: "云创园", x: 5802.28, y: 2186.38, labelX: 5788, labelY: 2178, anchor: "end", type: "环线站点" },
+    { name: "湖郊路", x: 5755.01, y: 2290.57, labelX: 5770, labelY: 2280, anchor: "start", type: "环线站点" },
+    { name: "慧郊中路·文郊西路", x: 5809.86, y: 2422.2, labelX: 5825, labelY: 2412, anchor: "start", type: "环线站点" },
+    { name: "慧郊南路·锦郊路", x: 5826.64, y: 2620.22, labelX: 5842, labelY: 2610, anchor: "start", type: "环线站点" },
+    { name: "三山滨郊体育中心", x: 5842.09, y: 2733.59, labelX: 5857, labelY: 2722, anchor: "start", type: "环线站点" },
+    { name: "三山滨郊体育中心南", x: 5986.31, y: 2778.18, labelX: 5986, labelY: 2803, anchor: "middle", type: "环线站点" },
+    { name: "滨郊南路", x: 6218.59, y: 2793.51, labelX: 6218, labelY: 2820, anchor: "middle", type: "环线站点", busLines: "333,301" },
+    { name: "城北三山汇南", x: 6356.58, y: 2628.99, labelX: 6341, labelY: 2618, anchor: "end", type: "环线站点" },
+    { name: "知郊苑·知锦苑", x: 6362.08, y: 2397.19, labelX: 6347, labelY: 2387, anchor: "end", type: "环线站点" },
+    { name: "知郊苑·知仁苑", x: 6361.14, y: 2144.53, labelX: 6346, labelY: 2134, anchor: "end", type: "环线站点" },
+    { name: "省人民医院新北院区", x: 6362.06, y: 1966.1, labelX: 6347, labelY: 1955, anchor: "end", type: "环线站点" },
+    { name: "东郊二中", x: 6239.79, y: 1895.34, labelX: 6239, labelY: 1879, anchor: "middle", type: "环线站点" }
+  ];
+  const routePaths = [
+    "M6050.03,1983.5l-17.38,11.53l-7.89,5.32l-8.41,5.87l-8.33,5.98l-7.65,5.66l-8.1,6.19l-8.64,6.78l-8.57,6.87l-7.88,6.47l-7.96,6.72l-8.5,7.34l-8.42,7.42l-7.74,6.98l-15.44,14.49",
+    "M5919.12,2087.12l-15.11,14.83l-6.64,6.81l-7.06,7.44l-6.96,7.53l-6.34,7.09l-5.99,6.46l-6.75,6.66l-7,6.4l-6.74,5.69l-7.25,5.55l-8.02,5.68l-8.21,5.41l-7.8,4.75l-16.97,8.95",
+    "M5802.28,2186.38l-17.52,7.82l-8.55,3.2l-9.32,3.12l-9.42,2.81l-8.84,2.27l-8.63,1.79l-9.36,1.55l-9.41,1.2l-8.78,0.72l4.07,7.01l6.1,10.7l6.06,10.73l3.94,7.09l14.56,29.02l7.84,15.16",
+    "M5755.01,2290.57l7.47,15.35l3.48,7.44l3.66,8.06l3.57,8.1l3.2,7.57l12.97,29.05l2.99,7.53l4.47,11.48l4.42,11.5l2.85,7.59l5.75,17.96",
+    "M5809.86,2422.2l4.81,18.24l2.07,9.46l1.99,10.25l1.78,10.29l1.44,9.58l1.18,9.62l1.05,10.39l0.83,10.4l0.55,9.67l0.23,9.08l-0.01,9.78l-0.23,9.78l-0.45,9.07l-0.45,9.81l-0.15,10.58l0.12,10.58l0.35,9.82l1.67,21.62",
+    "M5826.64,2620.22l2.6,21.53l1.58,9.7l1.96,10.4l2.22,10.35l2.36,9.54l1.87,8.1l1.51,8.8l1.07,8.87l0.57,8.29l-0.3,17.8",
+    "M5842.09,2733.59l-1.88,17.7l-1.59,8.43l-2.14,8.98l-2.52,8.88l-2.74,8.13l-3.13,7.7l-3.79,8.09l-4.18,7.9l-4.3,7.11l9.27,-1.31l14.08,-2.06l14.07,-2.1l9.25,-1.44l8.59,-1.51l13.04,-2.38l13.03,-2.43l8.56,-1.66l7.69,-1.69l8.26,-1.97l8.23,-2.08l7.61,-2.04l8.08,-2.3l8.67,-2.6l8.64,-2.7l7.98,-2.61l15.43,-5.45",
+    "M5986.31,2778.18l15.26,-5.9l10.21,-2.98l11.03,-1.1l11.06,0.79l10.29,2.69l8.56,3.06l9.31,3.03l9.38,2.8l8.77,2.38l9.28,2.22l10.05,2.15l10.1,1.94l9.41,1.59l9.68,1.37l10.46,1.25l10.48,1.05l9.74,0.76l9.5,0.39l10.24,0.05l10.24,-0.23l9.5,-0.43l19.74,-1.54",
+    "M6218.59,2793.51l19.68,-2.22l9.22,-1.21l9.95,-1.23l9.96,-1.11l9.26,-0.85l9,-0.7l13.68,-1.06l13.68,-1.06l9,-0.7l30.93,-2.4l0.21,-8.72l0.31,-13.25l0.31,-13.25l0.21,-8.72l0.2,-8.28l0.3,-12.58l0.3,-12.58l0.2,-8.28l1.08,-45.5l0.49,-20.85",
+    "M6356.58,2628.99l0.49,-20.85l0.2,-8.28l0.3,-12.58l0.3,-12.58l0.2,-8.28l0.21,-9.03l0.33,-13.72l0.33,-13.72l0.21,-9.03l0.2,-8.28l0.3,-12.58l0.3,-12.58l0.2,-8.28l0.21,-9.03l0.33,-13.72l0.33,-13.72l0.21,-9.03l0.54,-23.27l0.32,-13.27",
+    "M6362.08,2397.19l0.3,-13.27l0.08,-5.91l0.11,-8.98l0.1,-8.98l0.05,-5.91l0,-8.03l-0.03,-12.2l-0.04,-12.2l-0.05,-8.03l-0.03,-7.53l-0.08,-11.44l-0.11,-11.44l-0.09,-7.53l0.23,-36.38l-0.29,-37.92l-0.5,-38.06l-0.58,-18.84",
+    "M6361.14,2144.53l-0.4,-18.84l0.1,-9.03l0.12,-13.72l0.11,-13.72l0.05,-9.03l0.37,-45.51l0.37,-45.51l0.19,-23.06",
+    "M6362.06,1966.1l0.19,-23.06l-1.63,-6.73l-2.56,-10.21l-2.6,-10.2l-1.75,-6.7l-1.89,-6.67l-2.93,-10.11l-2.97,-10.1l-2,-6.63l-3.75,1.15l-4.06,1.18l-4.07,1.14l-3.79,1.02l-6.21,1.57l-6.71,1.61l-6.73,1.53l-6.26,1.33l-6.12,1.18l-6.61,1.18l-6.63,1.1l-6.16,0.94l-4.05,0.56l-4.37,0.56l-4.38,0.51l-4.07,0.42l-20.16,2.71",
+    "M6239.79,1895.34l-19.96,3.95l-10.1,2.53l-10.79,3.03l-10.72,3.3l-9.87,3.32l-9.75,3.63l-10.4,4.19l-10.29,4.44l-9.44,4.39l-8.73,4.44l-9.26,5.06l-9.1,5.33l-8.27,5.25l-7.08,4.71l-10.77,7.15l-10.77,7.15l-7.08,4.71l-17.37,11.55"
+  ];
+  return `
+    <figure class="bus-local-map-card bus-local-map-card-333">
+      <header>
+        <div><small>LOCAL ROUTE MAP</small><h3>333路局部线路图</h3></div>
+        <span>内外环叠加</span>
+      </header>
+      <div class="bus-local-map-frame" style="--map-aspect:760 / 1040">
+        <svg viewBox="5680 1825 760 1040" role="img" aria-labelledby="bus-333-map-title bus-333-map-desc">
+          <title id="bus-333-map-title">333路公交局部线路图</title>
+          <desc id="bus-333-map-desc">展示东郊地铁站环线的内外环线路及沿途站点。</desc>
+          <defs>
+            <marker id="bus-333-arrow-outer" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#176058"/></marker>
+            <marker id="bus-333-arrow-inner" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" refX="1" refY="3.5" orient="auto-start-reverse"><path d="M0,0 L7,3.5 L0,7 Z" fill="#d29a35"/></marker>
+          </defs>
+          <image class="bus-map-base" href="assets/maps/zezhou-base.svg" x="1820" y="1820" width="4551" height="4551"/>
+          <g class="bus-map-route-halo">${routePaths.map((path) => `<path d="${path}"/>`).join("")}</g>
+          <g class="bus-map-route bus-map-route-outbound">${routePaths.map((path, index) => `<path d="${path}"${[3, 7, 11].includes(index) ? ' marker-end="url(#bus-333-arrow-outer)"' : ""}/>`).join("")}</g>
+          <g class="bus-map-route bus-map-route-inbound">${routePaths.map((path, index) => `<path d="${path}"${[3, 7, 11].includes(index) ? ' marker-start="url(#bus-333-arrow-inner)"' : ""}/>`).join("")}</g>
+          <g class="bus-map-stops">
+            ${mapStops.map((stop, index) => `<g class="bus-map-stop${index === 0 ? " active" : ""}" data-map-stop="${stop.name}" aria-hidden="true">
+              <circle class="bus-map-stop-hit" cx="${stop.x}" cy="${stop.y}" r="14"/>
+              <circle class="${index === 0 ? "terminal" : "shared"}" cx="${stop.x}" cy="${stop.y}" r="${index === 0 ? 6 : 4.4}"/>
+              <text class="bus-map-stop-label" x="${stop.labelX}" y="${stop.labelY}" text-anchor="${stop.anchor}">${stop.name}</text>
+            </g>`).join("")}
+          </g>
+        </svg>
+        ${mapStops.map((stop) => `<button class="bus-map-hotspot" type="button"
+          style="--stop-left:${((stop.x - 5680) / 760 * 100).toFixed(2)}%;--stop-top:${((stop.y - 1825) / 1040 * 100).toFixed(2)}%"
+          data-map-stop="${stop.name}" data-map-stop-type="${stop.type}" data-map-bus-lines="${stop.busLines || "333"}"
+          ${stop.metroLines ? `data-map-metro-lines="${stop.metroLines}" data-map-metro-station="${stop.metroStation}"` : ""}
+          aria-label="查看${stop.name}站点信息"></button>`).join("")}
+        <aside class="bus-map-popup" style="--popup-left:48.69%;--popup-top:15.24%" aria-live="polite">
+          <strong data-map-stop-name>东郊地铁站</strong>
+          <div class="bus-map-transfers" data-map-transfers><span class="map-transfer-bus"><b>333</b></span><span class="map-transfer-bus"><b>301</b></span><span class="map-transfer-metro map-transfer-metro-group"><span class="map-transfer-metro-lines"><b style="--transfer-color:#009ace;color:#fff">1号线</b></span><em>东郊站</em></span></div>
+        </aside>
+      </div>
+      <figcaption><span><i class="outbound"></i>外环</span><span><i class="inbound"></i>内环</span><span><b></b>环线停靠站</span></figcaption>
+    </figure>`;
+}
+
 function legacyBusTemplate(section) {
   return `
     ${sectionHeroTemplate(section, 1)}
@@ -1645,33 +1741,35 @@ function legacyBusTemplate(section) {
 
 function busRouteCardTemplate(route) {
   const is401 = route.number === "401";
-  const start = is401 ? "洲角广场" : "滨郊南路";
-  const end = is401 ? "江洲北站" : "东郊地铁站";
+  const is333 = route.number === "333";
+  const start = is333 ? "东郊地铁站" : is401 ? "洲角广场" : "滨郊南路";
+  const end = is333 ? "东郊地铁站" : is401 ? "江洲北站" : "东郊地铁站";
+  const districtEn = is401 ? "JIANGZHOU" : "SANSHAN";
   return `
     <article class="bus-route-card">
       <header class="bus-route-header">
         <div class="bus-route-number"><small>BUS</small><strong>${route.number}</strong></div>
         <div>
-          <p>OUTER DISTRICT SERVICE · ${is401 ? "JIANGZHOU" : "SANSHAN"}</p>
-          <h2>${route.number}路</h2>
-          <span>${route.type} · 双向运营 · 非环线</span>
+          <p>OUTER DISTRICT SERVICE · ${districtEn}</p>
+          <h2 data-bus-route-title>${is333 ? route.outboundLabel : `${route.number}路`}</h2>
+          <span>${route.type} · ${is333 ? "环线运营" : "双向运营 · 非环线"}</span>
         </div>
-        <button class="bus-direction-toggle" type="button" data-bus-direction="outbound"
-          data-outbound-start="${start}" data-outbound-end="${end}" aria-label="切换至返程方向">
-          <span data-direction-start>${start}</span><i>→</i><span data-direction-end>${end}</span>
+        <button class="bus-direction-toggle${is333 ? " bus-direction-toggle-circular" : ""}" type="button" data-bus-direction="outbound"
+          data-outbound-start="${start}" data-outbound-end="${end}" ${is333 ? `data-circular="true" data-outbound-title="${route.outboundLabel}" data-inbound-title="${route.inboundLabel}"` : ""} aria-label="${is333 ? "切换至内环" : "切换至返程方向"}">
+          <span data-direction-start>${start}</span><i>${is333 ? "↻" : "→"}</i><span data-direction-end>${end}</span>
           <small>点击切换方向</small>
         </button>
       </header>
       <div class="bus-route-body">
         <div class="bus-direction-view">
-          ${busDirectionTemplate(`${start} → ${end}`, "outbound", route.outbound)}
-          <div data-bus-inbound hidden>${busDirectionTemplate(`${end} → ${start}`, "inbound", route.inbound)}</div>
+          ${busDirectionTemplate(is333 ? route.outboundLabel : `${start} → ${end}`, "outbound", route.outbound, is333 ? "外" : "", is333)}
+          <div data-bus-inbound hidden>${busDirectionTemplate(is333 ? route.inboundLabel : `${end} → ${start}`, "inbound", route.inbound, is333 ? "内" : "", is333)}</div>
         </div>
-        ${is401 ? busLocalMap401Template() : busLocalMapTemplate()}
+        ${is333 ? busLocalMap333Template() : is401 ? busLocalMap401Template() : busLocalMapTemplate()}
       </div>
       <footer class="bus-route-note">
-        <span><i class="shared-sample"></i>双向共同停靠</span>
-        ${is401 ? "<span>同名地铁站可换乘相应线路</span>" : '<span><i class="direction-sample"></i>方向性停靠站</span>'}
+        ${is333 ? '<span><i class="shared-sample"></i>内外环共同停靠</span>' : '<span><i class="shared-sample"></i>双向共同停靠</span>'}
+        ${is333 || is401 ? "<span>同名地铁站可换乘相应线路</span>" : '<span><i class="direction-sample"></i>方向性停靠站</span>'}
       </footer>
     </article>`;
 }
@@ -1702,6 +1800,10 @@ function busTemplate(section) {
             <a class="news-list-item" href="#transit-bus-301">
               <span class="bus-directory-number">301</span>
               <div><small>三山区东郊街道</small><h3>301路</h3><p>滨郊南路—东郊地铁站</p></div><b aria-hidden="true">→</b>
+            </a>
+            <a class="news-list-item" href="#transit-bus-333">
+              <span class="bus-directory-number">333</span>
+              <div><small>三山区东郊街道</small><h3>333路</h3><p>东郊地铁站环线</p></div><b aria-hidden="true">→</b>
             </a>
             <a class="news-list-item" href="#transit-bus-401">
               <span class="bus-directory-number">401</span>
@@ -1801,6 +1903,8 @@ async function render() {
   const newsSection = sections.find((item) => item.slug === "news");
   const busRouteDetail = slug === "transit-bus-301"
     ? busRoute301
+    : slug === "transit-bus-333"
+      ? busRoute333
     : slug === "transit-bus-401"
       ? busRoute401
       : null;
@@ -2091,12 +2195,21 @@ async function render() {
         const inboundWrap = routeCard?.querySelector("[data-bus-inbound]");
         const outboundStart = directionToggle.dataset.outboundStart;
         const outboundEnd = directionToggle.dataset.outboundEnd;
+        const isCircular = directionToggle.dataset.circular === "true";
         if (outbound) outbound.hidden = showInbound;
         if (inboundWrap) inboundWrap.hidden = !showInbound;
         directionToggle.dataset.busDirection = showInbound ? "inbound" : "outbound";
         directionToggle.querySelector("[data-direction-start]").textContent = showInbound ? outboundEnd : outboundStart;
         directionToggle.querySelector("[data-direction-end]").textContent = showInbound ? outboundStart : outboundEnd;
-        directionToggle.setAttribute("aria-label", showInbound ? "切换至去程方向" : "切换至返程方向");
+        if (isCircular) {
+          const routeTitle = routeCard?.querySelector("[data-bus-route-title]");
+          if (routeTitle) routeTitle.textContent = showInbound
+            ? directionToggle.dataset.inboundTitle
+            : directionToggle.dataset.outboundTitle;
+        }
+        directionToggle.setAttribute("aria-label", isCircular
+          ? (showInbound ? "切换至外环" : "切换至内环")
+          : (showInbound ? "切换至去程方向" : "切换至返程方向"));
         const activeDirection = showInbound
           ? inboundWrap?.querySelector(".bus-direction")
           : outbound;
