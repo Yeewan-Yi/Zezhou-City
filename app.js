@@ -130,20 +130,20 @@ const busRoute301 = {
   number: "301",
   type: "三山区东郊街道郊区公交",
   outbound: [
-    ["滨郊南路", "shared"],
+    ["滨郊南路", "shared", [], [333]],
     ["古林南", "shared", [8]],
     ["古林北", "shared", [8]],
     ["林郊大道·锦郊路", "shared"],
     ["林郊大道·文郊东路", "outbound-only"],
-    ["东郊地铁站", "shared", [1]]
+    ["东郊地铁站", "shared", [1], [333]]
   ],
   inbound: [
-    ["东郊地铁站", "shared", [1]],
+    ["东郊地铁站", "shared", [1], [333]],
     ["林郊大道·文郊西路", "inbound-only"],
     ["林郊大道·锦郊路", "shared"],
     ["古林北", "shared", [8]],
     ["古林南", "shared", [8]],
-    ["滨郊南路", "shared"]
+    ["滨郊南路", "shared", [], [333]]
   ]
 };
 
@@ -169,16 +169,16 @@ const busRoute333 = {
   outboundLabel: "333（外环）",
   inboundLabel: "333（内环）",
   outbound: [
-    ["东郊地铁站", "shared", [1]], ["丁香名郊北", "shared"], ["云创园", "shared"],
+    ["东郊地铁站", "shared", [1], [301]], ["丁香名郊北", "shared"], ["云创园", "shared"],
     ["湖郊路", "shared"], ["慧郊中路·文郊西路", "shared"], ["慧郊南路·锦郊路", "shared"],
-    ["三山滨郊体育中心", "shared"], ["三山滨郊体育中心南", "shared"], ["滨郊南路", "shared"],
+    ["三山滨郊体育中心", "shared"], ["三山滨郊体育中心南", "shared"], ["滨郊南路", "shared", [], [301]],
     ["城北三山汇南", "shared"], ["知郊苑·知锦苑", "shared"], ["知郊苑·知仁苑", "shared"],
     ["省人民医院新北院区", "shared"], ["东郊二中", "shared"]
   ],
   inbound: [
-    ["东郊地铁站", "shared", [1]], ["东郊二中", "shared"], ["省人民医院新北院区", "shared"],
+    ["东郊地铁站", "shared", [1], [301]], ["东郊二中", "shared"], ["省人民医院新北院区", "shared"],
     ["知郊苑·知仁苑", "shared"], ["知郊苑·知锦苑", "shared"], ["城北三山汇南", "shared"],
-    ["滨郊南路", "shared"], ["三山滨郊体育中心南", "shared"], ["三山滨郊体育中心", "shared"],
+    ["滨郊南路", "shared", [], [301]], ["三山滨郊体育中心南", "shared"], ["三山滨郊体育中心", "shared"],
     ["慧郊南路·锦郊路", "shared"], ["慧郊中路·文郊西路", "shared"], ["湖郊路", "shared"],
     ["云创园", "shared"], ["丁香名郊北", "shared"]
   ]
@@ -412,14 +412,17 @@ app.addEventListener("click", (event) => {
   render();
 });
 
-document.addEventListener("mouseover", (event) => {
+function previewBusMapStop(event) {
   const activeFrame = event.target.closest(".bus-local-map-frame");
   document.querySelectorAll(".bus-map-popup.visible").forEach((popup) => {
     if (!activeFrame || !activeFrame.contains(popup)) popup.classList.remove("visible");
   });
-  const mapStop = event.target.closest(".bus-map-hotspot");
+  const mapStop = event.target.closest(".bus-map-stop, .bus-map-hotspot");
   if (mapStop) selectBusMapStop(mapStop);
-});
+}
+
+document.addEventListener("pointerover", previewBusMapStop);
+document.addEventListener("mouseover", previewBusMapStop);
 
 app.addEventListener("focusin", (event) => {
   const mapStop = event.target.closest(".bus-map-hotspot");
@@ -1382,42 +1385,55 @@ function transitTemplate(section) {
 }
 
 function busDirectionTemplate(label, direction, stations, badge, circular = false) {
+  const stationItems = stations.map(([name, status, transfers = [], busTransfers = []], index) => {
+    const order = `<span class="bus-stop-order">${String(index + 1).padStart(2, "0")}</span>`;
+    const metroBadges = transfers.length ? `<span class="bus-stop-metro-transfers" aria-label="可换乘地铁${transfers.join("、")}号线">
+      ${transfers.map((number) => {
+        const line = metroLines.find((item) => item.number === number);
+        return `<b style="--transfer-color:${line.color};color:${number === 5 ? "#111" : "#fff"}">${number}</b>`;
+      }).join("")}
+    </span>` : "";
+    const busBadges = busTransfers.length ? `<span class="bus-stop-bus-transfers" aria-label="可换乘公交${busTransfers.join("、")}路">
+      ${busTransfers.map((number) => `<b>${number}</b>`).join("")}
+    </span>` : "";
+    const directionNote = status === "outbound-only"
+      ? '<em>仅去程停靠</em>'
+      : status === "inbound-only" ? '<em>仅返程停靠</em>' : "";
+    return circular ? `
+      <li class="${status}">
+        <i aria-hidden="true"></i>
+        <span class="bus-loop-stop-label">${order}<strong>${name}</strong>${busBadges}${metroBadges}</span>
+      </li>` : `
+      <li class="${status}">
+        <i aria-hidden="true"></i>${order}<strong>${name}</strong>${busBadges}${metroBadges}${directionNote}
+      </li>`;
+  }).join("");
   return `
     <section class="bus-direction bus-direction-${direction}${circular ? " bus-direction-circular" : ""}">
       <header>
         <span>${badge || (direction === "outbound" ? "去" : "返")}</span>
         <div><small>${direction.toUpperCase()}</small><h3>${label}</h3></div>
       </header>
-      <ol class="bus-stop-list">
-        ${stations.map(([name, status, transfers = []], index) => `
-          <li class="${status}">
-            <i aria-hidden="true"></i>
-            <span class="bus-stop-order">${String(index + 1).padStart(2, "0")}</span>
-            <strong>${name}</strong>
-            ${transfers.length ? `<span class="bus-stop-metro-transfers" aria-label="可换乘地铁${transfers.join("、")}号线">
-              ${transfers.map((number) => {
-                const line = metroLines.find((item) => item.number === number);
-                return `<b style="--transfer-color:${line.color};color:${number === 5 ? "#111" : "#fff"}">${number}</b>`;
-              }).join("")}
-            </span>` : ""}
-            ${status === "outbound-only" ? '<em>仅去程停靠</em>' : ""}
-            ${status === "inbound-only" ? '<em>仅返程停靠</em>' : ""}
-          </li>
-        `).join("")}
-      </ol>
+      ${circular ? '<div class="bus-loop-wrap">' : ""}
+        <ol class="bus-stop-list">${stationItems}</ol>
+        ${circular ? `<span class="bus-loop-arrows" aria-hidden="true">
+          <i class="bus-loop-arrow-top">→</i><i class="bus-loop-arrow-right">↓</i>
+          <i class="bus-loop-arrow-bottom">←</i><i class="bus-loop-arrow-left">↑</i>
+        </span>` : ""}
+      ${circular ? "</div>" : ""}
     </section>
   `;
 }
 
 function busLocalMapTemplate() {
   const mapStops = [
-    { name: "滨郊南路", x: 850.1, y: 302.8, labelX: 854.1, labelY: 305.4, anchor: "start", type: "首末站" },
+    { name: "滨郊南路", x: 850.1, y: 302.8, labelX: 854.1, labelY: 305.4, anchor: "start", type: "首末站", busLines: "301,333" },
     { name: "古林南", x: 849.2, y: 280.7, labelX: 853.2, labelY: 283.3, anchor: "start", type: "中途站", metroLine: "8", metroStation: "古林", metroColor: "#93282c" },
     { name: "古林北", x: 848.7, y: 266.4, labelX: 852.7, labelY: 269, anchor: "start", type: "中途站", metroLine: "8", metroStation: "古林", metroColor: "#93282c" },
     { name: "林郊大道·锦郊路", x: 848.2, y: 251.3, labelX: 852.2, labelY: 253.9, anchor: "start", type: "中途站" },
     { name: "林郊大道·文郊东路", x: 842.1, y: 212.8, labelX: 846.1, labelY: 216.8, anchor: "start", type: "方向性站点", busNote: "开往东郊地铁站方向" },
     { name: "林郊大道·文郊西路", x: 839.2, y: 210.3, labelX: 835.2, labelY: 207.5, anchor: "end", type: "方向性站点", busNote: "开往滨郊南路方向" },
-    { name: "东郊地铁站", x: 824.8, y: 176.1, labelX: 828.8, labelY: 172.9, anchor: "start", type: "首末站", metroLine: "1", metroStation: "东郊", metroColor: "#009ace" }
+    { name: "东郊地铁站", x: 824.8, y: 176.1, labelX: 828.8, labelY: 172.9, anchor: "start", type: "首末站", busLines: "301,333", metroLine: "1", metroStation: "东郊", metroColor: "#009ace" }
   ];
   return `
     <figure class="bus-local-map-card">
@@ -1468,8 +1484,9 @@ function busLocalMapTemplate() {
         </svg>
         ${mapStops.map((stop) => `
           <button class="bus-map-hotspot" type="button"
-            style="--stop-left:${((stop.x - 795) / 122 * 100).toFixed(2)}%;--stop-top:${((stop.y - 158) / 158 * 100).toFixed(2)}%"
+            style="--stop-left:${((910 + stop.x * 6.2216796875 - 5611.96) / 759.04 * 100).toFixed(2)}%;--stop-top:${((910 + stop.y * 6.2216796875 - 1893.02) / 983.03 * 100).toFixed(2)}%"
             data-map-stop="${stop.name}" data-map-stop-type="${stop.type}"
+            ${stop.busLines ? `data-map-bus-lines="${stop.busLines}"` : ""}
             ${stop.busNote ? `data-map-bus-note="${stop.busNote}"` : ""}
             ${stop.metroLine ? `data-map-metro-line="${stop.metroLine}" data-map-metro-station="${stop.metroStation}" data-map-metro-color="${stop.metroColor}"` : ""}
             aria-label="查看${stop.name}站点信息"></button>
