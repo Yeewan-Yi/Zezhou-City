@@ -2,6 +2,8 @@
 
 收到新版 `泽州non.svg` 后，按下列范围统一更新，除非任务明确说明仅更新指定板块。
 
+公交线路页面的目录、站点信息、环线／非环线布局、换乘与交互规范另见 `BUS_DESIGN_REQUIREMENTS.md`。
+
 ## 基础文件
 
 - 将新版文件同步至 `assets/maps/zezhou-base.svg`。

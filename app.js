@@ -1385,7 +1385,7 @@ function transitTemplate(section) {
 }
 
 function busDirectionTemplate(label, direction, stations, badge, circular = false) {
-  const stationItems = stations.map(([name, status, transfers = [], busTransfers = []], index) => {
+  const stationItems = stations.map(([name, status, transfers = []], index) => {
     const order = `<span class="bus-stop-order">${String(index + 1).padStart(2, "0")}</span>`;
     const metroBadges = transfers.length ? `<span class="bus-stop-metro-transfers" aria-label="可换乘地铁${transfers.join("、")}号线">
       ${transfers.map((number) => {
@@ -1393,19 +1393,16 @@ function busDirectionTemplate(label, direction, stations, badge, circular = fals
         return `<b style="--transfer-color:${line.color};color:${number === 5 ? "#111" : "#fff"}">${number}</b>`;
       }).join("")}
     </span>` : "";
-    const busBadges = busTransfers.length ? `<span class="bus-stop-bus-transfers" aria-label="可换乘公交${busTransfers.join("、")}路">
-      ${busTransfers.map((number) => `<b>${number}</b>`).join("")}
-    </span>` : "";
     const directionNote = status === "outbound-only"
       ? '<em>仅去程停靠</em>'
       : status === "inbound-only" ? '<em>仅返程停靠</em>' : "";
     return circular ? `
       <li class="${status}">
         <i aria-hidden="true"></i>
-        <span class="bus-loop-stop-label">${order}<strong>${name}</strong>${busBadges}${metroBadges}</span>
+        <span class="bus-loop-stop-label">${order}<strong>${name}</strong>${metroBadges}</span>
       </li>` : `
       <li class="${status}">
-        <i aria-hidden="true"></i>${order}<strong>${name}</strong>${busBadges}${metroBadges}${directionNote}
+        <i aria-hidden="true"></i>${order}<strong>${name}</strong>${metroBadges}${directionNote}
       </li>`;
   }).join("");
   return `

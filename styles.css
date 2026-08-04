@@ -691,14 +691,14 @@ a.district-card { display: block; color: inherit; text-decoration: none; cursor:
 .bus-stop-list { position: relative; margin: 0; padding: 0; list-style: none; }
 .bus-stop-list::before { content: ""; position: absolute; top: 12px; bottom: 12px; left: 10px; width: 2px; background: #c7d5d1; }
 .bus-stop-list li { min-height: 58px; position: relative; display: grid; grid-template-columns: 22px 34px 1fr auto; align-items: center; gap: 10px; }
+.bus-direction:not(.bus-direction-circular) .bus-stop-list { height: 580px; display: flex; flex-direction: column; justify-content: space-between; }
+.bus-direction:not(.bus-direction-circular) .bus-stop-list li { width: 100%; min-height: 58px; flex: 0 0 58px; }
 .bus-stop-list li > i { z-index: 1; width: 12px; height: 12px; margin-left: 5px; border: 3px solid #fff; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 2px var(--green); }
 .bus-stop-list li:first-child > i, .bus-stop-list li:last-child > i { width: 16px; height: 16px; margin-left: 3px; }
 .bus-stop-order { color: #929c9b; font: 11px Georgia, serif; }
 .bus-stop-list strong { font-size: 15px; font-weight: 600; }
 .bus-stop-metro-transfers { display: inline-flex; align-items: center; justify-self: start; gap: 3px; }
 .bus-stop-metro-transfers b { width: 23px; min-width: 23px; height: 34px; display: grid; place-items: center; padding: 0; color: #fff; background: var(--transfer-color); border-radius: 2px; font: 700 13px/1 Arial, sans-serif; }
-.bus-stop-bus-transfers { display: inline-flex; align-items: center; justify-self: start; gap: 3px; }
-.bus-stop-bus-transfers b { min-width: 31px; height: 31px; display: grid; place-items: center; padding: 0 5px; color: #fff; border-radius: 50%; background: #176058; font: 700 10px/1 Arial, sans-serif; }
 .bus-stop-list em { min-width: 88px; justify-self: start; margin-left: -14px; padding: 5px 8px; color: #925b0d; border: 1px solid rgba(216,166,77,.45); border-radius: 3px; background: #fff6df; font-size: 10px; font-style: normal; text-align: center; white-space: nowrap; }
 .bus-stop-list li.outbound-only > i, .bus-stop-list li.inbound-only > i { background: #d8a64d; box-shadow: 0 0 0 2px #d8a64d; }
 .bus-local-map-card { min-width: 0; align-self: start; margin: 0; display: flex; flex-direction: column; background: #eef2eb; }
@@ -743,9 +743,9 @@ a.district-card { display: block; color: inherit; text-decoration: none; cursor:
 .map-transfer-metro-group em { padding-left: 8px; }
 .bus-local-map-card-401 .bus-map-stop-label { font-size: 5.2px; stroke-width: 1.55px; letter-spacing: .015em; }
 .bus-direction-toggle-circular { grid-template-columns: auto 22px auto; }
-.bus-loop-wrap { width: min(100%, 410px); position: relative; margin: 42px auto 28px; }
+.bus-loop-wrap { --loop-inset: 112px; width: min(100%, 410px); position: relative; margin: 42px auto 28px; }
 .bus-direction-circular .bus-stop-list { height: 640px; margin: 0; }
-.bus-direction-circular .bus-stop-list::before { top: 18px; right: 92px; bottom: 18px; left: 92px; width: auto; border: 2px solid #c7d5d1; border-radius: 38px; background: transparent; }
+.bus-direction-circular .bus-stop-list::before { top: 18px; right: var(--loop-inset); bottom: 18px; left: var(--loop-inset); width: auto; border: 2px solid #c7d5d1; border-radius: 38px; background: transparent; }
 .bus-direction-circular .bus-stop-list::after { content: none; }
 .bus-direction-circular .bus-stop-list li { width: 0; min-height: 0; position: absolute; display: block; padding: 0; transform: none; }
 .bus-direction-circular .bus-stop-list li > i,
@@ -754,14 +754,13 @@ a.district-card { display: block; color: inherit; text-decoration: none; cursor:
 .bus-loop-stop-label { min-width: max-content; position: absolute; z-index: 2; display: flex; align-items: center; gap: 6px; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,.92); line-height: 1.25; }
 .bus-loop-stop-label strong { max-width: 164px; font-size: 13px; }
 .bus-loop-stop-label .bus-stop-metro-transfers b { width: 20px; min-width: 20px; height: 28px; font-size: 11px; }
-.bus-loop-stop-label .bus-stop-bus-transfers b { min-width: 27px; height: 27px; font-size: 9px; }
 .bus-direction-circular .bus-stop-list li:nth-child(1) { top: 18px; left: 50%; }
 .bus-direction-circular .bus-stop-list li:nth-child(1) .bus-loop-stop-label { bottom: 15px; left: 50%; transform: translateX(-50%); }
 .bus-direction-circular .bus-stop-list li:nth-child(8) { bottom: 18px; left: 50%; }
 .bus-direction-circular .bus-stop-list li:nth-child(8) .bus-loop-stop-label { top: 15px; left: 50%; transform: translateX(-50%); }
-.bus-direction-circular .bus-stop-list li:nth-child(n+2):nth-child(-n+7) { left: calc(100% - 92px); }
+.bus-direction-circular .bus-stop-list li:nth-child(n+2):nth-child(-n+7) { left: calc(100% - var(--loop-inset)); }
 .bus-direction-circular .bus-stop-list li:nth-child(n+2):nth-child(-n+7) .bus-loop-stop-label { left: 15px; }
-.bus-direction-circular .bus-stop-list li:nth-child(n+9) { left: 92px; }
+.bus-direction-circular .bus-stop-list li:nth-child(n+9) { left: var(--loop-inset); }
 .bus-direction-circular .bus-stop-list li:nth-child(n+9) .bus-loop-stop-label { right: 15px; justify-content: flex-end; text-align: right; }
 .bus-direction-circular .bus-stop-list li:nth-child(2), .bus-direction-circular .bus-stop-list li:nth-child(14) { top: 14%; }
 .bus-direction-circular .bus-stop-list li:nth-child(3), .bus-direction-circular .bus-stop-list li:nth-child(13) { top: 28%; }
@@ -772,9 +771,9 @@ a.district-card { display: block; color: inherit; text-decoration: none; cursor:
 .bus-loop-arrows i { position: absolute; z-index: 4; color: #176058; background: transparent; font: 700 18px/1 Arial, sans-serif; font-style: normal; text-shadow: 0 0 4px #fff, 0 0 4px #fff; pointer-events: none; }
 .bus-direction-inbound .bus-loop-arrows i { color: #b67a16; }
 .bus-loop-arrow-top { top: 8px; left: 63%; }
-.bus-loop-arrow-right { top: 35%; right: 82px; }
+.bus-loop-arrow-right { top: 35%; right: calc(var(--loop-inset) - 10px); }
 .bus-loop-arrow-bottom { bottom: 8px; left: 35%; }
-.bus-loop-arrow-left { top: 65%; left: 82px; }
+.bus-loop-arrow-left { top: 65%; left: calc(var(--loop-inset) - 10px); }
 .bus-local-map-card-333 .bus-map-route-halo { stroke-width: 7px; }
 .bus-local-map-card-333 .bus-map-route { stroke-width: 2.6px; }
 .bus-local-map-card-333 .bus-map-route-inbound { stroke-dasharray: 11px 7px; }
@@ -1141,10 +1140,10 @@ body.view-transitioning #app { min-height: 100vh; background: #0b302d; overflow:
   .bus-local-map-card > header { padding: 16px 18px; }
   .bus-local-map-frame { min-height: 0; }
   .bus-stop-list li { grid-template-columns: 22px 30px 1fr; }
-  .bus-stop-bus-transfers { grid-column: 3; margin-top: -8px; }
   .bus-stop-metro-transfers { grid-column: 3; margin-top: -8px; }
   .bus-direction-circular { padding-right: 10px; padding-left: 10px; }
-  .bus-direction-circular .bus-loop-stop-label { width: 77px; min-width: 0; flex-wrap: wrap; gap: 3px; padding: 3px; }
+  .bus-loop-wrap { --loop-inset: 100px; }
+  .bus-direction-circular .bus-loop-stop-label { width: 85px; min-width: 0; flex-wrap: wrap; gap: 3px; padding: 3px; }
   .bus-direction-circular .bus-loop-stop-label strong { max-width: 100%; font-size: 11px; line-height: 1.28; }
   .bus-direction-circular .bus-loop-stop-label .bus-stop-order { font-size: 9px; }
   .bus-direction-circular .bus-stop-list li:nth-child(1) .bus-loop-stop-label,
